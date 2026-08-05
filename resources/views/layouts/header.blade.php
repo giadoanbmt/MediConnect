@@ -38,11 +38,11 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url('/service') }}">Services</a></li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/department') }}" id="dropdown02" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">Department <i class="icofont-thin-down"></i></a>
+                        <a class="nav-link dropdown-toggle" href="{{ url('/Specialization') }}" id="dropdown02" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">Specialization <i class="icofont-thin-down"></i></a>
                         <ul class="dropdown-menu" aria-labelledby="dropdown02">
-                            <li><a class="dropdown-item" href="{{ url('/department') }}">Departments</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/department-single') }}">Department Single</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/Specialization') }}">Specializations</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/Specialization-single') }}">Specialization Single</a></li>
                     
                             <li class="dropdown dropdown-submenu dropright">
                                 <a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0301" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>

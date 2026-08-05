@@ -72,11 +72,11 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url('/service') }}">Services</a></li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/department') }}" id="dropdown02" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">Department <i class="icofont-thin-down"></i></a>
+                        <a class="nav-link dropdown-toggle" href="{{ url('/specialization') }}" id="dropdown02" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">Specialization <i class="icofont-thin-down"></i></a>
                         <ul class="dropdown-menu" aria-labelledby="dropdown02">
-                            <li><a class="dropdown-item" href="{{ url('/department') }}">Departments</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/department-single') }}">Department Single</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/specialization') }}">Specializations</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/specialization-single') }}">Specialization Single</a></li>
                     
                             <li class="dropdown dropdown-submenu dropright">
                                 <a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0301" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
@@ -119,6 +119,16 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
                 </ul>
             </div>
+            <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3"> <!--làm  xong controller search thì ghi vô action ở đây -->
+                    <div class="input-group input-group-sm" style="max-width: 230px;">
+                        <input type="text" name="keyword" class="form-control" placeholder="Search doctor, blog..." required style="border-radius: 20px 0 0 20px; border-right: none;">
+                        <div class="input-group-append">
+                            <button class="btn btn-main-2" type="submit" style="border-radius: 0 20px 20px 0; padding: 0 12px; height: 100%;">
+                                <i class="icofont-search"></i>
+                            </button>
+                        </div>
+                    </div>
+            </form>
         </div>
     </nav>
 </header>
@@ -129,13 +139,13 @@
     <div class="row">
       <div class="col-md-12">
         <div class="block text-center">
-          <span class="text-white">Department Details</span>
-          <h1 class="text-capitalize mb-5 text-lg">Single Department</h1>
+          <span class="text-white">Specialization Details</span>
+          <h1 class="text-capitalize mb-5 text-lg">Single Specialization</h1>
 
           <!-- <ul class="list-inline breadcumb-nav">
             <li class="list-inline-item"><a href="{{ url('/') }}" class="text-white">Home</a></li>
             <li class="list-inline-item"><span class="text-white">/</span></li>
-            <li class="list-inline-item"><a href="#" class="text-white-50">Department Details</a></li>
+            <li class="list-inline-item"><a href="#" class="text-white-50">Specialization Details</a></li>
           </ul> -->
         </div>
       </div>
@@ -144,11 +154,11 @@
 </section>
 
 
-<section class="section department-single">
+<section class="section Specialization-single">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <div class="department-img">
+                <div class="Specialization-img">
                     <img src="images/service/bg-1.jpg" alt="" class="img-fluid">
                 </div>
             </div>
@@ -156,7 +166,7 @@
 
         <div class="row">
             <div class="col-lg-8">
-                <div class="department-content mt-5">
+                <div class="Specialization-content mt-5">
                     <h3 class="text-md">Medecine and Health</h3>
                     <div class="divider my-4"></div>
                     <p class="lead">Age forming covered you entered the examine. Blessing scarcely confined her contempt wondered shy. Dashwoods contented sportsmen at up no convinced cordially affection.</p>
@@ -165,7 +175,7 @@
 
                     <h3 class="mt-5 mb-4">Services features</h3>
                     <div class="divider my-4"></div>
-                    <ul class="list-unstyled department-service">
+                    <ul class="list-unstyled Specialization-service">
                         <li><i class="icofont-check mr-2"></i>International Drug Database</li>
                         <li><i class="icofont-check mr-2"></i>Stretchers and Stretcher Accessories</li>
                         <li><i class="icofont-check mr-2"></i>Cushions and Mattresses</li>
@@ -234,7 +244,7 @@
 
             <div class="col-lg-2 col-md-6 col-sm-6">
                 <div class="widget mb-5 mb-lg-0">
-                    <h4 class="text-capitalize mb-3">Department</h4>
+                    <h4 class="text-capitalize mb-3">Specialization</h4>
                     <div class="divider mb-4"></div>
 
                     <ul class="list-unstyled footer-menu lh-35">

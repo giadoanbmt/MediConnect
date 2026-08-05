@@ -73,11 +73,11 @@
 					<li class="nav-item"><a class="nav-link" href="{{ url('/service') }}">Services</a></li>
 
 					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="{{ url('/department') }}" id="dropdown02" data-toggle="dropdown"
-							aria-haspopup="true" aria-expanded="false">Department <i class="icofont-thin-down"></i></a>
+						<a class="nav-link dropdown-toggle" href="{{ url('/specialization') }}" id="dropdown02" data-toggle="dropdown"
+							aria-haspopup="true" aria-expanded="false">Specialization <i class="icofont-thin-down"></i></a>
 						<ul class="dropdown-menu" aria-labelledby="dropdown02">
-							<li><a class="dropdown-item" href="{{ url('/department') }}">Departments</a></li>
-							<li><a class="dropdown-item" href="{{ url('/department-single') }}">Department Single</a></li>
+							<li><a class="dropdown-item" href="{{ url('/specialization') }}">Specializations</a></li>
+							<li><a class="dropdown-item" href="{{ url('/specialization-single') }}">Specialization Single</a></li>
                     
 							<li class="dropdown dropdown-submenu dropright">
 								<a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0301" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
@@ -252,7 +252,7 @@
 
 			<div class="col-lg-2 col-md-6 col-sm-6">
 				<div class="widget mb-5 mb-lg-0">
-					<h4 class="text-capitalize mb-3">Department</h4>
+					<h4 class="text-capitalize mb-3">Specialization</h4>
 					<div class="divider mb-4"></div>
 
 					<ul class="list-unstyled footer-menu lh-35">

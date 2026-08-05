@@ -10,83 +10,83 @@ class FrontendController extends Controller
     // Trang chủ
     public function index()
     {
-        return view('index');
+        return view('patient.index');
     }
 
     // Trang giới thiệu
     public function about()
     {
-        return view('about');
+        return view('patient.about');
     }
 
     // Trang dịch vụ
     public function service()
     {
-        return view('service');
+        return view('patient.service');
     }
 
     // Trang danh sách khoa phòng
     public function department() {
-        return view('department');
+        return view('patient.department');
     }
 
     // Trang chi tiết khoa phòng
     public function departmentSingle() {
-        return view('department-single');
+        return view('patient.department-single');
     }
 
     // Trang danh sách bác sĩ
     public function doctor()
     {
-        return view('doctor');
+        return view('patient.doctor');
     }
 
     // Trang chi tiết bác sĩ
     public function doctorSingle()
     {
-        return view('doctor-single');
+        return view('patient.doctor-single');
     }
 
     // Trang đặt lịch khám
     public function appointment()
     {
-        return view('appointment');
+        return view('patient.appointment');
     }
 
     // Trang xác nhận đặt lịch
     public function confirmation()
     {
-        return view('confirmation');
+        return view('patient.confirmation');
     }
 
     // Trang tin tức / bài viết (Blog sidebar)
     public function blogSidebar()
     {
-        return view('blog-sidebar');
+        return view('patient.blog-sidebar');
     }
 
     // Trang chi tiết bài viết (Blog single)
     public function blogSingle()
     {
-        return view('blog-single');
+        return view('patient.blog-single');
     }
 
     // Trang liên hệ
     public function contact()
     {
-        return view('contact');
+        return view('patient.contact');
     }
 
     // Trang login
     public function login()
     {
-        return view('login');
+        return view('patient.login');
     }
 
     // Trang register
     public function register()
     {
-        return view('register');
+        return view('patient.register');
     }
 
     // Trang doctor/login

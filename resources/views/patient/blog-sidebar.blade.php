@@ -73,11 +73,11 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url('/service') }}">Services</a></li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/department') }}" id="dropdown02" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">Department <i class="icofont-thin-down"></i></a>
+                        <a class="nav-link dropdown-toggle" href="{{ url('/specialization') }}" id="dropdown02" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">Specialization <i class="icofont-thin-down"></i></a>
                         <ul class="dropdown-menu" aria-labelledby="dropdown02">
-                            <li><a class="dropdown-item" href="{{ url('/department') }}">Departments</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/department-single') }}">Department Single</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/specialization') }}">Specializations</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/specialization-single') }}">Specialization Single</a></li>
                     
                             <li class="dropdown dropdown-submenu dropright">
                                 <a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0301" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
@@ -120,6 +120,16 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
                 </ul>
             </div>
+            <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3"> <!--làm  xong controller search thì ghi vô action ở đây -->
+                    <div class="input-group input-group-sm" style="max-width: 230px;">
+                        <input type="text" name="keyword" class="form-control" placeholder="Search doctor, blog..." required style="border-radius: 20px 0 0 20px; border-right: none;">
+                        <div class="input-group-append">
+                            <button class="btn btn-main-2" type="submit" style="border-radius: 0 20px 20px 0; padding: 0 12px; height: 100%;">
+                                <i class="icofont-search"></i>
+                            </button>
+                        </div>
+                    </div>
+            </form>
         </div>
     </nav>
 </header>
@@ -222,6 +232,8 @@
             </div>
         </nav>
     </div>
+
+<!-- Side bar -->
 </div>
       </div>
       <div class="col-lg-4">
@@ -238,21 +250,7 @@
     <div class="sidebar-widget latest-post mb-3">
         <h5>Popular Posts</h5>
 
-        <div class="py-2">
-            <span class="text-sm text-muted">03 Mar 2018</span>
-            <h6 class="my-2"><a href="#">Thoughtful living in los Angeles</a></h6>
-        </div>
-
-        <div class="py-2">
-            <span class="text-sm text-muted">03 Mar 2018</span>
-            <h6 class="my-2"><a href="#">Vivamus molestie gravida turpis.</a></h6>
-        </div>
-
-        <div class="py-2">
-            <span class="text-sm text-muted">03 Mar 2018</span>
-            <h6 class="my-2"><a href="#">Fusce lobortis lorem at ipsum semper sagittis</a></h6>
-        </div>
-    </div>
+        <!-- Popular post sẽ chọn 3 bài viết vs lượt xem cao nhất -->
 
     <div class="sidebar-widget category mb-3">
         <h5 class="mb-4">Categories</h5>
@@ -260,41 +258,28 @@
         <ul class="list-unstyled">
           <li class="align-items-center">
             <a href="#">Medicine</a>
-            <span>(14)</span>
+
           </li>
           <li class="align-items-center">
             <a href="#">Equipments</a>
-            <span>(2)</span>
+
           </li>
           <li class="align-items-center">
             <a href="#">Heart</a>
-            <span>(10)</span>
+            
           </li>
           <li class="align-items-center">
             <a href="#">Free counselling</a>
-            <span>(5)</span>
+            
           </li>
           <li class="align-items-center">
             <a href="#">Lab test</a>
-            <span>(5)</span>
+           
           </li>
         </ul>
     </div>
 
 
-    <div class="sidebar-widget tags mb-3">
-        <h5 class="mb-4">Tags</h5>
-
-        <a href="#">Doctors</a>
-        <a href="#">agency</a>
-        <a href="#">company</a>
-        <a href="#">medicine</a>
-        <a href="#">surgery</a>
-        <a href="#">Marketing</a>
-        <a href="#">Social Media</a>
-        <a href="#">Branding</a>
-        <a href="#">Laboratory</a>
-    </div>
 
 
     <div class="sidebar-widget schedule-widget mb-3">
@@ -354,7 +339,7 @@
 
             <div class="col-lg-2 col-md-6 col-sm-6">
                 <div class="widget mb-5 mb-lg-0">
-                    <h4 class="text-capitalize mb-3">Department</h4>
+                    <h4 class="text-capitalize mb-3">Specialization</h4>
                     <div class="divider mb-4"></div>
 
                     <ul class="list-unstyled footer-menu lh-35">
