@@ -8,72 +8,84 @@ use Illuminate\Support\Facades\DB;
 class FrontendController extends Controller
 {
     // Trang chủ
-    public function index() {
+    public function index()
+    {
         return view('index');
     }
 
     // Trang giới thiệu
-    public function about() {
+    public function about()
+    {
         return view('about');
     }
 
     // Trang dịch vụ
-    public function service() {
+    public function service()
+    {
         return view('service');
     }
 
-    // Trang danh sách khoa phòng (sẽ đổi lại thành chuyên khoa)
+    // Trang danh sách khoa phòng
     public function department() {
         return view('department');
     }
 
-    // Trang chi tiết khoa phòng (sẽ đổi lại thành chuyên khoa)
+    // Trang chi tiết khoa phòng
     public function departmentSingle() {
         return view('department-single');
     }
 
     // Trang danh sách bác sĩ
-    public function doctor() {
+    public function doctor()
+    {
         return view('doctor');
     }
 
     // Trang chi tiết bác sĩ
-    public function doctorSingle() {
+    public function doctorSingle()
+    {
         return view('doctor-single');
     }
 
     // Trang đặt lịch khám
-    public function appointment() {
+    public function appointment()
+    {
         return view('appointment');
     }
 
     // Trang xác nhận đặt lịch
-    public function confirmation() {
+    public function confirmation()
+    {
         return view('confirmation');
     }
 
     // Trang tin tức / bài viết (Blog sidebar)
-    public function blogSidebar() {
+    public function blogSidebar()
+    {
         return view('blog-sidebar');
     }
 
     // Trang chi tiết bài viết (Blog single)
-    public function blogSingle() {
+    public function blogSingle()
+    {
         return view('blog-single');
     }
 
     // Trang liên hệ
-    public function contact() {
+    public function contact()
+    {
         return view('contact');
     }
 
     // Trang login
-    public function login() {
+    public function login()
+    {
         return view('login');
     }
 
     // Trang register
-    public function register() {
+    public function register()
+    {
         return view('register');
     }
 

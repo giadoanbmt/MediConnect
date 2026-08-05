@@ -1,7 +1,9 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Patient\PatientController;
 use App\Http\Controllers\FrontendController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontendController::class, 'index']);
 Route::get('/about', [FrontendController::class, 'about']);
@@ -17,6 +19,3 @@ Route::get('/blog-single', [FrontendController::class, 'blogSingle']);
 Route::get('/contact', [FrontendController::class, 'contact']);
 Route::get('/login', [FrontendController::class, 'login']);
 Route::get('/register', [FrontendController::class, 'register']);
-Route::get('/doctor/login', [FrontendController::class, 'doctorLogin']);
-Route::get('/doctor/dashboard', [FrontendController::class, 'doctorDashboard']);
-
