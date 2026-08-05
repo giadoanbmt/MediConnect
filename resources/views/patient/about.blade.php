@@ -118,6 +118,27 @@
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
+@guest
+    
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url('/login') }}">Sign In</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link btn btn-main-2 btn-round-full" href="{{ url('/register') }}">Sign Up</a>
+    </li>
+@else
+    
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle font-weight-bold text-primary" href="#" id="userDropdown" data-toggle="dropdown">
+            {{ Auth::user()->name }}
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+            <a class="dropdown-item menu-item text-danger p-2 d-block" href="{{ url('/logout') }}">
+                <i class="icofont-logout mr-2"></i>Log Out
+            </a>
+        </div>
+    </li>
+@endguest
                 </ul>
             </div>
         </div>

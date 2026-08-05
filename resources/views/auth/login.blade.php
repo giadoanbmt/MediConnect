@@ -68,20 +68,26 @@
                     <form action="{{ url('/login') }}" method="POST">
                         @csrf
                         
-                        <div class="form-group mb-3">
-                            <label for="username" class="text-black font-weight-bold small">Username</label>
-                            <div class="input-group">
-                                <input type="username" name="username" id="username" class="form-control" required autofocus>
-                            </div>
-                        </div>
+                       <div class="form-group mb-3">
+        <label for="username" class="text-black font-weight-bold small">Username</label>
+        <div class="input-group">
+            <input type="text" name="username" id="username" class="form-control" required autofocus>
+        </div>
+        @error('username')
+            <small class="text-danger d-block mt-1">{{ $message }}</small>
+        @enderror
+    </div>
 
-                        <div class="form-group mb-3">
-                            <label for="password" class="text-black font-weight-bold small">Password</label>
-                            <input type="password" name="password" id="password" class="form-control" required>
-                            <div class="text-right">
-                                <a href="#" class="text-small text-right text-muted small ">Forgot password</a>
-                            </div>  
-                        </div>
+    <div class="form-group mb-3">
+        <label for="password" class="text-black font-weight-bold small">Password</label>
+        <input type="password" name="password" id="password" class="form-control" required>
+        @error('password')
+            <small class="text-danger d-block mt-1">{{ $message }}</small>
+        @enderror
+        <div class="text-right">
+            <a href="#" class="text-small text-right text-muted small">Forgot password?</a>
+        </div>
+    </div>
 
                         <div class="form-group d-flex justify-content-between align-items-center mb-4">
                             <div class="custom-control custom-checkbox">
