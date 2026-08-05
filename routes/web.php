@@ -17,3 +17,6 @@ Route::get('/blog-single', [FrontendController::class, 'blogSingle']);
 Route::get('/contact', [FrontendController::class, 'contact']);
 Route::get('/login', [FrontendController::class, 'login']);
 Route::get('/register', [FrontendController::class, 'register']);
+Route::get('/doctor/login', [FrontendController::class, 'doctorLogin']);
+Route::get('/doctor/dashboard', [FrontendController::class, 'doctorDashboard']);
+

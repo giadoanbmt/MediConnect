@@ -6,7 +6,7 @@
   <!-- Basic Page Needs
   ================================================== -->
   <meta charset="utf-8">
-  <title>Novena- Health Care &amp; Medical template</title>
+  <title>MediConnect &amp; Medical template</title>
 
   <!-- Mobile Specific Metas
   ================================================== -->
@@ -120,6 +120,16 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
                 </ul>
             </div>
+            <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3"> <!--làm  xong controller search thì ghi vô action ở đây -->
+                    <div class="input-group input-group-sm" style="max-width: 230px;">
+                        <input type="text" name="keyword" class="form-control" placeholder="Search doctor, blog..." required style="border-radius: 20px 0 0 20px; border-right: none;">
+                        <div class="input-group-append">
+                            <button class="btn btn-main-2" type="submit" style="border-radius: 0 20px 20px 0; padding: 0 12px; height: 100%;">
+                                <i class="icofont-search"></i>
+                            </button>
+                        </div>
+                    </div>
+            </form>
         </div>
     </nav>
 </header>

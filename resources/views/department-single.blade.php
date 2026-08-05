@@ -5,7 +5,7 @@
   <!-- Basic Page Needs
   ================================================== -->
   <meta charset="utf-8">
-  <title>Novena- Health Care &amp; Medical template</title>
+  <title>MediConnect &amp; Medical template</title>
 
   <!-- Mobile Specific Metas
   ================================================== -->
