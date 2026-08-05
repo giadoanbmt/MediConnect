@@ -1,19 +1,20 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Patient\PatientController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FrontendController;
 
-Route::get('/', [FrontendController::class, 'index']);
-Route::get('/about', [FrontendController::class, 'about']);
-Route::get('/service', [FrontendController::class, 'service']);
-Route::get('/department', [FrontendController::class, 'department']);
-Route::get('/department-single', [FrontendController::class, 'departmentSingle']);
-Route::get('/doctor', [FrontendController::class, 'doctor']);
-Route::get('/doctor-single', [FrontendController::class, 'doctorSingle']);
-Route::get('/appointment', [FrontendController::class, 'appointment']);
-Route::get('/confirmation', [FrontendController::class, 'confirmation']);
-Route::get('/blog-sidebar', [FrontendController::class, 'blogSidebar']);
-Route::get('/blog-single', [FrontendController::class, 'blogSingle']);
-Route::get('/contact', [FrontendController::class, 'contact']);
-Route::get('/login', [FrontendController::class, 'login']);
-Route::get('/register', [FrontendController::class, 'register']);
+Route::get('/', [PatientController::class, 'index']);
+Route::get('/about', [PatientController::class, 'about']);
+Route::get('/service', [PatientController::class, 'service']);
+Route::get('/department', [PatientController::class, 'department']);
+Route::get('/department-single', [PatientController::class, 'departmentSingle']);
+Route::get('/doctor', [PatientController::class, 'doctor']);
+Route::get('/doctor-single', [PatientController::class, 'doctorSingle']);
+Route::get('/appointment', [PatientController::class, 'appointment']);
+Route::get('/confirmation', [PatientController::class, 'confirmation']);
+Route::get('/blog-sidebar', [PatientController::class, 'blogSidebar']);
+Route::get('/blog-single', [PatientController::class, 'blogSingle']);
+Route::get('/contact', [PatientController::class, 'contact']);
+Route::get('/login', [AuthController::class, 'login']);
+Route::get('/register', [AuthController::class, 'register']);
