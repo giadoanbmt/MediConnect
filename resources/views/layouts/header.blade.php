@@ -1,4 +1,3 @@
-
 <header>
     <div class="header-top-bar">
         <div class="container">
@@ -15,6 +14,29 @@
                             <span>Call Now : </span>
                             <span class="h4">823-4565-13456</span>
                         </a>
+                        @if(session('customer_id')) 
+                               <div class="dropdown">
+                                    <a class="btn btn-outline-primary btn-round-full dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 8px 22px; border-radius: 25px;">
+                                          <i class="icofont-user-alt-7 mr-1"></i> {{ session('customer_name') ?? 'My account' }}
+                                    </a>
+                                <div class="dropdown-menu dropdown-menu-right shadow-sm border-0 mt-2">
+                                    <a class="dropdown-item" href="{{ url('/patient/profile') }}">
+                                       <i class="icofont-ui-user mr-2 text-primary"></i> Profile
+                                    </a>
+                                    <a class="dropdown-item" href="{{ url('/patient/appointments') }}">
+                                        <i class="icofont-calendar mr-2 text-info"></i> Appointments
+                                    </a>
+                                     <div class="dropdown-divider"></div>
+                                       <a class="dropdown-item text-danger" href="{{ url('/patient/logout') }}">
+                                           <i class="icofont-logout mr-2"></i> Logout
+                                        </a>
+                                 </div>
+                                </div>
+                            @else
+                                <a class="btn btn-main-2 btn-round-full" href="{{ url('/patient/login') }}" style="background-color: var(--primary-blue); color: #fff; padding: 8px 22px; border-radius: 25px;">
+                                    <i class="icofont-sign-in mr-1"></i> Login
+                                </a>
+                             @endif
                     </div>
                 </div>
             </div>
@@ -23,7 +45,7 @@
     <nav class="navbar navbar-expand-lg navigation" id="navbar">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
-                <img src="{{ asset('Novena/images/logo.png') }}" alt="" class="img-fluid">
+                <img src="images/logo.png" alt="" class="img-fluid">
             </a>
 
             <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarmain"
@@ -38,30 +60,22 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url('/service') }}">Services</a></li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/Specialization') }}" id="dropdown02" data-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href="{{ url('/specialization') }}" id="dropdown02" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">Specialization <i class="icofont-thin-down"></i></a>
                         <ul class="dropdown-menu" aria-labelledby="dropdown02">
-                            <li><a class="dropdown-item" href="{{ url('/Specialization') }}">Specializations</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/Specialization-single') }}">Specialization Single</a></li>
-                    
-                            <li class="dropdown dropdown-submenu dropright">
-                                <a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0301" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
-            
-                                <ul class="dropdown-menu" aria-labelledby="dropdown0301">
-                                    <li><a class="dropdown-item" href="{{ url('/') }}">Submenu 01</a></li>
-                                    <li><a class="dropdown-item" href="{{ url('/') }}">Submenu 02</a></li>
-                                </ul>
-                            </li>
+                            <li><a class="dropdown-item" href="{{ url('/') }}">Pediatrics</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('/') }}">Cardiology</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('/') }}">Orthopedics</a></li>
+                                    <li><a class="dropdown-item" href="{{ url('/') }}">Dermatology</a></li>
                         </ul>
                     </li>
-
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="{{ url('/doctor') }}" id="dropdown03" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">Doctors <i class="icofont-thin-down"></i></a>
                         <ul class="dropdown-menu" aria-labelledby="dropdown03">
                             <li><a class="dropdown-item" href="{{ url('/doctor') }}">Doctors</a></li>
                             <li><a class="dropdown-item" href="{{ url('/doctor-single') }}">Doctor Single</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/appointment') }}">Appoinment</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/appoinment') }}">Appoinment</a></li>
 
                             <li class="dropdown dropdown-submenu dropleft">
                                 <a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0501" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
@@ -85,7 +99,6 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
                 </ul>
             </div>
-        
             <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3"> <!--làm  xong controller search thì ghi vô action ở đây -->
                     <div class="input-group input-group-sm" style="max-width: 230px;">
                         <input type="text" name="keyword" class="form-control" placeholder="Search doctor, blog..." required style="border-radius: 20px 0 0 20px; border-right: none;">
@@ -99,5 +112,3 @@
         </div>
     </nav>
 </header>
-
-

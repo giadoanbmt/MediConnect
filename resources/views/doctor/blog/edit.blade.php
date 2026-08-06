@@ -2,6 +2,10 @@
 
 @section('title', 'Edit blog - MediConnect')
 
+@push('style')
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+@endpush
+
 @section('content')
 <h2 class="font-weight-bold mb-4" style="color: var(--primary-blue);">Edit blog</h2>
 
@@ -36,4 +40,27 @@
         </div>
     </form>
 </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#summernote').summernote({
+            placeholder: 'Nhập nội dung bài viết chi tiết tại đây...',
+            tabsize: 2,
+            height: 350, // Chiều cao mặc định của khung soạn thảo
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'italic', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+    });
+</script>
+@endpush
+
 @endsection

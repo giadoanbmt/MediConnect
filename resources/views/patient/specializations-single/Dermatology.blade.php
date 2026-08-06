@@ -33,105 +33,7 @@
 
 <body id="top">
 
-<header>
-    <div class="header-top-bar">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <ul class="top-bar-info list-inline-item pl-0 mb-0">
-                        <li class="list-inline-item"><a href="mailto:support@gmail.com"><i class="icofont-support-faq mr-2"></i>support@novena.com</a></li>
-                        <li class="list-inline-item"><i class="icofont-location-pin mr-2"></i>Address Ta-134/A, New York, USA </li>
-                    </ul>
-                </div>
-                <div class="col-lg-6">
-                    <div class="text-lg-right top-right-bar mt-2 mt-lg-0">
-                        <a href="tel:+23-345-67890">
-                            <span>Call Now : </span>
-                            <span class="h4">823-4565-13456</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <nav class="navbar navbar-expand-lg navigation" id="navbar">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">
-                <img src="images/logo.png" alt="" class="img-fluid">
-            </a>
-
-            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarmain"
-                aria-controls="navbarmain" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="icofont-navigation-menu"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarmain">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active"><a class="nav-link" href="{{ url('/') }}">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/about') }}">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/service') }}">Services</a></li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/specialization') }}" id="dropdown02" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">Specialization <i class="icofont-thin-down"></i></a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdown02">
-                            <li><a class="dropdown-item" href="{{ url('/specialization') }}">Specializations</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/specialization-single') }}">Specialization Single</a></li>
-                    
-                            <li class="dropdown dropdown-submenu dropright">
-                                <a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0301" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
-            
-                                <ul class="dropdown-menu" aria-labelledby="dropdown0301">
-                                    <li><a class="dropdown-item" href="{{ url('/') }}">Submenu 01</a></li>
-                                    <li><a class="dropdown-item" href="{{ url('/') }}">Submenu 02</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/doctor') }}" id="dropdown03" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">Doctors <i class="icofont-thin-down"></i></a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdown03">
-                            <li><a class="dropdown-item" href="{{ url('/doctor') }}">Doctors</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/doctor-single') }}">Doctor Single</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/appointment') }}">appointment</a></li>
-
-                            <li class="dropdown dropdown-submenu dropleft">
-                                <a class="dropdown-item dropdown-toggle" href="#!" id="dropdown0501" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sub Menu</a>
-            
-                                <ul class="dropdown-menu" aria-labelledby="dropdown0501">
-                                    <li><a class="dropdown-item" href="{{ url('/') }}">Submenu 01</a></li>
-                                    <li><a class="dropdown-item" href="{{ url('/') }}">Submenu 02</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/blog-sidebar') }}" id="dropdown05" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">Blog <i class="icofont-thin-down"></i></a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdown05">
-                            <li><a class="dropdown-item" href="{{ url('/blog-sidebar') }}">Blog with Sidebar</a></li>
-                            <li><a class="dropdown-item" href="{{ url('/blog-single') }}">Blog Single</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
-                </ul>
-            </div>
-            <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3"> <!--làm  xong controller search thì ghi vô action ở đây -->
-                    <div class="input-group input-group-sm" style="max-width: 230px;">
-                        <input type="text" name="keyword" class="form-control" placeholder="Search doctor, blog..." required style="border-radius: 20px 0 0 20px; border-right: none;">
-                        <div class="input-group-append">
-                            <button class="btn btn-main-2" type="submit" style="border-radius: 0 20px 20px 0; padding: 0 12px; height: 100%;">
-                                <i class="icofont-search"></i>
-                            </button>
-                        </div>
-                    </div>
-            </form>
-        </div>
-    </nav>
-</header>
+@include('layouts.header')
 
 <section class="page-title bg-1">
   <div class="overlay"></div>
@@ -142,11 +44,11 @@
           <span class="text-white">Specialization Details</span>
           <h1 class="text-capitalize mb-5 text-lg">Single Specialization</h1>
 
-          <!-- <ul class="list-inline breadcumb-nav">
+           <ul class="list-inline breadcumb-nav">
             <li class="list-inline-item"><a href="{{ url('/') }}" class="text-white">Home</a></li>
             <li class="list-inline-item"><span class="text-white">/</span></li>
             <li class="list-inline-item"><a href="#" class="text-white-50">Specialization Details</a></li>
-          </ul> -->
+          </ul> 
         </div>
       </div>
     </div>
@@ -167,10 +69,10 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="Specialization-content mt-5">
-                    <h3 class="text-md">Medecine and Health</h3>
-                    <div class="divider my-4"></div>
-                    <p class="lead">Age forming covered you entered the examine. Blessing scarcely confined her contempt wondered shy. Dashwoods contented sportsmen at up no convinced cordially affection.</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum recusandae dolor autem laudantium, quaerat vel dignissimos. Magnam sint suscipit omnis eaque unde eos aliquam distinctio, quisquam iste, itaque possimus . Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet alias modi eaque, ratione recusandae cupiditate dolorum repellendus iure eius rerum hic minus ipsa at, corporis nesciunt tempore vero voluptas. Tempore.</p>
+                    <h3 class="text-md">Dermatology</h3>
+                    <div class="divider my-4">Healthy skin reflects overall health. Our dermatology experts provide professional care for skin, hair, and nail conditions using modern treatments tailored to every patient's needs.</div>
+                    <p class="lead">The Dermatology Department specializes in diagnosing and treating acne, eczema, psoriasis, skin infections, allergies, pigmentation disorders, and skin cancer screening. Whether you need medical or cosmetic dermatology services, our team combines advanced technology with evidence-based treatments to achieve healthy, beautiful skin while ensuring patient comfort and safety throughout every stage of care.</p>
+                    <p></p>
 
 
                     <h3 class="mt-5 mb-4">Services features</h3>
@@ -184,7 +86,17 @@
                         <li><i class="icofont-check mr-2"></i>Emergency Assistance</li>
                     </ul>
 
-                    <a href="{{ url('/appointment') }}" class="btn btn-main-2 btn-round-full">Make an appointment<i class="icofont-simple-right ml-2  "></i></a>
+                    @if(session('customer_id'))
+    <!-- Đã đăng nhập -> Đặt lịch -->
+    <a href="{{ url('/appointment') }}" class="btn btn-main-2 btn-round-full">
+        Make an appointment<i class="icofont-simple-right ml-2"></i>
+    </a>
+@else
+    <!-- Chưa đăng nhập -> Chuyển sang trang Login -->
+    <a href="{{ url('/login') }}" class="btn btn-main-2 btn-round-full">
+        Make an appointment<i class="icofont-simple-right ml-2"></i>
+    </a>
+@endif
                 </div>
             </div>
 

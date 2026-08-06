@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <!-- Basic Page Needs
   ================================================== -->
   <meta charset="utf-8">
@@ -27,6 +28,7 @@
 
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="{{ asset('Novena/css/style.css') }}">
+
 </head>
 
 <body id="top">
@@ -39,77 +41,90 @@
     <div class="row">
       <div class="col-md-12">
         <div class="block text-center">
-          <span class="text-white">All Specialization</span>
-          <h1 class="text-capitalize mb-5 text-lg">Medical Specialties</h1>
+          <span class="text-white">Specialization Details</span>
+          <h1 class="text-capitalize mb-5 text-lg">Single Specialization</h1>
 
-          <!-- <ul class="list-inline breadcumb-nav">
+           <ul class="list-inline breadcumb-nav">
             <li class="list-inline-item"><a href="{{ url('/') }}" class="text-white">Home</a></li>
             <li class="list-inline-item"><span class="text-white">/</span></li>
-            <li class="list-inline-item"><a href="#" class="text-white-50">All Specialization</a></li>
-          </ul> -->
+            <li class="list-inline-item"><a href="#" class="text-white-50">Specialization Details</a></li>
+          </ul> 
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section service-2">
+
+<section class="section Specialization-single">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-7 text-center">
-                <div class="section-title">
-                    <h2>Comprehensive Medical Specialties</h2>
-                    <div class="divider mx-auto my-4"></div>
-                    <p>We offer specialized medical services across multiple disciplines to ensure accurate diagnosis, effective treatment, and compassionate care for every patient.</p>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="Specialization-img">
+                    <img src="images/service/bg-1.jpg" alt="" class="img-fluid">
                 </div>
             </div>
         </div>
 
         <div class="row">
-            <div class="col-lg-4 col-md-6">
-                <div class="Specialization-block mb-5 border rounded shadow-sm overflow-hidde">
-                    <img src="{{ asset('Novena/images/service/Orthopedics_service.jpg') }}" alt="" class="img-fluid w-100 border-bottom">
-                    <div class="content p-4">
-                        <h4 class="mt-4 mb-2 title-color">Orthopedics</h4>
-                        <p class="mb-4">Diagnosis and Treatment of Bone and Joint Disorders.</p>
-                        <a href="{{ url('/specialization-single') }}" class="read-more">Learn More  <i class="icofont-simple-right ml-2"></i></a>
-                    </div>
+            <div class="col-lg-8">
+                <div class="Specialization-content mt-5">
+                    <h3 class="text-md">Orthopedics</h3>
+                    <div class="divider my-4">Strong bones and healthy joints are essential for an active lifestyle. Our orthopedic specialists help patients recover mobility, reduce pain, and improve physical function.</div>
+                    <p class="lead">The Orthopedics Department provides comprehensive care for bone, joint, muscle, ligament, and spine conditions. From sports injuries and fractures to arthritis and joint replacement surgery, our experienced orthopedic surgeons and rehabilitation team deliver personalized treatment plans using modern techniques. We are dedicated to restoring movement, relieving pain, and helping patients return to their daily activities with confidence.</p>
+                    <p></p>
+
+
+                    <h3 class="mt-5 mb-4">Services features</h3>
+                    <div class="divider my-4"></div>
+                    <ul class="list-unstyled Specialization-service">
+                        <li><i class="icofont-check mr-2"></i>International Drug Database</li>
+                        <li><i class="icofont-check mr-2"></i>Stretchers and Stretcher Accessories</li>
+                        <li><i class="icofont-check mr-2"></i>Cushions and Mattresses</li>
+                        <li><i class="icofont-check mr-2"></i>Cholesterol and lipid tests</li>
+                        <li><i class="icofont-check mr-2"></i>Critical Care Medicine Specialists</li>
+                        <li><i class="icofont-check mr-2"></i>Emergency Assistance</li>
+                    </ul>
+
+                    @if(session('customer_id'))
+    <!-- Đã đăng nhập -> Đặt lịch -->
+    <a href="{{ url('/appointment') }}" class="btn btn-main-2 btn-round-full">
+        Make an appointment<i class="icofont-simple-right ml-2"></i>
+    </a>
+@else
+    <!-- Chưa đăng nhập -> Chuyển sang trang Login -->
+    <a href="{{ url('/login') }}" class="btn btn-main-2 btn-round-full">
+        Make an appointment<i class="icofont-simple-right ml-2"></i>
+    </a>
+@endif
                 </div>
             </div>
 
-            <div class="col-lg-4 col-md-6">
-                <div class="Specialization-block mb-5 border rounded shadow-sm overflow-hidde">
-                    <img src="{{ asset('Novena/images/service/Cardiology_service.jpg') }}" alt="" class="img-fluid w-100  border-bottom">
-                    <div class="content p-4">
-                        <h4 class="mt-4 mb-2  title-color">Cardiology</h4>
-                        <p class="mb-4">Comprehensive Diagnosis and Treatment for Heart and Cardiovascular Diseases.</p>
-                        <a href="{{ url('/specialization-single') }}" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6 ">
-                <div class="Specialization-block  mb-5 border rounded shadow-sm overflow-hidde">
-                    <img src="{{ asset('Novena/images/service/Pediatrics_service.jpg') }}" alt="" class="img-fluid w-100  border-bottom">
-                    <div class="content p-4">
-                        <h4 class="mt-4 mb-2 title-color">Pediatrics</h4>
-                        <p class="mb-4">Comprehensive Healthcare Services for Children.</p>
-                        <a href="{{ url('/specialization-single') }}" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
-                    </div>
-                </div>
-            </div>
+            <div class="col-lg-4">
+                <div class="sidebar-widget schedule-widget mt-5">
+                    <h5 class="mb-4">Time Schedule</h5>
 
-            <div class="col-lg-4 col-md-6">
-                <div class="Specialization-block mb-5 border rounded shadow-sm overflow-hidde">
-                    <img src="{{ asset('Novena/images/service/Dermatology_service.jpg') }}" alt="" class="img-fluid w-100  border-bottom">
-                    <div class="content p-4">
-                        <h4 class="mt-4 mb-2 title-color">Dermatology</h4>
-                        <p class="mb-4">Comprehensive Diagnosis and Treatment of Skin Conditions</p>
-                        <a href="{{ url('/specialization-single') }}" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
+                    <ul class="list-unstyled">
+                      <li class="d-flex justify-content-between align-items-center">
+                        <span>Monday - Friday</span>
+                        <span>9:00 - 17:00</span>
+                      </li>
+                      <li class="d-flex justify-content-between align-items-center">
+                        <span>Saturday</span>
+                        <span>9:00 - 16:00</span>
+                      </li>
+                      <li class="d-flex justify-content-between align-items-center">
+                        <span>Sunday</span>
+                        <span>Closed</span>
+                      </li>
+                    </ul>
+
+                    <div class="sidebar-contatct-info mt-4">
+                        <p class="mb-0">Need Urgent Help?</p>
+                        <h3>+23-4565-65768</h3>
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
 </section>
@@ -221,6 +236,7 @@
     </div>
 </footer>
    
+
     <!-- 
     Essential Scripts
     =====================================-->
@@ -229,7 +245,7 @@
     <script src="plugins/slick-carousel/slick/slick.min.js"></script>
     <script src="plugins/shuffle/shuffle.min.js"></script>
 
- 
+
     
     <script src="js/script.js"></script>
 
