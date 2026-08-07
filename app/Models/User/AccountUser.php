@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\User;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,7 +23,6 @@ class AccountUser extends Authenticatable
     protected $keyType = 'int';
 
     protected $fillable = [
-        'Name',
         'Username',
         'Password',
         'Email',

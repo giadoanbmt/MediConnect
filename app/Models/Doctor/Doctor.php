@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Doctor;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Doctor extends Model
+class Doctor extends Authenticatable
 {
     protected $table = 'Doctor';
-
     protected $primaryKey = 'DoctorId';
-
     public $timestamps = false;
 
     protected $fillable = [
@@ -24,4 +22,13 @@ class Doctor extends Model
         'CityId',
         'Address',
     ];
+
+    protected $hidden = [
+        'Password',
+    ];
+
+    public function getAuthPassword()
+    {
+        return $this->Password;
+    }
 }
