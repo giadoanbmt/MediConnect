@@ -17,7 +17,9 @@
                         <div class="dropdown">
                             <a class="top-login-link dropdown-toggle" href="#" id="topUserMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ auth()->user()->name }}</a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="topUserMenu">
-                                <a class="dropdown-item" href="{{ route('patient.appointment') }}"><i class="icofont-calendar mr-2"></i>Appointments</a>
+                                <span class="dropdown-item text-muted"><i class="icofont-ui-user mr-2"></i>Edit profile <small>(coming soon)</small></span>
+                                <span class="dropdown-item text-muted"><i class="icofont-calendar mr-2"></i>My appointments <small>(coming soon)</small></span>
+                                <div class="dropdown-divider"></div>
                                 <form method="POST" action="{{ route('logout') }}">@csrf <button class="dropdown-item text-danger" type="submit"><i class="icofont-logout mr-2"></i>Log out</button></form>
                             </div>
                         </div>

@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Doctor\DoctorController;
 use App\Http\Controllers\Patient\AppointmentController;
-use App\Http\Controllers\Patient\AuthController;
 use App\Http\Controllers\Patient\PatientController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,10 +27,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register.store');
 });
 
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('role:patient,admin,doctor')->name('logout');
 
 /* Patient: pages and actions that require a signed-in patient. */
-Route::middleware('auth')->group(function () {
+Route::middleware('role:patient')->group(function () {
     Route::controller(PatientController::class)->group(function () {
         Route::get('/appointment', 'appointment')->name('patient.appointment');
         Route::get('/confirmation', 'confirmation')->name('patient.confirmation');
@@ -43,7 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/appointments/{id}/book', [AppointmentController::class, 'book'])->name('patient.appointments.book');
     Route::put('/appointments/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('patient.appointments.reschedule');
     Route::delete('/appointments/{id}/cancel', [AppointmentController::class, 'cancel'])->name('patient.appointments.cancel');
-
-    /* Role middleware can be added here once doctor/admin roles exist in the database. */
-    Route::get('/doctor/dashboard', [DoctorController::class, 'dashboard'])->name('doctor.dashboard');
 });
+
+Route::get('/doctor/dashboard', [DoctorController::class, 'dashboard'])
+    ->middleware('role:doctor')
+    ->name('doctor.dashboard');

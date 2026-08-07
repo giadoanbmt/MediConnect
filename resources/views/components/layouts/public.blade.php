@@ -17,6 +17,8 @@
         html::before { content: ''; position: fixed; z-index: 9999; top: 0; left: 0; width: 0; height: 3px; background: #0088cc; opacity: 0; transition: width .2s ease, opacity .2s ease; }
         html.spa-loading::before { width: 75%; opacity: 1; }
         .top-hotline { white-space: nowrap; }
+        .top-right-bar .dropdown { position: relative; }
+        .top-right-bar .dropdown-menu { z-index: 1050; }
         .top-login-link { display: inline-flex; align-items: center; padding: 6px 15px; border: 1px solid #fff; border-radius: 999px; background: #fff; color: #223a66 !important; font-size: .82rem; font-weight: 700; line-height: 1.2; text-decoration: none !important; box-shadow: 0 1px 2px rgba(0, 0, 0, .12); transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
         .top-login-link:hover, .top-login-link:focus { background: #eaf4ff; border-color: #eaf4ff; color: #0088cc !important; }
         @media (max-width: 991px) { .top-right-bar { justify-content: flex-start; } }
