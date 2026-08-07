@@ -4,61 +4,79 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
     // Đăng ký tài khoản Bệnh nhân
-    public function register(Request $request)
+    public function register(Request $request): RedirectResponse
     {
-        $request->validate([
-            'username' => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:4',
+        $validated = $request->validate([
+            'name' => ['nullable', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:100', Rule::unique('AccountUser', 'Username')],
+            'email' => ['required', 'string', 'email', 'max:100', Rule::unique('AccountUser', 'Email')],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
         $user = User::create([
-            'name'     => $request->username,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+            'role' => 2,
+            'is_active' => true,
         ]);
 
         Auth::login($user);
+        $request->session()->regenerate();
 
-        return redirect('/');
+        return redirect()->route('public.home');
     }
 
     // Đăng nhập an toàn
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
-        $request->validate([
-            'username' => 'required',
-            'password' => 'required',
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string'],
         ]);
 
-        $loginField = filter_var($request->input('username'), FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
-        $loginValue = $request->input('username');
+        $loginValue = trim($validated['username']);
+        $loginField = filter_var($loginValue, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        // Kiểm tra xem tài khoản có tồn tại trong CSDL không
-        $userExists = User::where($loginField, $loginValue)->exists();
-        if (!$userExists) {
-            return back()->withErrors(['username' => 'Account not found']);
+        $user = User::where($loginField, $loginValue)->first();
+
+        if (! $user) {
+            return back()
+                ->withInput($request->only('username', 'remember'))
+                ->withErrors(['username' => 'Account not found']);
         }
 
-        $credentials = [
-            $loginField => $loginValue,
-            'password'  => $request->password,
-        ];
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect('/');
+        if ((int) $user->role !== 2) {
+            return back()
+                ->withInput($request->only('username', 'remember'))
+                ->withErrors(['username' => 'Only patient accounts can log in here.']);
         }
 
-        return back()->withErrors(['password' => 'Incorrect password']);
+        if (! $user->is_active) {
+            return back()
+                ->withInput($request->only('username', 'remember'))
+                ->withErrors(['username' => 'This account is inactive.']);
+        }
+
+        if (! Hash::check($validated['password'], $user->password)) {
+            return back()
+                ->withInput($request->only('username', 'remember'))
+                ->withErrors(['password' => 'Incorrect password']);
+        }
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->route('public.home');
     }
 
     // Đăng xuất
@@ -68,6 +86,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return response()->json(['message' => 'Đã đăng xuất!']);
+        return redirect()->route('public.home')->with('status', 'Đã đăng xuất thành công.');
     }
 }

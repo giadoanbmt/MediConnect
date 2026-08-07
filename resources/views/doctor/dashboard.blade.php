@@ -1,8 +1,4 @@
-@extends('layouts.dashboard')
-
-@section('title', 'Doctor Dashboard - MediConnect')
-
-@section('content')
+<x-layouts.doctor title="MediConnect - Bảng điều khiển bác sĩ">
 <!-- Custom CSS riêng cho trang Dashboard Bác sĩ -->
 <style>
     /* Thẻ thống kê (Stat Cards) */
@@ -162,4 +158,4 @@
     </div>
 </div>
 
-@endsection
+</x-layouts.doctor>

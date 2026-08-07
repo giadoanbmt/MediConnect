@@ -1,55 +1,4 @@
-<!DOCTYPE html>
-
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Register</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-
-    <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('Novena/images/favicon.png') }}" />
-
-    <!-- Essential stylesheets -->
-    <link rel="stylesheet" href="{{ asset('Novena/plugins/bootstrap/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('Novena/plugins/icofont/icofont.min.css') }}">
-
-    <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="{{ asset('Novena/css/style.css') }}">
-
-    <style>
-        .auth-wrapper {
-            min-height: 100vh;
-            background-image: url("{{ asset('Novena/images/bg/banner.jpg') }}");
-            background-size: cover;
-            background-position: right center;
-            background-repeat: no-repeat;
-            display: flex;
-            align-items: center;
-            padding: 30px 0;
-        }
-        .auth-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 35px 40px;
-            backdrop-filter: blur(5px);
-        }
-        .form-control {
-            height: 46px;
-            border-radius: 5px;
-            border: 1px solid #e5e5e5;
-            padding-left: 15px;
-        }
-        .form-control:focus {
-            border-color: #222fb9;
-            box-shadow: none;
-        }
-    </style>
-</head>
-
-<body>
-
+<x-layouts.auth title="Register">
 <div class="auth-wrapper">
     <div class="container">
         <div class="row">
@@ -123,9 +72,4 @@
         </div>
     </div>
 </div>
-
-<script src="{{ asset('Novena/plugins/jquery/jquery.js') }}"></script>
-<script src="{{ asset('Novena/plugins/bootstrap/bootstrap.min.js') }}"></script>
-
-</body>
-</html>
+</x-layouts.auth>
