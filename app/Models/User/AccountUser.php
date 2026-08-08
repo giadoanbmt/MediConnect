@@ -2,14 +2,16 @@
 
 namespace App\Models\User;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ */
 class AccountUser extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     protected $table = 'AccountUser';
@@ -39,24 +41,18 @@ class AccountUser extends Authenticatable
     protected function casts(): array
     {
         return [
-            'Password' => 'hashed',
             'Role' => 'integer',
             'IsActive' => 'boolean',
         ];
     }
 
+    public function getAuthPassword()
+    {
+        return $this->Password;
+    }
+
     protected static function newFactory(): Factory
     {
         return \Database\Factories\AccountUserFactory::new();
-    }
-
-    public function getNameAttribute(): ?string
-    {
-        return $this->attributes['Username'] ?? null;
-    }
-
-    public function setNameAttribute(string $value): void
-    {
-        $this->attributes['Username'] = $value;
     }
 }

@@ -66,4 +66,21 @@ class PatientController extends Controller
     {
         return view('patient.contact');
     }
+
+    /**
+     * Hiển thị trang chi tiết chuyên khoa động dựa vào tên chuyên khoa
+     */
+    public function specializationSingle(string $slug)
+    {
+        // Chuẩn hóa tên view (Ví dụ: cardiology -> Cardiology)
+        $formattedName = ucfirst($slug);
+        $viewPath = "patient.specializations-single.{$formattedName}";
+
+        // Kiểm tra nếu view tồn tại thì render, ngược lại trả về 404
+        if (view()->exists($viewPath)) {
+            return view($viewPath);
+        }
+
+        abort(404);
+    }
 }

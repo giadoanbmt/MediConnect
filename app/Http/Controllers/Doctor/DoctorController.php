@@ -45,4 +45,29 @@ class DoctorController extends Controller
 
         return response()->json($doctor);
     }
+
+
+    /**
+     * Màn hình danh sách bài viết của Bác sĩ
+     */
+    public function blogIndex()
+    {
+        return view('doctor.blog.blogIndex');
+    }
+
+    /**
+     * Màn hình tạo bài viết mới
+     */
+    public function createBlog()
+    {
+        return view('doctor.blog.createBlog');
+    }
+
+    /**
+     * Màn hình chỉnh sửa bài viết
+     */
+    public function editBlog($id)
+    {
+        return view('doctor.blog.edit', compact('id'));
+    }
 }
