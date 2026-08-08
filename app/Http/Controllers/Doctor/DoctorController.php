@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Doctor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
-use App\Models\Doctor;
+use App\Models\Doctor\Doctor;
 use Illuminate\Http\Request;
 
 
