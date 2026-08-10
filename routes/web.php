@@ -16,15 +16,17 @@ Route::controller(PatientController::class)->group(function () {
     Route::get('/', 'index')->name('public.home');
     Route::get('/about', 'about')->name('public.about');
     Route::get('/service', 'service')->name('public.service');
-    Route::get('/department', 'department')->name('public.department');
-    Route::get('/department-single', 'departmentSingle')->name('public.department-single');
+    Route::get('/specialization', 'specialization')->name('public.specialization');
     Route::get('/doctor', 'doctor')->name('public.doctor');
     Route::get('/doctor-single', 'doctorSingle')->name('public.doctor-single');
     Route::get('/blog-sidebar', 'blogSidebar')->name('public.blog-sidebar');
     Route::get('/blog-single', 'blogSingle')->name('public.blog-single');
 
     // Route động cho các trang Chuyên khoa
-    Route::get('/specializations/{slug}', 'specializationSingle')->name('public.specialization.single');
+    Route::get('/specializations/Cardiology', 'specializationCardiology')->name('specializations.Cardiology');
+    Route::get('/specializations/Dermatology', 'specializationDermatology')->name('specializations.Dermatology');
+    Route::get('/specializations/Orthopedics', 'specializationOrthopedics')->name('specializations.Orthopedics');
+    Route::get('/specializations/Pediatrics', 'specializationPediatrics')->name('specializations.Pediatrics');
 });
 
 /*

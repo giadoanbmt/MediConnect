@@ -22,14 +22,29 @@ class PatientController extends Controller
         return view('patient.service');
     }
 
-    public function department(): View
+    public function specialization(): View
     {
-        return view('patient.department');
+        return view('patient.specialization');
     }
 
-    public function departmentSingle(): View
+    public function specializationCardiology(): View
     {
-        return view('patient.department-single');
+        return view('patient.specializations-single.Cardiology');
+    }
+
+    public function specializationDermatology(): View
+    {
+        return view('patient.specializations-single.Dermatology');
+    }
+
+    public function specializationOrthopedics(): View
+    {
+        return view('patient.specializations-single.Orthopedics');
+    }
+
+    public function specializationPediatrics(): View
+    {
+        return view('patient.specializations-single.Pediatrics');
     }
 
     public function doctor(): View
