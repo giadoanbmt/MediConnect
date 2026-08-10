@@ -18,7 +18,10 @@ class AccountUser extends Authenticatable
 
     protected $primaryKey = 'UserId';
 
-    public $timestamps = false;
+    // Bật timestamp cho CreatedAt, tắt UpdatedAt
+    public $timestamps = true;
+    const CREATED_AT = 'CreatedAt';
+    const UPDATED_AT = null;
 
     public $incrementing = true;
 
@@ -35,7 +38,6 @@ class AccountUser extends Authenticatable
 
     protected $hidden = [
         'Password',
-        'remember_token',
     ];
 
     protected function casts(): array
@@ -43,12 +45,20 @@ class AccountUser extends Authenticatable
         return [
             'Role' => 'integer',
             'IsActive' => 'boolean',
+            'CreatedAt' => 'datetime',
         ];
     }
 
+    // Chỉ định cột Password cho Laravel Auth
     public function getAuthPassword()
     {
         return $this->Password;
+    }
+
+    // Tắt tính năng remember_token do CSDL không có cột này
+    public function getRememberTokenName()
+    {
+        return null;
     }
 
     protected static function newFactory(): Factory

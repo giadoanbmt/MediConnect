@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\AdminSetupController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Doctor\DoctorController;
 use App\Http\Controllers\Patient\AppointmentController;
@@ -29,7 +34,7 @@ Route::controller(PatientController::class)->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Guest Routes
+| Guest Routes & One-Time Admin Setup
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
@@ -37,6 +42,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.store');
     Route::view('/register', 'auth.register')->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.store');
+});
+
+// Route Đăng ký Admin ban đầu (Chỉ truy cập được khi CSDL CHƯA CÓ Admin)
+Route::middleware('no_admin')->group(function () {
+    Route::get('/admin/setup-initial', [AdminSetupController::class, 'showRegisterForm'])->name('admin.setup');
+    Route::post('/admin/setup-initial', [AdminSetupController::class, 'register'])->name('admin.setup.post');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
@@ -83,5 +94,33 @@ Route::middleware('role:doctor')->prefix('doctor')->name('doctor.')->group(funct
 |--------------------------------------------------------------------------
 */
 Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-    // Khai báo các route dành riêng cho Admin tại đây
+    // 1. Dashboard Admin
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    // 2. Quản lý Tài khoản (Users & Doctors)
+    Route::controller(UserController::class)->prefix('users')->name('users.')->group(function () {
+        Route::get('/', 'index')->name('index');             // admin.users.index (/admin/users)
+        Route::get('/index', 'index');                       // Hỗ trợ thêm cho URL /admin/users/index
+        Route::get('/create', 'create')->name('create');     // admin.users.create
+        Route::post('/', 'store')->name('store');           // admin.users.store
+
+        // Bổ sung Route sửa tài khoản (nếu cần)
+        Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');
+        Route::put('/{id}', 'update')->name('update')->whereNumber('id');
+
+        // Ràng buộc id BẮT BUỘC phải là chữ số -> Không bị đụng độ với chữ "index"
+        Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id');
+    });
+
+    // 3. Quản lý Bài viết / Blog
+    Route::controller(BlogController::class)->prefix('blogs')->name('blogs.')->group(function () {
+        Route::get('/create', 'create')->name('create');     // admin.blogs.create
+        Route::post('/', 'store')->name('store');           // admin.blogs.store
+    });
+
+    // 4. Quản lý Hồ sơ cá nhân Admin
+    Route::controller(ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
+        Route::get('/edit', 'edit')->name('edit');          // admin.profile.edit
+        Route::put('/', 'update')->name('update');          // admin.profile.update
+    });
 });

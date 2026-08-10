@@ -1,15 +1,5 @@
 <?php
 
-// namespace App\Http\Middleware;
-
-// use Closure;
-// use App\Models\User\AccountUser;
-// use Illuminate\Http\RedirectResponse;
-// use Illuminate\Http\Request;
-// use Illuminate\Http\Response;
-// use Illuminate\Support\Facades\Auth;
-// use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-
 // class EnsureRoleAccess
 // {
 //     /**
@@ -48,6 +38,7 @@
 //         return redirect()->route('login');
 //     }
 // }
+
 namespace App\Http\Middleware;
 
 use Closure;
