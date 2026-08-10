@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\AccountUser;
+use Illuminate\Support\Facades\App;
 
 return [
 
@@ -64,8 +65,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model'  => App\Models\User\AccountUser::class,
-            // 'model' => env('AUTH_MODEL', AccountUser::class),
+            'model' => env('AUTH_MODEL', AccountUser::class),
         ],
 
         // 'users' => [
