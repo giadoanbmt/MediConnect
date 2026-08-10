@@ -45,6 +45,37 @@ class DoctorController extends Controller
 
         return response()->json($doctor);
     }
+    // Xem hồ sơ bác sĩ
+    public function profile()
+    {
+        $doctor = Doctor::findOrFail(session('doctor_id'));
+
+        return view('doctor.profile', compact('doctor'));
+    }
+
+    // Cập nhật hồ sơ bác sĩ
+    public function updateProfile(Request $request)
+    {
+        $doctor = Doctor::findOrFail(session('doctor_id'));
+
+        $validated = $request->validate([
+            'DoctorName' => 'required|string|max:255',
+            'Sex' => 'required|string|max:20',
+            'PhoneNumber' => 'required|string|max:20',
+            'Email' => 'required|email|max:255',
+            'Qualifications' => 'nullable|string|max:255',
+            'Address' => 'nullable|string|max:255',
+        ]);
+
+        $doctor->update($validated);
+
+        // Cập nhật tên trong session luôn
+        session(['doctor_name' => $doctor->DoctorName]);
+
+        return redirect()
+            ->route('doctor.profile')
+            ->with('success', 'Cập nhật hồ sơ thành công!');
+    }
 
 
     /**

@@ -80,14 +80,27 @@ Route::middleware('role:patient')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware('role:doctor')->prefix('doctor')->name('doctor.')->group(function () {
-    Route::get('/dashboard', [DoctorController::class, 'dashboard'])->name('dashboard');
 
+    // Dashboard
+    Route::get('/dashboard', [DoctorController::class, 'dashboard'])
+        ->name('dashboard');
+
+    // Quản lý hồ sơ bác sĩ
+    Route::get('/profile', [DoctorController::class, 'profile'])
+    ->name('profile');
+
+Route::put('/profile', [DoctorController::class, 'updateProfile'])
+    ->name('profile.update');
     // Quản lý Blog của Bác sĩ
-    Route::get('/blog', [DoctorController::class, 'blogIndex'])->name('blog.index');
-    Route::get('/blog/create', [DoctorController::class, 'createBlog'])->name('blog.create');
-    Route::get('/blog/{id}/edit', [DoctorController::class, 'editBlog'])->name('blog.edit');
-});
+    Route::get('/blog', [DoctorController::class, 'blogIndex'])
+        ->name('blog.index');
 
+    Route::get('/blog/create', [DoctorController::class, 'createBlog'])
+        ->name('blog.create');
+
+    Route::get('/blog/{id}/edit', [DoctorController::class, 'editBlog'])
+        ->name('blog.edit');
+});
 /*
 |--------------------------------------------------------------------------
 | Admin Routes (Role = 1)
