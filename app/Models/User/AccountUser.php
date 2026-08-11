@@ -4,6 +4,7 @@ namespace App\Models\User;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -12,28 +13,34 @@ use Illuminate\Notifications\Notifiable;
  */
 class AccountUser extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     protected $table = 'AccountUser';
 
     protected $primaryKey = 'UserId';
 
-    // Bật timestamp cho CreatedAt, tắt UpdatedAt
     public $timestamps = true;
     const CREATED_AT = 'CreatedAt';
-    const UPDATED_AT = null;
+    const UPDATED_AT = 'UpdatedAt';
+    const DELETED_AT = 'DeletedAt';
 
     public $incrementing = true;
 
     protected $keyType = 'int';
 
     protected $fillable = [
+        'FullName',
         'Username',
-        'Password',
         'Email',
+        'Password',
+        'Gender',
+        'Address',
+        'AvatarUrl',
         'Role',
         'IsActive',
         'CreatedAt',
+        'UpdatedAt',
+        'DeletedAt',
     ];
 
     protected $hidden = [
@@ -46,6 +53,8 @@ class AccountUser extends Authenticatable
             'Role' => 'integer',
             'IsActive' => 'boolean',
             'CreatedAt' => 'datetime',
+            'UpdatedAt' => 'datetime',
+            'DeletedAt' => 'datetime',
         ];
     }
 
