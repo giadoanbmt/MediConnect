@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\DoctorController as AdminDoctorController;
 use App\Http\Controllers\Auth\AdminSetupController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Doctor\DoctorController;
@@ -87,10 +88,10 @@ Route::middleware('role:doctor')->prefix('doctor')->name('doctor.')->group(funct
 
     // Quản lý hồ sơ bác sĩ
     Route::get('/profile', [DoctorController::class, 'profile'])
-    ->name('profile');
+        ->name('profile');
 
-Route::put('/profile', [DoctorController::class, 'updateProfile'])
-    ->name('profile.update');
+    Route::put('/profile', [DoctorController::class, 'updateProfile'])
+        ->name('profile.update');
     // Quản lý Blog của Bác sĩ
     Route::get('/blog', [DoctorController::class, 'blogIndex'])
         ->name('blog.index');
@@ -107,28 +108,39 @@ Route::put('/profile', [DoctorController::class, 'updateProfile'])
 |--------------------------------------------------------------------------
 */
 Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-    // 1. Dashboard Admin
+
+    // 1. Dashboard Admin (Đang dùng AdminController để lấy dữ liệu thống kê)
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
     // 2. Quản lý Tài khoản (Users & Doctors)
-    Route::controller(UserController::class)->prefix('users')->name('users.')->group(function () {
-        Route::get('/', 'index')->name('index');             // admin.users.index (/admin/users)
-        Route::get('/index', 'index');                       // Hỗ trợ thêm cho URL /admin/users/index
+    // 2.1. Quản lý Bệnh nhân (Patients)
+    Route::controller(AdminUserController::class)->prefix('users')->name('users.')->group(function () {
+        Route::get('/', 'index')->name('index');             // admin.users.index
         Route::get('/create', 'create')->name('create');     // admin.users.create
         Route::post('/', 'store')->name('store');           // admin.users.store
-
-        // Bổ sung Route sửa tài khoản (nếu cần)
         Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');
         Route::put('/{id}', 'update')->name('update')->whereNumber('id');
-
-        // Ràng buộc id BẮT BUỘC phải là chữ số -> Không bị đụng độ với chữ "index"
         Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id');
     });
 
-    // 3. Quản lý Bài viết / Blog
-    Route::controller(BlogController::class)->prefix('blogs')->name('blogs.')->group(function () {
-        Route::get('/create', 'create')->name('create');     // admin.blogs.create
-        Route::post('/', 'store')->name('store');           // admin.blogs.store
+    // 2.2. Quản lý Bác sĩ (Doctors)
+    Route::controller(AdminDoctorController::class)->prefix('doctors')->name('doctors.')->group(function () {
+        Route::get('/', 'index')->name('index');             // admin.doctors.index
+        Route::get('/create', 'create')->name('create');     // admin.doctors.create
+        Route::post('/', 'store')->name('store');           // admin.doctors.store
+        Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');
+        Route::put('/{id}', 'update')->name('update')->whereNumber('id');
+        Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id');
+    });
+
+    // 3. Quản lý Tin tức / Bài viết (News - Đã đổi tên từ Blog)
+    Route::controller(NewsController::class)->prefix('news')->name('news.')->group(function () {
+        Route::get('/', 'index')->name('index');             // admin.news.index (/admin/news)
+        Route::get('/create', 'create')->name('create');     // admin.news.create
+        Route::post('/', 'store')->name('store');           // admin.news.store
+        Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');     // admin.news.edit
+        Route::put('/{id}', 'update')->name('update')->whereNumber('id');     // admin.news.update
+        Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id'); // admin.news.destroy
     });
 
     // 4. Quản lý Hồ sơ cá nhân Admin
@@ -136,4 +148,8 @@ Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function
         Route::get('/edit', 'edit')->name('edit');          // admin.profile.edit
         Route::put('/', 'update')->name('update');          // admin.profile.update
     });
+
+    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::post('/appointments/{id}/approve', [AppointmentController::class, 'approve'])->name('appointments.approve');
+    Route::post('/appointments/{id}/reject', [AppointmentController::class, 'reject'])->name('appointments.reject');
 });
