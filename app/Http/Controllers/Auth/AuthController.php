@@ -89,7 +89,7 @@ class AuthController extends Controller
         }
 
         $doctor = Doctor::query()
-            ->where('DoctorAccount', $loginValue)
+            ->where('Username', $loginValue)
             ->first();
 
         if (! $doctor) {

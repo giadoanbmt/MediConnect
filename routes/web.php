@@ -18,7 +18,7 @@ Route::controller(PatientController::class)->group(function () {
     Route::get('/service', 'service')->name('public.service');
     Route::get('/specialization', 'specialization')->name('public.specialization');
     Route::get('/doctor', 'doctor')->name('public.doctor');
-    Route::get('/doctor-single', 'doctorSingle')->name('public.doctor-single');
+    Route::get('/doctor-profile/{id}', 'doctorProfile')->name('public.doctorProfile');
     Route::get('/blog-sidebar', 'blogSidebar')->name('public.blog-sidebar');
     Route::get('/blog-single', 'blogSingle')->name('public.blog-single');
 

@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Patient;
 
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
+use App\Models\Doctor\Doctor;
+use App\Models\Specialization\Specialization;
+use App\Models\City\City;
 
 class PatientController extends Controller
 {
@@ -47,16 +50,6 @@ class PatientController extends Controller
         return view('patient.specializations-single.Pediatrics');
     }
 
-    public function doctor(): View
-    {
-        return view('patient.doctor');
-    }
-
-    public function doctorSingle(): View
-    {
-        return view('patient.doctor-single');
-    }
-
     public function appointment(): View
     {
         return view('patient.appointment');
@@ -97,5 +90,27 @@ class PatientController extends Controller
         }
 
         abort(404);
+    }
+
+    // Hiển thị dánh sách doctor
+    public function Doctor()
+    {
+        $doctors = Doctor::with('specialization', 'City' )->get();
+
+        // Danh sách nút bấm Filter Specializations
+        $specializations = Specialization::all();
+
+        // Danh sách nút bấm filter City
+        $cities = City::all()->unique('CityName');
+
+
+        return view('patient.doctor', compact('doctors', 'specializations', 'cities'));
+    }
+
+    // Hiển thị Profile chi tiết của 1 Bác sĩ
+    public function doctorProfile($id){
+    $doctor = Doctor::with('specialization')->findOrFail($id);
+
+    return view('patient.doctorProfile  ', compact('doctor'));
     }
 }
