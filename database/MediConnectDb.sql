@@ -143,3 +143,21 @@ CREATE TABLE ContactQuery (
     CONSTRAINT FK_ContactQuery_Admin FOREIGN KEY (RespondedBy) 
         REFERENCES AccountUser(UserId) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Bảng DoctorSchedule (Lịch làm việc của Bác sĩ)
+CREATE TABLE IF NOT EXISTS `DoctorSchedule` (
+    `ScheduleId` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `DoctorId` INT NOT NULL,
+    `WorkDate` DATE NOT NULL,
+    `StartTime` TIME NOT NULL,
+    `EndTime` TIME NOT NULL,
+    `MaxPatients` INT UNSIGNED DEFAULT 10,
+    `Status` ENUM('Available', 'Full', 'Cancelled', 'Off') DEFAULT 'Available',
+    `Note` VARCHAR(255) NULL,
+    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    CONSTRAINT `fk_doctorschedule_doctor` 
+        FOREIGN KEY (`DoctorId`) REFERENCES `Doctor`(`DoctorId`) 
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

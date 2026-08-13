@@ -1,32 +1,23 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-/**
- * @mixin \Illuminate\Database\Eloquent\Builder
- */
-class AccountUser extends Authenticatable
+class Doctor extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
 
-    protected $table = 'AccountUser';
-
-    protected $primaryKey = 'UserId';
+    protected $table = 'Doctor';
+    protected $primaryKey = 'DoctorId';
 
     public $timestamps = true;
     const CREATED_AT = 'CreatedAt';
     const UPDATED_AT = 'UpdatedAt';
     const DELETED_AT = 'DeletedAt';
-
-    public $incrementing = true;
-
-    protected $keyType = 'int';
 
     protected $fillable = [
         'FullName',
@@ -34,13 +25,13 @@ class AccountUser extends Authenticatable
         'Email',
         'Password',
         'Gender',
+        'PhoneNumber',
+        'Qualifications',
         'Address',
         'AvatarUrl',
-        'Role',
-        'IsActive',
-        'CreatedAt',
-        'UpdatedAt',
-        'DeletedAt',
+        'CityId',
+        'SpecializationId',
+        'RoomId',
     ];
 
     protected $hidden = [
@@ -50,28 +41,44 @@ class AccountUser extends Authenticatable
     protected function casts(): array
     {
         return [
-            'Role' => 'integer',
-            'IsActive' => 'boolean',
             'CreatedAt' => 'datetime',
             'UpdatedAt' => 'datetime',
             'DeletedAt' => 'datetime',
         ];
     }
 
-    // Chỉ định cột Password cho Laravel Auth
     public function getAuthPassword()
     {
         return $this->Password;
     }
 
-    // Tắt tính năng remember_token do CSDL không có cột này
     public function getRememberTokenName()
     {
         return null;
     }
 
-    protected static function newFactory(): Factory
+    public function city()
     {
-        return \Database\Factories\AccountUserFactory::new();
+        return $this->belongsTo(City::class, 'CityId', 'CityId');
+    }
+
+    public function specialization()
+    {
+        return $this->belongsTo(Specialization::class, 'SpecializationId', 'SpecializationId');
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(ClinicRoom::class, 'RoomId', 'RoomId');
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(DoctorSchedule::class, 'DoctorId', 'DoctorId');
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'DoctorId', 'DoctorId');
     }
 }

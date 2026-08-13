@@ -1,29 +1,24 @@
 <?php
 
-namespace App\Models\Doctor;
+namespace App\Models;
 
-use App\Models\City;
-use App\Models\ClinicRoom;
-use App\Models\Specialization;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class Doctor extends Authenticatable
+class AccountUser extends Authenticatable
 {
     use HasFactory, Notifiable, SoftDeletes;
 
-    protected $table = 'Doctor';
-    protected $primaryKey = 'DoctorId';
+    protected $table = 'AccountUser';
+    protected $primaryKey = 'UserId';
 
     public $timestamps = true;
     const CREATED_AT = 'CreatedAt';
     const UPDATED_AT = 'UpdatedAt';
     const DELETED_AT = 'DeletedAt';
-
-    public $incrementing = true;
-    protected $keyType = 'int';
 
     protected $fillable = [
         'FullName',
@@ -31,16 +26,10 @@ class Doctor extends Authenticatable
         'Email',
         'Password',
         'Gender',
-        'PhoneNumber',
-        'Qualifications',
         'Address',
         'AvatarUrl',
-        'CityId',
-        'SpecializationId',
-        'RoomId',
-        'CreatedAt',
-        'UpdatedAt',
-        'DeletedAt',
+        'Role',
+        'IsActive',
     ];
 
     protected $hidden = [
@@ -50,13 +39,14 @@ class Doctor extends Authenticatable
     protected function casts(): array
     {
         return [
+            'Role' => 'integer',
+            'IsActive' => 'boolean',
             'CreatedAt' => 'datetime',
             'UpdatedAt' => 'datetime',
             'DeletedAt' => 'datetime',
         ];
     }
 
-    // Chỉ định cột Password cho Auth
     public function getAuthPassword()
     {
         return $this->Password;
@@ -67,20 +57,18 @@ class Doctor extends Authenticatable
         return null;
     }
 
-    // --- Các Mối quan hệ (Relationships) ---
-
-    public function city()
+    public function appointments()
     {
-        return $this->belongsTo(City::class, 'CityId', 'CityId');
+        return $this->hasMany(Appointment::class, 'UserId', 'UserId');
     }
 
-    public function specialization()
+    public function news()
     {
-        return $this->belongsTo(Specialization::class, 'SpecializationId', 'SpecializationId');
+        return $this->hasMany(News::class, 'UserId', 'UserId');
     }
 
-    public function room()
+    protected static function newFactory(): Factory
     {
-        return $this->belongsTo(ClinicRoom::class, 'RoomId', 'RoomId');
+        return \Database\Factories\AccountUserFactory::new();
     }
 }
