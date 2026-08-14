@@ -22,6 +22,7 @@ class AuthController extends Controller
 
         $loginValue = trim($validated['username']);
 
+        // 1. Kiểm tra tài khoản trong bảng AccountUser (Admin & Patient)
         $accountUser = AccountUser::query()
             ->where(function ($query) use ($loginValue): void {
                 $query->where('Username', $loginValue)
@@ -30,47 +31,25 @@ class AuthController extends Controller
             ->first();
 
         if ($accountUser) {
-            if ((int) $accountUser->Role === 0 || (int) $accountUser->Role === 3) {
-                return back()
-                    ->withInput($request->only('username', 'remember'))
-                    ->withErrors(['username' => 'This account cannot log in here.']);
-            }
-
+            // Kiểm tra trạng thái kích hoạt (1: Active/Online, 0: Inactive/Offline)
             if (! (bool) $accountUser->IsActive) {
                 return back()
                     ->withInput($request->only('username', 'remember'))
-                    ->withErrors(['username' => 'This account is inactive.']);
+                    ->withErrors(['username' => 'Tài khoản này hiện đang bị khóa hoặc ngưng hoạt động.']);
             }
 
-            /*
-             * Kiểm tra password.
-             *
-             * Password mới: đã được Hash::make()
-             * Password cũ: vẫn có thể đang là plain text
-             */
-            $passwordCorrect = false;
-
-            if (password_get_info($accountUser->Password)['algo'] !== 0) {
-                // Password đã được hash
-                $passwordCorrect = Hash::check(
-                    $validated['password'],
-                    $accountUser->Password
-                );
-            } else {
-                // Password cũ đang là plain text
-                $passwordCorrect = $accountUser->Password === $validated['password'];
-            }
+            // Kiểm tra mật khẩu (Hỗ trợ cả Hash và Plain Text cũ)
+            $passwordCorrect = password_get_info($accountUser->Password)['algo'] !== 0
+                ? Hash::check($validated['password'], $accountUser->Password)
+                : $accountUser->Password === $validated['password'];
 
             if (! $passwordCorrect) {
                 return back()
                     ->withInput($request->only('username', 'remember'))
-                    ->withErrors(['password' => 'Incorrect password']);
+                    ->withErrors(['password' => 'Mật khẩu không chính xác.']);
             }
 
-            /*
-             * Nếu password cũ là plain text,
-             * tự động hash lại sau khi đăng nhập thành công.
-             */
+            // Tự động Hash lại mật khẩu cũ nếu phát hiện là Plain Text
             if (password_get_info($accountUser->Password)['algo'] === 0) {
                 $accountUser->Password = Hash::make($validated['password']);
                 $accountUser->save();
@@ -81,6 +60,7 @@ class AuthController extends Controller
 
             $role = (int) $accountUser->Role;
 
+            // Role 1: Admin -> Vào Admin Dashboard, Role 2: Patient -> Vào Trang chủ
             if ($role === 1) {
                 return redirect('/admin/dashboard');
             }
@@ -88,52 +68,40 @@ class AuthController extends Controller
             return redirect()->route('public.home');
         }
 
+        // 2. Nếu không có trong AccountUser, kiểm tra trong bảng Doctor (Bác sĩ)
         $doctor = Doctor::query()
-            ->where('DoctorAccount', $loginValue)
+            ->where('Username', $loginValue)
+            ->orWhere('Email', $loginValue)
             ->first();
 
         if (! $doctor) {
             return back()
                 ->withInput($request->only('username', 'remember'))
-                ->withErrors(['username' => 'Account not found']);
+                ->withErrors(['username' => 'Tài khoản không tồn tại trên hệ thống.']);
         }
 
-        /*
-         * Kiểm tra password Doctor.
-         * Hỗ trợ cả password đã hash và password plain text cũ.
-         */
-        $passwordCorrect = false;
-
-        if (password_get_info($doctor->Password)['algo'] !== 0) {
-            // Password đã được hash
-            $passwordCorrect = Hash::check(
-                $validated['password'],
-                $doctor->Password
-            );
-        } else {
-            // Password cũ đang là plain text
-            $passwordCorrect = $doctor->Password === $validated['password'];
-        }
+        // Kiểm tra mật khẩu Doctor
+        $passwordCorrect = password_get_info($doctor->Password)['algo'] !== 0
+            ? Hash::check($validated['password'], $doctor->Password)
+            : $doctor->Password === $validated['password'];
 
         if (! $passwordCorrect) {
             return back()
                 ->withInput($request->only('username', 'remember'))
-                ->withErrors(['password' => 'Incorrect password']);
+                ->withErrors(['password' => 'Mật khẩu không chính xác.']);
         }
 
-        /*
-         * Nếu Doctor vẫn đang dùng password plain text,
-         * tự động hash lại sau lần đăng nhập thành công.
-         */
+        // Tự động Hash lại mật khẩu Doctor nếu là Plain Text
         if (password_get_info($doctor->Password)['algo'] === 0) {
             $doctor->Password = Hash::make($validated['password']);
             $doctor->save();
         }
 
+        // Lưu Session dành riêng cho Doctor
         $request->session()->put([
             'auth_type' => 'doctor',
             'doctor_id' => $doctor->DoctorId,
-            'doctor_name' => $doctor->DoctorName,
+            'doctor_name' => $doctor->FullName, // Đã sửa tên cột thành FullName
         ]);
 
         $request->session()->regenerate();
@@ -141,15 +109,14 @@ class AuthController extends Controller
         return redirect('/doctor/dashboard');
     }
 
-
     public function register(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:100'],
             'username' => [
                 'required',
                 'string',
-                'max:100',
+                'max:50',
                 Rule::unique('AccountUser', 'Username')
             ],
             'email' => [
@@ -167,16 +134,14 @@ class AuthController extends Controller
             ],
         ]);
 
+        // Đăng ký người dùng mới
         $user = AccountUser::create([
-            'Name' => $validated['name'],
+            'FullName' => $validated['name'], // Đã sửa từ 'Name' thành 'FullName'
             'Username' => $validated['username'],
             'Email' => $validated['email'],
-
-            // Đã sửa: hash password trước khi lưu database
             'Password' => Hash::make($validated['password']),
-
-            'Role' => 2,
-            'IsActive' => true,
+            'Role' => 2, // 2: Patient (Bệnh nhân)
+            'IsActive' => 1,
         ]);
 
         Auth::loginUsingId($user->getKey());
@@ -184,7 +149,6 @@ class AuthController extends Controller
 
         return redirect()->route('public.home');
     }
-
 
     public function logout(Request $request): RedirectResponse
     {
@@ -202,7 +166,7 @@ class AuthController extends Controller
             $request->session()->regenerateToken();
 
             return redirect('/login')
-                ->with('status', 'Successfully logged out.');
+                ->with('status', 'Đã đăng xuất thành công.');
         }
 
         Auth::logout();
@@ -211,6 +175,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('public.home')
-            ->with('status', 'Successfully logged out.');
+            ->with('status', 'Đã đăng xuất thành công.');
     }
 }
