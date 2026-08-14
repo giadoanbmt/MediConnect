@@ -1,12 +1,21 @@
 @extends('components.layouts.admin.master')
 
 @section('content')
+<<<<<<< HEAD
 <div class="max-w-4xl mx-auto">
     <!-- Header Title -->
     <div class="mb-6 flex justify-between items-center">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Create new account</h1>
             <p class="text-slate-500 text-sm">Add new Administrator, Doctor or Patient accounts to the system</p>
+=======
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Header Title -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Create New Account</h1>
+            <p class="text-slate-500 text-sm">Add a new Administrator or Patient account to the system</p>
+>>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
         </div>
         <a href="{{ route('admin.users.index') }}" class="text-slate-600 hover:text-slate-900 text-sm font-medium flex items-center">
             <i class="fa-solid fa-arrow-left mr-1.5"></i> Account List
@@ -15,7 +24,11 @@
 
     <!-- Alert Thông báo lỗi -->
     @if($errors->any())
+<<<<<<< HEAD
     <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+=======
+    <div class="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+>>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
         <ul class="list-disc pl-5 space-y-1">
             @foreach($errors->all() as $error)
             <li>{{ $error }}</li>
@@ -29,6 +42,7 @@
         <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-6">
             @csrf
 
+<<<<<<< HEAD
             <!-- 1. Chọn Vai Trò (Dropdown) -->
             <div>
                 <label for="role" class="block text-sm font-semibold text-slate-700 mb-2">Account Role <span class="text-red-500">*</span></label>
@@ -84,10 +98,25 @@
             <!-- 2. Thông tin cơ bản -->
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Full Name / Doctor Name <span class="text-red-500">*</span></label>
+=======
+            <!-- 1. Account Role -->
+            <div>
+                <label for="role" class="block text-sm font-semibold text-slate-700 mb-2">Account Role <span class="text-red-500">*</span></label>
+                <select id="role" name="role" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800" required>
+                    <option value="Patient" {{ old('role') == 'Patient' ? 'selected' : '' }}>Patient</option>
+                    <option value="Admin" {{ old('role') == 'Admin' ? 'selected' : '' }}>Administrator</option>
+                </select>
+            </div>
+
+            <!-- 2. Full Name -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Full Name <span class="text-red-500">*</span></label>
+>>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
                 <input type="text" name="name" value="{{ old('name') }}" placeholder="Enter full name..." required
                     class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
             </div>
 
+<<<<<<< HEAD
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2">Email Address <span class="text-red-500">*</span></label>
@@ -96,18 +125,46 @@
                 </div>
 
                 <div>
+=======
+            <!-- 3. Username + Gender (Ghép chung 1 hàng 2 cột) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+>>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
                     <label class="block text-sm font-semibold text-slate-700 mb-2">Username <span class="text-red-500">*</span></label>
                     <input type="text" name="username" value="{{ old('username') }}" placeholder="Enter username..." required
                         class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                 </div>
+<<<<<<< HEAD
             </div>
 
+=======
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Gender</label>
+                    <select name="gender" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800">
+                        <option value="">-- Select Gender --</option>
+                        <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
+                        <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 4. Email Address -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Email Address <span class="text-red-500">*</span></label>
+                <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter email address..." required
+                    class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+            </div>
+
+            <!-- 5. Password -->
+>>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Password <span class="text-red-500">*</span></label>
                 <input type="password" name="password" placeholder="Enter password..." required
                     class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
             </div>
 
+<<<<<<< HEAD
             <!-- 3. Thông tin bổ sung riêng cho Bác sĩ (Hiện khi chọn Doctor) -->
             <div id="doctor-fields" class="space-y-6 pt-4 border-t border-slate-100 hidden">
                 <div class="bg-blue-50 p-3 rounded-lg text-blue-800 font-semibold text-sm flex items-center">
@@ -181,11 +238,25 @@
             <div class="flex justify-end pt-4 border-t border-slate-100">
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition flex items-center">
                     <i class="fa-solid fa-user-plus mr-2"></i>Create Account
+=======
+            <!-- 6. Address -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Address</label>
+                <input type="text" name="address" value="{{ old('address') }}" placeholder="Enter detailed address..."
+                    class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
+            </div>
+
+            <!-- 7. Submit Button -->
+            <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition flex items-center">
+                    <i class="fa-solid fa-user-plus mr-2"></i> Create Account
+>>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
                 </button>
             </div>
         </form>
     </div>
 </div>
+<<<<<<< HEAD
 
 <!-- JavaScript hiện/ẩn thông tin Bác sĩ -->
 <script>
@@ -227,4 +298,6 @@
         toggleDoctorFields();
     });
 </script> -->
+=======
+>>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
 @endsection

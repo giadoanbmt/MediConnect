@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Doctor;
 
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
-use App\Models\Doctor\Doctor;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 
 
@@ -60,7 +60,11 @@ class DoctorController extends Controller
 
         $validated = $request->validate([
             'DoctorName' => 'required|string|max:255',
+<<<<<<< HEAD
             'Gender' => 'required|string|max:20',
+=======
+            'Sex' => 'required|string|max:20',
+>>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
             'PhoneNumber' => 'required|string|max:20',
             'Email' => 'required|email|max:255',
             'Qualifications' => 'nullable|string|max:255',

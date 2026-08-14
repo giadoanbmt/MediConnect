@@ -57,7 +57,9 @@
             try {
                 const response = await fetch(url, {
                     credentials: 'same-origin',
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
                     signal: request.signal,
                 });
 
@@ -78,7 +80,10 @@
                 syncNavigation(new URL(url, window.location.href).pathname);
 
                 if (shouldPushState) window.history.pushState({}, '', url);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             } catch (error) {
                 if (error.name !== 'AbortError') window.location.assign(url);
             } finally {

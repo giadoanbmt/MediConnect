@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\DoctorController as AdminDoctorController;
+use App\Http\Controllers\Auth\AdminSetupController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Doctor\DoctorController;
 use App\Http\Controllers\Patient\AppointmentController;
@@ -31,7 +37,7 @@ Route::controller(PatientController::class)->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Guest Routes
+| Guest Routes & One-Time Admin Setup
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
@@ -39,6 +45,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.store');
     Route::view('/register', 'auth.register')->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.store');
+});
+
+// Route Đăng ký Admin ban đầu (Chỉ truy cập được khi CSDL CHƯA CÓ Admin)
+Route::middleware('no_admin')->group(function () {
+    Route::get('/admin/setup-initial', [AdminSetupController::class, 'showRegisterForm'])->name('admin.setup');
+    Route::post('/admin/setup-initial', [AdminSetupController::class, 'register'])->name('admin.setup.post');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])
@@ -71,19 +83,75 @@ Route::middleware('role:patient')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware('role:doctor')->prefix('doctor')->name('doctor.')->group(function () {
-    Route::get('/dashboard', [DoctorController::class, 'dashboard'])->name('dashboard');
 
+    // Dashboard
+    Route::get('/dashboard', [DoctorController::class, 'dashboard'])
+        ->name('dashboard');
+
+    // Quản lý hồ sơ bác sĩ
+    Route::get('/profile', [DoctorController::class, 'profile'])
+        ->name('profile');
+
+    Route::put('/profile', [DoctorController::class, 'updateProfile'])
+        ->name('profile.update');
     // Quản lý Blog của Bác sĩ
-    Route::get('/blog', [DoctorController::class, 'blogIndex'])->name('blog.index');
-    Route::get('/blog/create', [DoctorController::class, 'createBlog'])->name('blog.create');
-    Route::get('/blog/{id}/edit', [DoctorController::class, 'editBlog'])->name('blog.edit');
-});
+    Route::get('/blog', [DoctorController::class, 'blogIndex'])
+        ->name('blog.index');
 
+    Route::get('/blog/create', [DoctorController::class, 'createBlog'])
+        ->name('blog.create');
+
+    Route::get('/blog/{id}/edit', [DoctorController::class, 'editBlog'])
+        ->name('blog.edit');
+});
 /*
 |--------------------------------------------------------------------------
 | Admin Routes (Role = 1)
 |--------------------------------------------------------------------------
 */
 Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
-    // Khai báo các route dành riêng cho Admin tại đây
+
+    // 1. Dashboard Admin (Đang dùng AdminController để lấy dữ liệu thống kê)
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    // 2. Quản lý Tài khoản (Users & Doctors)
+    // 2.1. Quản lý Bệnh nhân (Patients)
+    Route::controller(AdminUserController::class)->prefix('users')->name('users.')->group(function () {
+        Route::get('/', 'index')->name('index');             // admin.users.index
+        Route::get('/create', 'create')->name('create');     // admin.users.create
+        Route::post('/', 'store')->name('store');           // admin.users.store
+        Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');
+        Route::put('/{id}', 'update')->name('update')->whereNumber('id');
+        Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id');
+    });
+
+    // 2.2. Quản lý Bác sĩ (Doctors)
+    Route::controller(AdminDoctorController::class)->prefix('doctors')->name('doctors.')->group(function () {
+        Route::get('/', 'index')->name('index');             // admin.doctors.index
+        Route::get('/create', 'create')->name('create');     // admin.doctors.create
+        Route::post('/', 'store')->name('store');           // admin.doctors.store
+        Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');
+        Route::put('/{id}', 'update')->name('update')->whereNumber('id');
+        Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id');
+    });
+
+    // 3. Quản lý Tin tức / Bài viết (News - Đã đổi tên từ Blog)
+    Route::controller(NewsController::class)->prefix('news')->name('news.')->group(function () {
+        Route::get('/', 'index')->name('index');             // admin.news.index (/admin/news)
+        Route::get('/create', 'create')->name('create');     // admin.news.create
+        Route::post('/', 'store')->name('store');           // admin.news.store
+        Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');     // admin.news.edit
+        Route::put('/{id}', 'update')->name('update')->whereNumber('id');     // admin.news.update
+        Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id'); // admin.news.destroy
+    });
+
+    // 4. Quản lý Hồ sơ cá nhân Admin
+    Route::controller(ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
+        Route::get('/edit', 'edit')->name('edit');          // admin.profile.edit
+        Route::put('/', 'update')->name('update');          // admin.profile.update
+    });
+
+    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::post('/appointments/{id}/approve', [AppointmentController::class, 'approve'])->name('appointments.approve');
+    Route::post('/appointments/{id}/reject', [AppointmentController::class, 'reject'])->name('appointments.reject');
 });

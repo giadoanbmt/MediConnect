@@ -72,7 +72,7 @@
                         <input
                             type="text"
                             class="form-control"
-                            value="{{ $doctor->Username }}"
+                            value="{{ $doctor->DoctorAccount }}"
                             disabled
                         >
 
@@ -83,26 +83,26 @@
                     </div>
 
 
-                    <!-- Gender -->
+                    <!-- Sex -->
                     <div class="col-md-6 mb-3">
 
                         <label class="font-weight-bold">
-                            Gender
+                            Sex
                         </label>
 
                         <select
-                            name="Gender"
+                            name="Sex"
                             class="form-control"
                             required
                         >
 
                             <option value="Male"
-                                {{ old('Gender', $doctor->Gender) == 'Male' ? 'selected' : '' }}>
+                                {{ old('Sex', $doctor->Sex) == 'Male' ? 'selected' : '' }}>
                                 Male
                             </option>
 
                             <option value="Female"
-                                {{ old('Gender', $doctor->Gender) == 'Female' ? 'selected' : '' }}>
+                                {{ old('Sex', $doctor->Sex) == 'Female' ? 'selected' : '' }}>
                                 Female
                             </option>
 

@@ -1,73 +1,163 @@
-create database MediConnect
+-- ========================================================
+-- 1. TẠO VÀ CHỌN DATABASE
+-- ========================================================
+CREATE DATABASE IF NOT EXISTS MediConnectDb
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
+
+USE MediConnectDb;
 
 
-create table AccountUser (
-	UserId int primary key IDENTITY(1,1) not null,
-	Username varchar(100) not null,
-	Password varchar(max) not null,
-	Email varchar(100) not null,
-	Role int not null Default(2), -- 1: Admin, 2: Patient
-	IsActive Bit default(1), -- 1: true, 0: false
-	CreatedAt Datetime Default(Getdate())
-)
+-- 1. Bảng AccountUser
+CREATE TABLE AccountUser (
+    UserId INT AUTO_INCREMENT PRIMARY KEY,
+    FullName VARCHAR(100) NOT NULL,
+    Username VARCHAR(50) NOT NULL UNIQUE,
+    Email VARCHAR(100) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL,
+    Gender VARCHAR(10) DEFAULT NULL,
+    Address VARCHAR(255) DEFAULT NULL,
+    AvatarUrl VARCHAR(500) DEFAULT NULL,
+    Role TINYINT NOT NULL DEFAULT 2 COMMENT '1: Admin, 2: Patient',
+    IsActive BOOLEAN DEFAULT 1 COMMENT '1: Online/Active, 0: Offline/Inactive',
+    
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    DeletedAt DATETIME DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-create table City (
-	CityId int primary key IDENTITY(1,1) not null,
-	City varchar(50) not null
-)
+-- 2. Bảng City
+CREATE TABLE City (
+    CityId INT AUTO_INCREMENT PRIMARY KEY,
+    CityName VARCHAR(100) NOT NULL,
+    DistrictName VARCHAR(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-create table Specialization(
-	SpecializationId int primary key IDENTITY(1,1) not null,
-	SpecializationName varchar(100) not null,
-	Description varchar(max)
-)
+-- 3. Bảng Specialization
+CREATE TABLE Specialization (
+    SpecializationId INT AUTO_INCREMENT PRIMARY KEY,
+    SpecializationName VARCHAR(100) NOT NULL,
+    Description TEXT DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-create table Doctor (
-	DoctorId int primary key IDENTITY(1,1) not null,
-	DoctorName varchar(50) not null,
-	DoctorAccount varchar (100) not null,
-	Password varchar(max) not null,
-	Sex varchar(50),
-	PhoneNumber varchar(20) not null,
-	Email varchar(100) not null,
-	SpecializationId int, -- Mã chuyên ngành
-	Qualifications varchar(50) not null, --Trình độ học vấn
-	CityId int, -- Mã thành phố
-	Address varchar(max) not null,
-    Foreign key (CityId) references City(CityId) ON DELETE SET NULL,
-	Foreign key (SpecializationId) references Specialization(SpecializationId) on delete set null
-)
+-- 4. Bảng ClinicRoom
+CREATE TABLE ClinicRoom (
+    RoomId INT AUTO_INCREMENT PRIMARY KEY,
+    RoomName VARCHAR(100) NOT NULL,
+    RoomNumber VARCHAR(20) NOT NULL,
+    SpecializationId INT DEFAULT NULL,
+    LocationFloor VARCHAR(50) DEFAULT NULL,
+    IsActive TINYINT(1) DEFAULT 1,
 
-create table Appointment (
-	AppointmentId int primary key IDENTITY(1,1),
-	DoctorId int not null,
-	UserId int Default(null), -- Để null khi khung giờ đang Available nhưng chưa có bệnh nhân đặt
-	AvailableDate Date not null, -- Những khung giờ available do bác sĩ đặt mà bệnh nhân có thể book
-	AppointmentDate Date, -- Ngày hẹn. Nếu khách chọn thời gian trùng vs AppointmentDate đã có thì ko thể đặt lịch
-	StartTime Time not null,
-	EndTime Time not null,
-	Status varchar(20) 
-		check(status in ('Available', 'Booked', 'Completed', 'Canceled')) Default('Available'),
-	Foreign key (UserId) references AccountUser(UserId),
-	Foreign key (DoctorId) references Doctor(DoctorId)
-)
+    CONSTRAINT FK_ClinicRoom_Specialization FOREIGN KEY (SpecializationId) 
+        REFERENCES Specialization(SpecializationId) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 5. Bảng Doctor
+CREATE TABLE Doctor (
+    DoctorId INT AUTO_INCREMENT PRIMARY KEY,
+    FullName VARCHAR(100) NOT NULL,
+    Username VARCHAR(50) NOT NULL UNIQUE,
+    Email VARCHAR(100) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL,
+    Gender VARCHAR(10) DEFAULT NULL,
+    PhoneNumber VARCHAR(20) NOT NULL,
+    Qualifications VARCHAR(100) DEFAULT NULL,
+    Address VARCHAR(255) DEFAULT NULL,
+    AvatarUrl VARCHAR(500) DEFAULT NULL,
+    
+    CityId INT DEFAULT NULL,
+    SpecializationId INT DEFAULT NULL,
+    RoomId INT DEFAULT NULL,
+  
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    DeletedAt DATETIME DEFAULT NULL,
 
-create table Content( -- Bảng quản lý các content xuất hiện trên phần blog, homepage
-	ContentId int primary key IDENTITY(1,1) not null,
-	Title varchar(300) not null,
-	Category varchar(50),
-	Body varchar(max) not null,
-	PublishedBy int Default(null), -- Id người đăng bài
-	PublishedAt Datetime Default(Getdate()),
-	Foreign key (PublishedBy) references Doctor(DoctorId) on delete set null
-)
+    CONSTRAINT FK_Doctor_City FOREIGN KEY (CityId) REFERENCES City(CityId) ON DELETE SET NULL,
+    CONSTRAINT FK_Doctor_Specialization FOREIGN KEY (SpecializationId) REFERENCES Specialization(SpecializationId) ON DELETE SET NULL,
+    CONSTRAINT FK_Doctor_ClinicRoom FOREIGN KEY (RoomId) REFERENCES ClinicRoom(RoomId) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-create table ContactQuerie(
-	QueryId int primary key IDENTITY(1,1) not null,
-	Name varchar(100) not null,
-	Email varchar(100) not null,
-	PhoneNumber varchar(20) not null,
-	MessageText varchar(max) not null,
-	SubmittedAt datetime Default(Getdate())
-)
+-- 6. Bảng Appointment
+CREATE TABLE Appointment (
+    AppointmentId INT AUTO_INCREMENT PRIMARY KEY,
+    UserId INT NOT NULL,
+    DoctorId INT NOT NULL,
+    RoomId INT DEFAULT NULL,
+    
+    AppointmentDate DATE NOT NULL,
+    StartTime TIME NOT NULL,
+    EndTime TIME NOT NULL,
+    
+    Status ENUM('Pending', 'Confirmed', 'Completed', 'Cancelled') DEFAULT 'Pending',
+    Reason VARCHAR(255) DEFAULT NULL,
+    CancellationReason VARCHAR(255) DEFAULT NULL,
+    
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT FK_Appointment_User FOREIGN KEY (UserId) REFERENCES AccountUser(UserId) ON DELETE CASCADE,
+    CONSTRAINT FK_Appointment_Doctor FOREIGN KEY (DoctorId) REFERENCES Doctor(DoctorId) ON DELETE CASCADE,
+    CONSTRAINT FK_Appointment_Room FOREIGN KEY (RoomId) REFERENCES ClinicRoom(RoomId) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. Bảng News
+CREATE TABLE News (
+    NewsId INT AUTO_INCREMENT PRIMARY KEY,
+    Title VARCHAR(300) NOT NULL,
+    Category VARCHAR(100) DEFAULT NULL,
+    Content LONGTEXT NOT NULL,
+    ThumbnailUrl VARCHAR(500) DEFAULT NULL,
+    
+    AuthorType ENUM('Admin', 'Doctor') NOT NULL,
+    UserId INT DEFAULT NULL,
+    DoctorId INT DEFAULT NULL,
+    
+    PublishedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    IsPublished TINYINT(1) DEFAULT 1,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    DeletedAt DATETIME DEFAULT NULL,
+
+    CONSTRAINT FK_News_Admin FOREIGN KEY (UserId) REFERENCES AccountUser(UserId) ON DELETE SET NULL,
+    CONSTRAINT FK_News_Doctor FOREIGN KEY (DoctorId) REFERENCES Doctor(DoctorId) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 8. Bảng ContactQuery
+CREATE TABLE ContactQuery (
+    QueryId INT AUTO_INCREMENT PRIMARY KEY,
+    SenderName VARCHAR(100) NOT NULL,
+    Email VARCHAR(100) NOT NULL,
+    PhoneNumber VARCHAR(20) NOT NULL,
+    Subject VARCHAR(200) DEFAULT NULL,
+    MessageText TEXT NOT NULL,
+    
+    Status ENUM('Pending', 'Processing', 'Resolved') DEFAULT 'Pending',
+    AdminNotes TEXT DEFAULT NULL,
+    RespondedBy INT DEFAULT NULL,
+    
+    SubmittedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    RespondedAt DATETIME DEFAULT NULL,
+
+    CONSTRAINT FK_ContactQuery_Admin FOREIGN KEY (RespondedBy) 
+        REFERENCES AccountUser(UserId) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Bảng DoctorSchedule (Lịch làm việc của Bác sĩ)
+CREATE TABLE IF NOT EXISTS `DoctorSchedule` (
+    `ScheduleId` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `DoctorId` INT NOT NULL,
+    `WorkDate` DATE NOT NULL,
+    `StartTime` TIME NOT NULL,
+    `EndTime` TIME NOT NULL,
+    `MaxPatients` INT UNSIGNED DEFAULT 10,
+    `Status` ENUM('Available', 'Full', 'Cancelled', 'Off') DEFAULT 'Available',
+    `Note` VARCHAR(255) NULL,
+    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    CONSTRAINT `fk_doctorschedule_doctor` 
+        FOREIGN KEY (`DoctorId`) REFERENCES `Doctor`(`DoctorId`) 
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
