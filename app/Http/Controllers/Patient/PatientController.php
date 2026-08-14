@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Patient;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\City;
+use Illuminate\View\View;
 use App\Models\Doctor;
 use App\Models\Specialization;
-use Illuminate\View\View;
+use App\Models\City;
+
 
 class PatientController extends Controller
 {
@@ -25,25 +27,29 @@ class PatientController extends Controller
         return view('patient.service');
     }
 
-    public function department(): View
+    public function specialization(): View
     {
-        return view('patient.department');
+        return view('patient.specialization');
     }
 
-    public function departmentSingle(): View
+    public function specializationCardiology(): View
     {
-        return view('patient.department-single');
+        return view('patient.specializations-single.Cardiology');
     }
 
-    // Khai báo bên dưới
-    // public function doctor(): View
-    // {
-    //     return view('patient.doctor');
-    // }
-
-    public function doctorSingle(): View
+    public function specializationDermatology(): View
     {
-        return view('patient.doctor-single');
+        return view('patient.specializations-single.Dermatology');
+    }
+
+    public function specializationOrthopedics(): View
+    {
+        return view('patient.specializations-single.Orthopedics');
+    }
+
+    public function specializationPediatrics(): View
+    {
+        return view('patient.specializations-single.Pediatrics');
     }
 
     public function appointment(): View
@@ -66,10 +72,14 @@ class PatientController extends Controller
         return view('patient.blog-single');
     }
 
+    // Hiển thị trang contact
     public function contact(): View
     {
         return view('patient.contact');
     }
+    
+    // Xử lý lưu form vào DB
+
 
     /**
      * Hiển thị trang chi tiết chuyên khoa động dựa vào tên chuyên khoa
@@ -89,7 +99,7 @@ class PatientController extends Controller
     }
 
     // Hiển thị dánh sách doctor
-    public function doctor()
+    public function Doctor()
     {
         $doctors = Doctor::with('specialization', 'City')->get();
 

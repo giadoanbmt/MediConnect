@@ -11,19 +11,40 @@
                 <div class="col-lg-6">
                     <div class="top-right-bar mt-2 mt-lg-0 d-flex justify-content-lg-end align-items-center">
                         <a href="tel:+23-345-67890" class="top-hotline mr-3"><span>Call Now: </span><span class="h4">823-4565-13456</span></a>
+                        
                         @guest
-                        <a class="top-login-link" href="{{ route('login') }}">Login</a>
+                            <a class="top-login-link btn btn-main btn-round-full px-4 text-white font-weight-bold" href="{{ route('login') }}">
+                                <i class="icofont-sign-in mr-1"></i> Login
+                            </a>
                         @else
-                        <div class="dropdown">
-                            <a class="top-login-link dropdown-toggle" href="#" id="topUserMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ auth()->user()->name }}</a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="topUserMenu">
-                                <span class="dropdown-item text-muted"><i class="icofont-ui-user mr-2"></i>Edit profile <small>(coming soon)</small></span>
-                                <span class="dropdown-item text-muted"><i class="icofont-calendar mr-2"></i>My appointments <small>(coming soon)</small></span>
-                                <div class="dropdown-divider"></div>
-                                <form method="POST" action="{{ route('logout') }}">@csrf <button class="dropdown-item text-danger" type="submit"><i class="icofont-logout mr-2"></i>Log out</button></form>
+                            <div class="dropdown">
+                                <!-- Đã sửa Name thành FullName theo đúng Database mới -->
+                                <a class="top-login-link dropdown-toggle" href="#" id="topUserMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="icofont-user-alt-7 mr-1"></i> {{ optional(auth()->user())->FullName ?? 'My Account' }}
+                                </a>
+                                
+                                <div class="dropdown-menu dropdown-menu-right shadow-sm border-0 mt-2" aria-labelledby="topUserMenu">
+                                    <!-- Đã đổi <span> thành <a> để click được -->
+                                    <a class="dropdown-item text-muted" href="#">
+                                        <i class="icofont-ui-user mr-2 text-primary"></i>Edit profile <small>(coming soon)</small>
+                                    </a>
+                                    <a class="dropdown-item text-muted" href="#">
+                                        <i class="icofont-calendar mr-2 text-info"></i>My appointments <small>(coming soon)</small>
+                                    </a>
+                                    
+                                    <div class="dropdown-divider"></div>
+                                    
+                                    <!-- Đã fix style cho nút bấm nằm trong form -->
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf 
+                                        <button class="dropdown-item text-danger" type="submit" style="cursor: pointer; background: transparent; border: none; width: 100%; text-align: left;">
+                                            <i class="icofont-logout mr-2"></i>Log out
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
                         @endguest
+
                     </div>
                 </div>
             </div>
@@ -39,16 +60,36 @@
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.home') ? 'active' : '' }}" href="{{ route('public.home') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.about') ? 'active' : '' }}" href="{{ route('public.about') }}">About</a></li>
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.service') ? 'active' : '' }}" href="{{ route('public.service') }}">Services</a></li>
-                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="{{ route('public.department') }}" id="departmentMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Departments <i class="icofont-thin-down"></i></a>
-                        <div class="dropdown-menu" aria-labelledby="departmentMenu"><a class="dropdown-item" href="{{ route('public.department') }}">All departments</a><a class="dropdown-item" href="{{ route('public.department-single') }}">Department details</a></div>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="{{ url('/specialization') }}" id="dropdown02" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">Specialization <i class="icofont-thin-down"></i></a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdown02">
+                            <li><a class="dropdown-item" href="{{ route('specializations.Pediatrics') }}">Pediatrics</a></li>
+                            <li><a class="dropdown-item" href="{{ route('specializations.Cardiology') }}">Cardiology</a></li>
+                            <li><a class="dropdown-item" href="{{ route('specializations.Orthopedics') }}">Orthopedics</a></li>
+                            <li><a class="dropdown-item" href="{{ route('specializations.Dermatology') }}">Dermatology</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="{{ route('public.doctor') }}" id="doctorMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Doctors <i class="icofont-thin-down"></i></a>
-                        <div class="dropdown-menu" aria-labelledby="doctorMenu"><a class="dropdown-item" href="{{ route('public.doctor') }}">Find a doctor</a><a class="dropdown-item" href="{{ route('public.doctor-single') }}">Doctor profile</a>@auth <a class="dropdown-item" href="{{ route('patient.appointment') }}">Book an appointment</a> @endauth</div>
+                        <div class="dropdown-menu" aria-labelledby="doctorMenu">
+                            <a class="dropdown-item" href="{{ route('public.doctor') }}">Find a doctor</a>
+                            @auth <a class="dropdown-item" href="{{ route('patient.appointment') }}">Book an appointment</a> @endauth
+                        </div>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('public.blog-sidebar') }}">News</a></li>
-                    @auth <li class="nav-item"><a class="nav-link" href="{{ route('patient.contact') }}">Contact</a></li> @endauth
+                        <li class="nav-item"><a class="nav-link" href="{{ auth()->check() ? route('patient.contact') : route('login') }}">Contact</a></li>
                 </ul>
             </div>
+            <!-- <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3">
+                <div class="input-group input-group-sm" style="max-width: 230px;">
+                    <input type="text" name="keyword" class="form-control" placeholder="Search doctor, blog..." required style="border-radius: 20px 0 0 20px; border-right: none;">
+                    <div class="input-group-append">
+                        <button class="btn btn-main-2" type="submit" style="border-radius: 0 20px 20px 0; padding: 0 12px; height: 100%;">
+                            <i class="icofont-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form> -->
         </div>
     </nav>
 </header>

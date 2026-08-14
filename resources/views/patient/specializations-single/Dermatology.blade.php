@@ -33,7 +33,7 @@
 
 <body id="top">
 
-@include('layouts.header')
+@include('components.layouts.partials.header')
 
 <section class="page-title bg-1">
   <div class="overlay"></div>
@@ -70,9 +70,9 @@
             <div class="col-lg-8">
                 <div class="Specialization-content mt-5">
                     <h3 class="text-md">Dermatology</h3>
-                    <div class="divider my-4">Healthy skin reflects overall health. Our dermatology experts provide professional care for skin, hair, and nail conditions using modern treatments tailored to every patient's needs.</div>
-                    <p class="lead">The Dermatology Department specializes in diagnosing and treating acne, eczema, psoriasis, skin infections, allergies, pigmentation disorders, and skin cancer screening. Whether you need medical or cosmetic dermatology services, our team combines advanced technology with evidence-based treatments to achieve healthy, beautiful skin while ensuring patient comfort and safety throughout every stage of care.</p>
-                    <p></p>
+                    <div class="divider my-4"></div>
+                    <p class="lead">Healthy skin reflects overall health. Our dermatology experts provide professional care for skin, hair, and nail conditions using modern treatments tailored to every patient's needs.</p>
+                    <p>The Dermatology Department specializes in diagnosing and treating acne, eczema, psoriasis, skin infections, allergies, pigmentation disorders, and skin cancer screening. Whether you need medical or cosmetic dermatology services, our team combines advanced technology with evidence-based treatments to achieve healthy, beautiful skin while ensuring patient comfort and safety throughout every stage of care.</p>
 
 
                     <h3 class="mt-5 mb-4">Services features</h3>

@@ -33,7 +33,7 @@
 
 <body id="top">
 
-@include('layouts.header')
+@include('components.layouts.partials.header')
 
 <section class="page-title bg-1">
   <div class="overlay"></div>
@@ -69,8 +69,8 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="Specialization-content mt-5">
-                    <h3 class="text-md">Cardiology</h3>
-                    <div class="divider my-4"></div>
+                    <h3 class="text-md"></h3>      <!-- Tên chuyên khoa -->
+                    <div class="divider my-4"></div> <!-- Description -->
                     <p class="lead"></p>
                     <p></p>
 

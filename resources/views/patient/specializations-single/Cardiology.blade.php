@@ -33,7 +33,7 @@
 
 <body id="top">
 
-@include('layouts.header')
+@include('components.layouts.partials.header')
 
 <section class="page-title bg-1">
   <div class="overlay"></div>
@@ -70,9 +70,9 @@
             <div class="col-lg-8">
                 <div class="Specialization-content mt-5">
                     <h3 class="text-md">Cardiology</h3>
-                    <div class="divider my-4">Heart health is the foundation of overall well-being. Our cardiology specialists provide comprehensive diagnosis, treatment, and preventive care for a wide range of cardiovascular conditions, helping patients live healthier and longer lives.</div>
-                    <p class="lead">Our Cardiology Department offers advanced medical services for heart disease, hypertension, arrhythmias, coronary artery disease, and heart failure. Using modern diagnostic technology and personalized treatment plans, our experienced cardiologists focus on early detection, effective management, and long-term cardiovascular health. We are committed to delivering compassionate care while helping patients reduce risks and improve their quality of life.</p>
-                    <p></p>
+                    <div class="divider my-4"></div>
+                    <p class="lead">Heart health is the foundation of overall well-being. Our cardiology specialists provide comprehensive diagnosis, treatment, and preventive care for a wide range of cardiovascular conditions, helping patients live healthier and longer lives.</p>
+                    <p>Our Cardiology Department offers advanced medical services for heart disease, hypertension, arrhythmias, coronary artery disease, and heart failure. Using modern diagnostic technology and personalized treatment plans, our experienced cardiologists focus on early detection, effective management, and long-term cardiovascular health. We are committed to delivering compassionate care while helping patients reduce risks and improve their quality of life.</p>
 
 
                     <h3 class="mt-5 mb-4">Services features</h3>

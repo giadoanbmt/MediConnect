@@ -1,12 +1,12 @@
 <x-layouts.public title="MediConnect - Doctors">
-	<section class="page-title bg-1">
-		<div class="overlay"></div>
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<div class="block text-center">
-						<span class="text-white">All Doctors</span>
-						<h1 class="text-capitalize mb-5 text-lg">Specalized doctors</h1>
+<section class="page-title bg-1">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block text-center">
+          <span class="text-white">All Doctors</span>
+          <h1 class="text-capitalize mb-5 text-lg">Specalized doctors</h1>
 
 						<!-- <ul class="list-inline breadcumb-nav">
             <li class="list-inline-item"><a href="{{ url('/') }}" class="text-white">Home</a></li>
@@ -33,126 +33,201 @@
 				</div>
 			</div>
 
-			<!-- ================= BỘ LỌC 2 BÊN ================= -->
-			<div class="row align-items-end mb-5">
+      <div class="col-12 text-center  mb-5">
+	        <div class="btn-group btn-group-toggle " data-toggle="buttons">
+	          <label class="btn active ">
+	            <input type="radio" name="shuffle-filter" value="all" checked="checked" />All Department
+	          </label>
+	          <label class="btn ">
+	            <input type="radio" name="shuffle-filter" value="cat1" />Cardiology
+	          </label>
+	          <label class="btn">
+	            <input type="radio" name="shuffle-filter" value="cat2" />Dental
+	          </label>
+	          <label class="btn">
+	            <input type="radio" name="shuffle-filter" value="cat3" />Neurology
+	          </label>
+	          <label class="btn">
+	            <input type="radio" name="shuffle-filter" value="cat4" />Medicine
+	          </label>
+	           <label class="btn">
+	            <input type="radio" name="shuffle-filter" value="cat5" />Pediatric
+	          </label>
+	          <label class="btn">
+	            <input type="radio" name="shuffle-filter" value="cat6" />Traumatology
+	          </label>
+	        </div>
+      </div>
 
-				<!-- 1. BÊN TRÁI: Chọn Chuyên khoa (Dạng Nút) -->
-				<div class="col-lg-9 col-md-8 mb-4 mb-lg-0">
-					<h6 class="text-uppercase text-muted mb-2 font-weight-bold">
-						<i class="mr-1 text-primary"></i> Specializations
-					</h6>
-					<div class="btn-group btn-group-toggle w-auto flex-wrap" style="width: fit-content;" data-toggle="buttons">
-						<label class="btn btn-sm btn-outline-primary active filter-spec-btn" data-filter="all">
-							<input type="radio" name="shuffle-filter-spec" checked /> All
-						</label>
-						@foreach($specializations as $spec)
-						<label class="btn btn-sm btn-outline-primary filter-spec-btn" data-filter="spec-{{ $spec->SpecializationId }}">
-							<input type="radio" name="shuffle-filter-spec" /> {{ $spec->SpecializationName }}
-						</label>
-						@endforeach
-					</div>
-				</div>
+    <div class="row shuffle-wrapper portfolio-gallery">
+      	<div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item" data-groups="[&quot;cat1&quot;,&quot;cat2&quot;]">
+	      	<div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+	               <div class="doctor-img">
+	               		<img src="images/team/1.jpg" alt="doctor-image" class="img-fluid w-100">
+	               </div>
+	            </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">Thomas Henry</a></h4>
+                	<p>Cardiology</p>
+                </div> 
+	      	</div>
+      	</div>
 
-				<!-- 2. BÊN PHẢI: Chọn Thành phố (Dạng Dropdown) -->
-				<div class="col-lg-3 col-md-4 bg-light p-3 rounded border">
-					<h6 class="text-uppercase text-muted mb-2 font-weight-bold">
-						<i class="icofont-location-pin mr-1 text-danger"></i> City
-					</h6>
-					<select id="city-select" class="form-control custom-select">
-						<option value="all">--- City ---</option>
-						@foreach($cities as $city)
-						<option value="city-{{ $city->CityId }}">{{ $city->CityName }}</option>
-						@endforeach
-					</select>
-				</div>
+      <div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item" data-groups="[&quot;cat2&quot;]">
+        	<div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+		        	<div class="doctor-img">
+		               <img src="images/team/2.jpg" alt="doctor-image" class="img-fluid w-100">
+		            </div>
+	            </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">Harrision Samuel</a></h4>
+                	<p>Radiology</p>
+                </div> 
+	      	</div>
+      </div>
 
-				<!-- ================= DANH SÁCH BÁC SĨ ================= -->
-				<div class="row shuffle-wrapper portfolio-gallery">
-					@foreach($doctors as $doctor)
-					<div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item"
-						data-groups='["spec-{{ $doctor->SpecializationId }}", "city-{{ $doctor->CityId }}"]'>
+      <div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item" data-groups="[&quot;cat3&quot;]">
+        	<div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+		        	<div class="doctor-img">
+		               <img src="images/team/3.jpg" alt="doctor-image" class="img-fluid w-100">
+		            </div>
+	            </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">Alexandar James</a></h4>
+                	<p>Dental</p>
+                </div> 
+	      	</div>
+      </div>
 
-						<div class="position-relative doctor-inner-box">
-							<div class="doctor-profile">
-								<div class="doctor-img">
-									<a href="{{ route('public.doctorProfile', ['id' => $doctor->DoctorId]) }}">
-										@php
-										$avatar = ($doctor->AvatarUrl && file_exists(public_path($doctor->AvatarUrl)))
-										? asset($doctor->AvatarUrl)
-										: asset('Novena/images/team/1.jpg');
-										@endphp
-										<img src="{{ $avatar }}" alt="{{ $doctor->FullName }}" class="img-fluid w-100" style="height: 250px; object-fit: cover;">
-									</a>
-								</div>
-							</div>
+      <div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item" data-groups="[&quot;cat3&quot;,&quot;cat4&quot;]">
+        	<div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+		        	<div class="doctor-img">
+		               <img src="images/team/4.jpg" alt="doctor-image" class="img-fluid w-100">
+		            </div>
+	            </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">Edward john</a></h4>
+                	<p>Pediatry</p>
+                </div> 
+	      	</div>
+      </div>
 
-							<div class="content mt-3 text-center">
-								<h4 class="mb-0">
-									<a href="{{ route('public.doctorProfile', $doctor->DoctorId) }}">{{ $doctor->FullName }}</a>
-								</h4>
-								<p class="mb-0 text-primary font-weight-bold">
-									{{ $doctor->specialization->SpecializationName ?? 'Update soon' }}
-								</p>
-								<p class="mb-0 text-muted small">
-									<i class="icofont-location-pin"></i> {{ $doctor->city->CityName ?? 'Update soon' }}
-								</p>
-							</div>
-						</div>
-					</div>
-					@endforeach
+      	<div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item" data-groups="[&quot;cat5&quot;]">
+        	<div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+		        	<div class="doctor-img">
+		               <img src="images/team/1.jpg" alt="doctor-image" class="img-fluid w-100">
+		            </div>
+	            </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">Thomas Henry</a></h4>
+                	<p>Neurology</p>
+                </div> 
+	      	</div>
+      	</div>
+
+      <div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item" data-groups="[&quot;cat6&quot;]">
+       		 <div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+		        	<div class="doctor-img">
+		               <img src="images/team/3.jpg" alt="doctor-image" class="img-fluid w-100">
+		            </div>
+	            </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">Henry samuel</a></h4>
+                	<p>Palmology</p>
+                </div> 
+	      	</div>
+      </div>
+
+      <div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item" data-groups="[&quot;cat4&quot;]">
+        	<div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+		        	<div class="doctor-img">
+		               <img src="images/team/1.jpg" alt="doctor-image" class="img-fluid w-100">
+		            </div>
+	            </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">Thomas alexandar</a></h4>
+                	<p>Cardiology</p>
+                </div> 
+	        </div>
+      </div>
+
+      <div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item" data-groups="[&quot;cat5&quot;,&quot;cat6&quot;,&quot;cat1&quot;]">
+        	<div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+		        	<div class="doctor-img">
+		               <img src="images/team/3.jpg" alt="doctor-image" class="img-fluid w-100">
+		             </div>
+	             </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">HarissonThomas </a></h4>
+                	<p>Traumatology</p>
+                </div> 
+	      	</div>
+      </div>
+
+      <div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item illustration" data-groups="[&quot;cat2&quot;]">
+        	<div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+		        	<div class="doctor-img">
+		               <img src="images/team/4.jpg" alt="doctor-image" class="img-fluid w-100">
+		            </div>
+	            </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">Jonas Thomson</a></h4>
+                	<p>Cardiology</p>
+                </div> 
+	      	</div>
+        </div>
+
+         <div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item" data-groups="[&quot;cat5&quot;,&quot;cat6&quot;,&quot;cat1&quot;]">
+        	<div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+		        	<div class="doctor-img">
+		               <img src="images/team/3.jpg" alt="doctor-image" class="img-fluid w-100">
+		            </div>
+	            </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">Henry Forth</a></h4>
+                	<p>hematology</p>
+                </div> 
+	      	</div>
+      </div>
+
+      <div class="col-lg-3 col-sm-6 col-md-6 mb-4 shuffle-item illustration" data-groups="[&quot;cat2&quot;]">
+        	<div class="position-relative doctor-inner-box">
+		        <div class="doctor-profile">
+		        	<div class="doctor-img">
+		               <img src="images/team/4.jpg" alt="doctor-image" class="img-fluid w-100">
+		             </div>
+	             </div>
+                <div class="content mt-3">
+                	<h4 class="mb-0"><a href="{{ url('/doctor-single') }}">Thomas Henry</a></h4>
+                	<p>Dental</p>
+                </div> 
+	      	</div>
+        </div>
+    </div>
+  </div>
+</section>
+<!-- /portfolio -->
+<section class="section cta-page">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-7">
+				<div class="cta-content">
+					<div class="divider mb-4"></div>
+					<h2 class="mb-5 text-lg">We are pleased to offer you the <span class="title-color">chance to have the healthy</span></h2>
+					<a href="{{ url('/appoinment') }}" class="btn btn-main-2 btn-round-full">Get appoinment<i class="icofont-simple-right  ml-2"></i></a>
 				</div>
 			</div>
 		</div>
-	</section>
-	<!-- JavaScript Xử Lý Lọc Kết Hợp (Dropdown + Buttons) -->
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			var gridContainer = document.querySelector('.shuffle-wrapper');
-
-			if (gridContainer && window.Shuffle) {
-				var myShuffle = new Shuffle(gridContainer, {
-					itemSelector: '.shuffle-item',
-					sizer: null
-				});
-
-				var currentSpec = 'all';
-				var currentCity = 'all';
-
-				// Hàm áp dụng lọc đồng thời cả 2 điều kiện
-				function applyMultiFilter() {
-					myShuffle.filter(function(element) {
-						var groups = JSON.parse(element.getAttribute('data-groups') || '[]');
-						var matchSpec = (currentSpec === 'all') || groups.includes(currentSpec);
-						var matchCity = (currentCity === 'all') || groups.includes(currentCity);
-						return matchSpec && matchCity;
-					});
-				}
-
-				// Bắt sự kiện khi CLICK nút Chuyên khoa
-				document.querySelectorAll('.filter-spec-btn').forEach(function(btn) {
-					btn.addEventListener('click', function() {
-						document.querySelectorAll('.filter-spec-btn').forEach(b => b.classList.remove('active'));
-						this.classList.add('active');
-						currentSpec = this.getAttribute('data-filter');
-						applyMultiFilter();
-					});
-				});
-
-				// Bắt sự kiện khi THAY ĐỔI lựa chọn ở Dropdown Thành phố
-				var citySelect = document.getElementById('city-select');
-				if (citySelect) {
-					citySelect.addEventListener('change', function() {
-						currentCity = this.value;
-						applyMultiFilter();
-					});
-				}
-			}
-		});
-	</script>
-	<script src="{{ asset('Novena/plugins/jquery/jquery.js') }}"></script>
-	<script src="{{ asset('Novena/plugins/bootstrap/bootstrap.min.js') }}"></script>
-	<script src="{{ asset('Novena/plugins/slick-carousel/slick/slick.min.js') }}"></script>
-	<script src="{{ asset('Novena/plugins/shuffle/shuffle.min.js') }}"></script>
-	<script src="{{ asset('Novena/js/script.js') }}"></script>
-
+	</div>
+</section>
 </x-layouts.public>

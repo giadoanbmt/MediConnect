@@ -31,15 +31,17 @@
                             <input type="password" name="password" id="password" class="form-control" required>
                         </div>
 
+                        <div class="form-group mb-3">
+                            <label for="password_confirmation" class="text-black font-weight-bold small">Confirm password</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+                        </div>
+
                         <div class="form-group mb-2">
                             <label for="email" class="text-black font-weight-bold small">Email</label>
                             <input type="email" name="email" id="email" class="form-control"  required>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label for="password_confirmation" class="text-black font-weight-bold small">Confirm password</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
-                        </div>
+                        
 
                             <!-- dấu tích tôi đồng ý vs điều khoản dịch vụ, vs từ Term of service khi nhấn vô sẽ điều hướng đến 
                             page điều khoản dịch vụ -->

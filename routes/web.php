@@ -1,15 +1,25 @@
 <?php
 
+//use Amdin
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\DoctorController as AdminDoctorController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
+
+// Auth
 use App\Http\Controllers\Auth\AdminSetupController;
 use App\Http\Controllers\Auth\AuthController;
+
+//use Doctor
 use App\Http\Controllers\Doctor\DoctorController;
+
+//use Patient
 use App\Http\Controllers\Patient\AppointmentController;
 use App\Http\Controllers\Patient\PatientController;
+use App\Http\Controllers\Patient\ContactController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,15 +32,17 @@ Route::controller(PatientController::class)->group(function () {
     Route::get('/', 'index')->name('public.home');
     Route::get('/about', 'about')->name('public.about');
     Route::get('/service', 'service')->name('public.service');
-    Route::get('/department', 'department')->name('public.department');
-    Route::get('/department-single', 'departmentSingle')->name('public.department-single');
+    Route::get('/specialization', 'specialization')->name('public.specialization');
     Route::get('/doctor', 'doctor')->name('public.doctor');
     Route::get('/doctor-profile/{id}', 'doctorProfile')->name('public.doctorProfile');
     Route::get('/blog-sidebar', 'blogSidebar')->name('public.blog-sidebar');
     Route::get('/blog-single', 'blogSingle')->name('public.blog-single');
 
     // Route động cho các trang Chuyên khoa
-    Route::get('/specializations/{slug}', 'specializationSingle')->name('public.specialization.single');
+    Route::get('/specializations/Cardiology', 'specializationCardiology')->name('specializations.Cardiology');
+    Route::get('/specializations/Dermatology', 'specializationDermatology')->name('specializations.Dermatology');
+    Route::get('/specializations/Orthopedics', 'specializationOrthopedics')->name('specializations.Orthopedics');
+    Route::get('/specializations/Pediatrics', 'specializationPediatrics')->name('specializations.Pediatrics');
 });
 
 /*
@@ -66,7 +78,7 @@ Route::middleware('role:patient')->group(function () {
         Route::get('/confirmation', 'confirmation')->name('patient.confirmation');
         Route::get('/contact', 'contact')->name('patient.contact');
     });
-
+    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
     Route::get('/doctors', [DoctorController::class, 'index'])->name('patient.doctors.index');
     Route::get('/doctors/{id}', [DoctorController::class, 'show'])->name('patient.doctors.show');
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('patient.appointments.index');
@@ -152,4 +164,16 @@ Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::post('/appointments/{id}/approve', [AppointmentController::class, 'approve'])->name('appointments.approve');
     Route::post('/appointments/{id}/reject', [AppointmentController::class, 'reject'])->name('appointments.reject');
+});
+
+// 5. Quản lý ContactQuery
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    // Trang danh sách câu hỏi
+    Route::get('/contact-queries', [AdminContactController::class, 'index'])->name('admin.contact.index');
+
+    // Trang xem chi tiết / form phản hồi
+    Route::get('/contact-queries/{id}', [AdminContactController::class, 'show'])->name('admin.contact.show');
+
+    // Action lưu phản hồi / cập nhật trạng thái
+    Route::put('/contact-queries/{id}/respond', [AdminContactController::class, 'respond'])->name('admin.contact.respond');
 });

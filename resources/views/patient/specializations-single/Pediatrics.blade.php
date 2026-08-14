@@ -33,7 +33,7 @@
 
 <body id="top">
 
-@include('layouts.header')
+@include('components.layouts.partials.header')
 
 <section class="page-title bg-1">
   <div class="overlay"></div>
@@ -70,9 +70,9 @@
             <div class="col-lg-8">
                 <div class="Specialization-content mt-5">
                     <h3 class="text-md">Pediatrics</h3>
-                    <div class="divider my-4">Children deserve specialized healthcare that supports their growth and development. Our pediatric team provides compassionate medical care from infancy through adolescence.</div>
-                    <p class="lead">Our Pediatrics Department focuses on preventive care, routine checkups, vaccinations, diagnosis, and treatment of childhood illnesses. We understand that every child is unique, which is why we provide family-centered care in a warm and welcoming environment. Our goal is to promote healthy development, prevent disease, and ensure every child receives the highest standard of medical attention.</p>
-                    <p></p>
+                    <div class="divider my-4"></div>
+                    <p class="lead">Children deserve specialized healthcare that supports their growth and development. Our pediatric team provides compassionate medical care from infancy through adolescence.</p>
+                    <p>Our Pediatrics Department focuses on preventive care, routine checkups, vaccinations, diagnosis, and treatment of childhood illnesses. We understand that every child is unique, which is why we provide family-centered care in a warm and welcoming environment. Our goal is to promote healthy development, prevent disease, and ensure every child receives the highest standard of medical attention.</p>
 
 
                     <h3 class="mt-5 mb-4">Services features</h3>
