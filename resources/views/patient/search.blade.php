@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- Hoặc master layout trang public của bạn --}}
+@extends('components.layouts.partials.frontend')
 
 @section('title', 'Search results: ' . $keyword)
 

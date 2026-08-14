@@ -33,7 +33,7 @@ Route::controller(PatientController::class)->group(function () {
     Route::get('/about', 'about')->name('public.about');
     Route::get('/service', 'service')->name('public.service');
     Route::get('/specialization', 'specialization')->name('public.specialization');
-    Route::get('/doctor', 'doctor')->name('public.doctor');
+    Route::get('/doctor', 'Doctor')->name('public.doctor');
     Route::get('/doctor-profile/{id}', 'doctorProfile')->name('public.doctorProfile');
     Route::get('/blog-sidebar', 'blogSidebar')->name('public.blog-sidebar');
     Route::get('/blog-single', 'blogSingle')->name('public.blog-single');
