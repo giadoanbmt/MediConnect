@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Patient;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\City;
-use App\Models\Doctor;
-use App\Models\Specialization;
 use Illuminate\View\View;
 use App\Models\Doctor\Doctor;
 use App\Models\Specialization\Specialization;
 use App\Models\City\City;
+
 
 class PatientController extends Controller
 {
@@ -38,18 +37,10 @@ class PatientController extends Controller
         return view('patient.specializations-single.Cardiology');
     }
 
-<<<<<<< HEAD
     public function specializationDermatology(): View
     {
         return view('patient.specializations-single.Dermatology');
     }
-=======
-    // Khai báo bên dưới
-    // public function doctor(): View
-    // {
-    //     return view('patient.doctor');
-    // }
->>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
 
     public function specializationOrthopedics(): View
     {
@@ -81,10 +72,14 @@ class PatientController extends Controller
         return view('patient.blog-single');
     }
 
+    // Hiển thị trang contact
     public function contact(): View
     {
         return view('patient.contact');
     }
+    
+    // Xử lý lưu form vào DB
+    
 
     /**
      * Hiển thị trang chi tiết chuyên khoa động dựa vào tên chuyên khoa
@@ -104,15 +99,9 @@ class PatientController extends Controller
     }
 
     // Hiển thị dánh sách doctor
-<<<<<<< HEAD
     public function Doctor()
     {
         $doctors = Doctor::with('specialization', 'City' )->get();
-=======
-    public function doctor()
-    {
-        $doctors = Doctor::with('specialization', 'City')->get();
->>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
 
         // Danh sách nút bấm Filter Specializations
         $specializations = Specialization::all();
@@ -125,17 +114,10 @@ class PatientController extends Controller
     }
 
     // Hiển thị Profile chi tiết của 1 Bác sĩ
-<<<<<<< HEAD
     public function doctorProfile($id){
     $doctor = Doctor::with('specialization')->findOrFail($id);
 
     return view('patient.doctorProfile  ', compact('doctor'));
-=======
-    public function doctorProfile($id)
-    {
-        $doctor = Doctor::with('specialization')->findOrFail($id);
-
-        return view('patient.doctorProfile  ', compact('doctor'));
->>>>>>> 9055961252df2b6344616ae09933e26c5b164dd2
     }
+
 }

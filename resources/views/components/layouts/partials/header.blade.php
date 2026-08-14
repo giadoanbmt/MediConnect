@@ -13,7 +13,7 @@
                         <a href="tel:+23-345-67890" class="top-hotline mr-3"><span>Call Now: </span><span class="h4">823-4565-13456</span></a>
                         
                         @guest
-                            <a class="top-login-link" href="{{ route('login') }}">
+                            <a class="top-login-link btn btn-main btn-round-full px-4 text-white font-weight-bold" href="{{ route('login') }}">
                                 <i class="icofont-sign-in mr-1"></i> Login
                             </a>
                         @else
@@ -77,10 +77,10 @@
                         </div>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('public.blog-sidebar') }}">News</a></li>
-                    @auth <li class="nav-item"><a class="nav-link" href="{{ route('patient.contact') }}">Contact</a></li> @endauth
+                        <li class="nav-item"><a class="nav-link" href="{{ auth()->check() ? route('patient.contact') : route('login') }}">Contact</a></li>
                 </ul>
             </div>
-            <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3">
+            <!-- <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3">
                 <div class="input-group input-group-sm" style="max-width: 230px;">
                     <input type="text" name="keyword" class="form-control" placeholder="Search doctor, blog..." required style="border-radius: 20px 0 0 20px; border-right: none;">
                     <div class="input-group-append">
@@ -89,7 +89,7 @@
                         </button>
                     </div>
                 </div>
-            </form>
+            </form> -->
         </div>
     </nav>
 </header>

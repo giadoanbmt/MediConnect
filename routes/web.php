@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Doctor\DoctorController;
 use App\Http\Controllers\Patient\AppointmentController;
 use App\Http\Controllers\Patient\PatientController;
+use App\Http\Controllers\Patient\ContactController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,7 +70,7 @@ Route::middleware('role:patient')->group(function () {
         Route::get('/confirmation', 'confirmation')->name('patient.confirmation');
         Route::get('/contact', 'contact')->name('patient.contact');
     });
-
+    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
     Route::get('/doctors', [DoctorController::class, 'index'])->name('patient.doctors.index');
     Route::get('/doctors/{id}', [DoctorController::class, 'show'])->name('patient.doctors.show');
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('patient.appointments.index');
@@ -154,4 +156,18 @@ Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::post('/appointments/{id}/approve', [AppointmentController::class, 'approve'])->name('appointments.approve');
     Route::post('/appointments/{id}/reject', [AppointmentController::class, 'reject'])->name('appointments.reject');
+
 });
+
+    // 5. Quản lý ContactQuery
+    Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    // Trang danh sách câu hỏi
+    Route::get('/contact-queries', [AdminContactController::class, 'index'])->name('admin.contact.index');
+    
+    // Trang xem chi tiết / form phản hồi
+    Route::get('/contact-queries/{id}', [AdminContactController::class, 'show'])->name('admin.contact.show');
+    
+    // Action lưu phản hồi / cập nhật trạng thái
+    Route::put('/contact-queries/{id}/respond', [AdminContactController::class, 'respond'])->name('admin.contact.respond');
+});
+
