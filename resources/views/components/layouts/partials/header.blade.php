@@ -11,38 +11,55 @@
                 <div class="col-lg-6">
                     <div class="top-right-bar mt-2 mt-lg-0 d-flex justify-content-lg-end align-items-center">
                         <a href="tel:+23-345-67890" class="top-hotline mr-3"><span>Call Now: </span><span class="h4">823-4565-13456</span></a>
-                        
+
                         @guest
-                            <a class="top-login-link btn btn-main btn-round-full px-4 text-white font-weight-bold" href="{{ route('login') }}">
-                                <i class="icofont-sign-in mr-1"></i> Login
-                            </a>
+                        <a class="top-login-link login-btn" href="{{ route('login') }}">
+                            <i class="icofont-sign-in mr-1"></i>
+                            Login
+                        </a>
                         @else
-                            <div class="dropdown">
-                                <!-- Đã sửa Name thành FullName theo đúng Database mới -->
-                                <a class="top-login-link dropdown-toggle" href="#" id="topUserMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="icofont-user-alt-7 mr-1"></i> {{ optional(auth()->user())->FullName ?? 'My Account' }}
+                        {{-- Thêm position: relative và z-index để menu nổi lên trên --}}
+                        <div class="dropdown user-top-dropdown" style="position: relative; z-index: 1050;">
+                            <a class="top-login-link dropdown-toggle d-inline-flex align-items-center user-account-link"
+                                href="#"
+                                id="topUserMenu"
+                                data-toggle="dropdown"
+                                data-bs-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false">
+
+                                <span class="user-icon">
+                                    <i class="icofont-user-alt-7"></i>
+                                </span>
+
+                                <span class="user-name">
+                                    {{ optional(auth()->user())->FullName ?? 'My Account' }}
+                                </span>
+
+                            </a>
+
+                            {{-- Căn lề phải (right: 0) để không bị đè ra khỏi màn hình --}}
+                            <div class="dropdown-menu dropdown-menu-right dropdown-menu-end shadow border-0 mt-1"
+                                aria-labelledby="topUserMenu"
+                                style="right: 0; left: auto; min-width: 190px;">
+
+                                <a class="dropdown-item py-2" href="#">
+                                    <i class="icofont-ui-user mr-2 text-primary"></i>Edit profile <small class="text-muted">(coming soon)</small>
                                 </a>
-                                
-                                <div class="dropdown-menu dropdown-menu-right shadow-sm border-0 mt-2" aria-labelledby="topUserMenu">
-                                    <!-- Đã đổi <span> thành <a> để click được -->
-                                    <a class="dropdown-item text-muted" href="#">
-                                        <i class="icofont-ui-user mr-2 text-primary"></i>Edit profile <small>(coming soon)</small>
-                                    </a>
-                                    <a class="dropdown-item text-muted" href="#">
-                                        <i class="icofont-calendar mr-2 text-info"></i>My appointments <small>(coming soon)</small>
-                                    </a>
-                                    
-                                    <div class="dropdown-divider"></div>
-                                    
-                                    <!-- Đã fix style cho nút bấm nằm trong form -->
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf 
-                                        <button class="dropdown-item text-danger" type="submit" style="cursor: pointer; background: transparent; border: none; width: 100%; text-align: left;">
-                                            <i class="icofont-logout mr-2"></i>Log out
-                                        </button>
-                                    </form>
-                                </div>
+                                <a class="dropdown-item py-2" href="#">
+                                    <i class="icofont-calendar mr-2 text-info"></i>My appointments <small class="text-muted">(coming soon)</small>
+                                </a>
+
+                                <div class="dropdown-divider my-1"></div>
+
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button class="dropdown-item text-danger py-2" type="submit" style="cursor: pointer; background: transparent; border: none; width: 100%; text-align: left;">
+                                        <i class="icofont-logout mr-2"></i>Log out
+                                    </button>
+                                </form>
                             </div>
+                        </div>
                         @endguest
 
                     </div>
@@ -77,10 +94,10 @@
                         </div>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('public.blog-sidebar') }}">News</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ auth()->check() ? route('patient.contact') : route('login') }}">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ auth()->check() ? route('patient.contact') : route('login') }}">Contact</a></li>
                 </ul>
             </div>
-            <!-- <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3">
+            <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3">
                 <div class="input-group input-group-sm" style="max-width: 230px;">
                     <input type="text" name="keyword" class="form-control" placeholder="Search doctor, blog..." required style="border-radius: 20px 0 0 20px; border-right: none;">
                     <div class="input-group-append">
@@ -89,7 +106,7 @@
                         </button>
                     </div>
                 </div>
-            </form> -->
+            </form>
         </div>
     </nav>
 </header>
