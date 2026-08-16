@@ -6,33 +6,29 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File; // Import File Facade
+use Illuminate\Support\Str;          // Import Str Helper
 
 class ProfileController extends Controller
 {
-    /**
-     * Hiển thị form chỉnh sửa hồ sơ
-     */
     public function edit()
     {
         $user = Auth::user();
         return view('admin.profile.edit', compact('user'));
     }
 
-    /**
-     * Cập nhật thông tin tài khoản Admin
-     */
     public function update(Request $request)
     {
+        /** @var \App\Models\AccountUser $user */ // Gợi ý cho IDE nhận diện Eloquent Model
         $user = Auth::user();
 
         if (!$user) {
-            return redirect()->route('login')->with('error', 'Phiên đăng nhập đã hết hạn.');
+            return redirect()->route('login')->with('error', 'The login session has expired..');
         }
 
-        // Lấy ID để loại trừ trong kiểm tra unique email/username
         $userId = $user->UserId ?? $user->id;
 
-        // 1. Validate thông tin gửi lên
+        // 1. Validate
         $request->validate([
             'name'     => 'required|string|max:100',
             'username' => 'required|string|max:50|unique:AccountUser,Username,' . $userId . ',UserId',
@@ -43,36 +39,45 @@ class ProfileController extends Controller
             'avatar'   => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        // 2. Xử lý Upload Ảnh Avatar nếu có chọn file
-        if ($request->hasFile('avatar')) {
+        // 2. Xử lý Upload Ảnh Avatar (Tên file: timestamp_avatar_userId.ext)
+        if ($request->boolean('remove_avatar')) {
+            // Trường hợp 1: Người dùng chọn XÓA ảnh
+            if ($user->AvatarUrl && File::exists(public_path($user->AvatarUrl))) {
+                File::delete(public_path($user->AvatarUrl));
+            }
+            $user->AvatarUrl = null; // Đặt về NULL để View tự lấy ảnh mặc định
+
+        } elseif ($request->hasFile('avatar')) {
+            // Trường hợp 2: Người dùng UPLOAD ảnh mới
             $file = $request->file('avatar');
-            $fileName = time() . '_' . $file->getClientOriginalName();
+            $fileName = time() . '_avatar_' . $userId . '.' . $file->getClientOriginalExtension();
 
-            // Di chuyển file vào public/uploads/avatars/
-            $file->move(public_path('uploads/avatars'), $fileName);
-
-            // Xóa ảnh cũ nếu tồn tại
-            if ($user->AvatarUrl && file_exists(public_path($user->AvatarUrl))) {
-                @unlink(public_path($user->AvatarUrl));
+            $destinationPath = public_path('uploads/avatars');
+            if (!File::exists($destinationPath)) {
+                File::makeDirectory($destinationPath, 0755, true);
             }
 
-            // Gán đường dẫn ảnh mới
+            // Xóa ảnh cũ trước khi lưu ảnh mới
+            if ($user->AvatarUrl && File::exists(public_path($user->AvatarUrl))) {
+                File::delete(public_path($user->AvatarUrl));
+            }
+
+            $file->move($destinationPath, $fileName);
             $user->AvatarUrl = '/uploads/avatars/' . $fileName;
         }
 
-        // 3. Cập nhật các trường thông tin khác
+        // 3. Cập nhật thông tin khác
         $user->FullName = $request->input('name');
         $user->Username = $request->input('username');
         $user->Email    = $request->input('email');
         $user->Gender   = $request->input('gender');
         $user->Address  = $request->input('address');
 
-        // Cập nhật mật khẩu nếu có nhập
         if ($request->filled('password')) {
             $user->Password = Hash::make($request->input('password'));
         }
 
-        // 4. Lưu lại vào Database
+        // 4. Lưu lại
         $user->save();
 
         return redirect()->back()->with('success', 'Profile updated successfully!');

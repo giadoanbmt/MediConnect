@@ -61,9 +61,19 @@
                             <i class="fa-solid fa-camera mr-2 text-slate-500"></i> Change Avatar
                         </label>
                         <input type="file" id="avatar" name="avatar" accept="image/*" class="hidden" onchange="previewImage(event)">
-                        <p class="text-xs text-slate-400">JPG, PNG, GIF or WEBP. Max size 2MB.</p>
+                        <p class="text-xs text-slate-400">JPG, PNG, GIF or WEBP.</p>
+                        @if($user->AvatarUrl)
+                        <div class="mt-2 flex items-center space-x-2">
+                            <input type="checkbox" id="remove_avatar" name="remove_avatar" value="1" class="rounded text-red-600 border-slate-300 focus:ring-red-500">
+                            <label for="remove_avatar" class="text-xs font-semibold text-red-600 cursor-pointer">
+                                <i class="fa-solid fa-trash-can mr-1"></i> Delete current avatar
+                            </label>
+                        </div>
+                        @endif
                     </div>
                 </div>
+
+
             </div>
 
             <!-- 1. Full Name (Chỉnh name="name" để khớp với Controller) -->
