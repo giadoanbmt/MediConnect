@@ -150,6 +150,7 @@ Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function
         Route::get('/', 'index')->name('index');             // admin.news.index (/admin/news)
         Route::get('/create', 'create')->name('create');     // admin.news.create
         Route::post('/', 'store')->name('store');           // admin.news.store
+        Route::get('/{id}', 'show')->name('show')->whereNumber('id');         // admin.news.show
         Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');     // admin.news.edit
         Route::put('/{id}', 'update')->name('update')->whereNumber('id');     // admin.news.update
         Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id'); // admin.news.destroy
