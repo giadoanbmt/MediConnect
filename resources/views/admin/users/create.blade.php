@@ -5,11 +5,11 @@
     <!-- Header Title -->
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Create New Account</h1>
-            <p class="text-slate-500 text-sm">Add a new Administrator or Patient account to the system</p>
+            <h1 class="text-2xl font-bold text-slate-800">Create New Patient Account</h1>
+            <p class="text-slate-500 text-sm">Add a new Patient account to the system</p>
         </div>
         <a href="{{ route('admin.users.index') }}" class="text-slate-600 hover:text-slate-900 text-sm font-medium flex items-center">
-            <i class="fa-solid fa-arrow-left mr-1.5"></i> Account List
+            <i class="fa-solid fa-arrow-left mr-1.5"></i> Patient List
         </a>
     </div>
 
@@ -29,23 +29,14 @@
         <form action="{{ route('admin.users.store') }}" method="POST" class="space-y-6">
             @csrf
 
-            <!-- 1. Account Role -->
-            <div>
-                <label for="role" class="block text-sm font-semibold text-slate-700 mb-2">Account Role <span class="text-red-500">*</span></label>
-                <select id="role" name="role" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800" required>
-                    <option value="Patient" {{ old('role') == 'Patient' ? 'selected' : '' }}>Patient</option>
-                    <option value="Admin" {{ old('role') == 'Admin' ? 'selected' : '' }}>Administrator</option>
-                </select>
-            </div>
-
-            <!-- 2. Full Name -->
+            <!-- 1. Full Name -->
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Full Name <span class="text-red-500">*</span></label>
                 <input type="text" name="name" value="{{ old('name') }}" placeholder="Enter full name..." required
                     class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
             </div>
 
-            <!-- 3. Username + Gender (Ghép chung 1 hàng 2 cột) -->
+            <!-- 2. Username + Gender -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2">Username <span class="text-red-500">*</span></label>
@@ -63,31 +54,31 @@
                 </div>
             </div>
 
-            <!-- 4. Email Address -->
+            <!-- 3. Email Address -->
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Email Address <span class="text-red-500">*</span></label>
                 <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter email address..." required
                     class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
             </div>
 
-            <!-- 5. Password -->
+            <!-- 4. Password -->
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Password <span class="text-red-500">*</span></label>
                 <input type="password" name="password" placeholder="Enter password..." required
                     class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
             </div>
 
-            <!-- 6. Address -->
+            <!-- 5. Address -->
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Address</label>
                 <input type="text" name="address" value="{{ old('address') }}" placeholder="Enter detailed address..."
                     class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
             </div>
 
-            <!-- 7. Submit Button -->
+            <!-- Submit Button -->
             <div class="flex justify-end pt-4 border-t border-slate-100">
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow transition flex items-center">
-                    <i class="fa-solid fa-user-plus mr-2"></i> Create Account
+                    <i class="fa-solid fa-user-plus mr-2"></i> Create Patient Account
                 </button>
             </div>
         </form>

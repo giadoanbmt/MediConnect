@@ -31,13 +31,6 @@ class AuthController extends Controller
             ->first();
 
         if ($accountUser) {
-            // Kiểm tra trạng thái kích hoạt (1: Active/Online, 0: Inactive/Offline)
-            if (! (bool) $accountUser->IsActive) {
-                return back()
-                    ->withInput($request->only('username', 'remember'))
-                    ->withErrors(['username' => 'Tài khoản này hiện đang bị khóa hoặc ngưng hoạt động.']);
-            }
-
             // Kiểm tra mật khẩu (Hỗ trợ cả Hash và Plain Text cũ)
             $passwordCorrect = password_get_info($accountUser->Password)['algo'] !== 0
                 ? Hash::check($validated['password'], $accountUser->Password)
@@ -46,14 +39,17 @@ class AuthController extends Controller
             if (! $passwordCorrect) {
                 return back()
                     ->withInput($request->only('username', 'remember'))
-                    ->withErrors(['password' => 'Mật khẩu không chính xác.']);
+                    ->withErrors(['password' => 'Password is incorrect.']);
             }
 
             // Tự động Hash lại mật khẩu cũ nếu phát hiện là Plain Text
             if (password_get_info($accountUser->Password)['algo'] === 0) {
                 $accountUser->Password = Hash::make($validated['password']);
-                $accountUser->save();
             }
+
+            // Cập nhật trạng thái Hoạt động (Online = 1) khi đăng nhập thành công
+            $accountUser->IsActive = 1;
+            $accountUser->save();
 
             Auth::loginUsingId($accountUser->getKey());
             $request->session()->regenerate();
@@ -77,7 +73,7 @@ class AuthController extends Controller
         if (! $doctor) {
             return back()
                 ->withInput($request->only('username', 'remember'))
-                ->withErrors(['username' => 'Tài khoản không tồn tại trên hệ thống.']);
+                ->withErrors(['username' => 'Account does not exist in the system.']);
         }
 
         // Kiểm tra mật khẩu Doctor
@@ -88,7 +84,7 @@ class AuthController extends Controller
         if (! $passwordCorrect) {
             return back()
                 ->withInput($request->only('username', 'remember'))
-                ->withErrors(['password' => 'Mật khẩu không chính xác.']);
+                ->withErrors(['password' => 'Password is incorrect.']);
         }
 
         // Tự động Hash lại mật khẩu Doctor nếu là Plain Text
@@ -134,9 +130,9 @@ class AuthController extends Controller
             ],
         ]);
 
-        // Đăng ký người dùng mới
+        // Đăng ký người dùng mới và tự động kích hoạt trạng thái Online (IsActive = 1) do thực hiện tự động đăng nhập ngay sau đó
         $user = AccountUser::create([
-            'FullName' => $validated['name'], // Đã sửa từ 'Name' thành 'FullName'
+            'FullName' => $validated['name'],
             'Username' => $validated['username'],
             'Email' => $validated['email'],
             'Password' => Hash::make($validated['password']),
@@ -152,6 +148,7 @@ class AuthController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
+        // Đăng xuất cho Bác sĩ
         if (
             $request->session()->has('auth_type')
             && $request->session()->get('auth_type') === 'doctor'
@@ -166,7 +163,12 @@ class AuthController extends Controller
             $request->session()->regenerateToken();
 
             return redirect('/login')
-                ->with('status', 'Đã đăng xuất thành công.');
+                ->with('status', 'Logout successful. You have been logged out.');
+        }
+
+        // Đăng xuất cho Admin & Patient: Chuyển IsActive về 0 (Offline)
+        if (Auth::check()) {
+            AccountUser::where('UserId', Auth::id())->update(['IsActive' => 0]);
         }
 
         Auth::logout();
@@ -175,6 +177,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('public.home')
-            ->with('status', 'Đã đăng xuất thành công.');
+            ->with('status', 'Logout successful. You have been logged out.');
     }
 }

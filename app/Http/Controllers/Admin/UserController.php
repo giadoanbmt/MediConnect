@@ -3,114 +3,117 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AccountUser;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    // 1. Danh sách Users (Admin & Patient)
+    /**
+     * Hiển thị danh sách Bệnh nhân (Role = 2)
+     */
     public function index()
     {
-        $users = DB::table('AccountUser')
-            ->whereIn('Role', [1, 2]) // Lấy cả Admin (1) và Patient (2)
-            ->whereNull('DeletedAt')
+        $users = AccountUser::where('Role', 2)
             ->orderBy('CreatedAt', 'asc')
             ->paginate(15);
 
         return view('admin.users.index', compact('users'));
     }
 
-    // 2. Form tạo tài khoản
+    /**
+     * Form tạo tài khoản Bệnh nhân mới
+     */
     public function create()
     {
         return view('admin.users.create');
     }
 
-    // 3. Xử lý lưu tài khoản mới
+    /**
+     * Lưu thông tin Bệnh nhân mới (Cố định Role = 2)
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'role'     => 'required|in:Admin,Patient',
-            'name'     => 'required|string|max:100',
-            'username' => 'required|string|max:50|unique:AccountUser,Username',
-            'email'    => 'required|email|max:100|unique:AccountUser,Email',
-            'password' => 'required|string|min:6',
-            'gender'   => 'nullable|string|max:10',
-            'address'  => 'nullable|string|max:255',
+        $validated = $request->validate([
+            'name'     => ['required', 'string', 'max:100'],
+            'username' => ['required', 'string', 'max:50', Rule::unique('AccountUser', 'Username')],
+            'email'    => ['required', 'string', 'email', 'max:100', Rule::unique('AccountUser', 'Email')],
+            'password' => ['required', 'string', 'min:6'],
+            'gender'   => ['nullable', 'string'],
+            'address'  => ['nullable', 'string', 'max:255'],
         ]);
 
-        $roleValue = ($request->input('role') === 'Admin') ? 1 : 2;
-
-        DB::table('AccountUser')->insert([
-            'FullName'  => $request->input('name'),
-            'Username'  => $request->input('username'),
-            'Email'     => $request->input('email'),
-            'Password'  => Hash::make($request->input('password')),
-            'Gender'    => $request->input('gender'),
-            'Address'   => $request->input('address'),
-            'Role'      => $roleValue,
-            'IsActive'  => 1,
-            'CreatedAt' => now(),
-            'UpdatedAt' => now(),
+        AccountUser::create([
+            'FullName' => $validated['name'],
+            'Username' => $validated['username'],
+            'Email'    => $validated['email'],
+            'Password' => Hash::make($validated['password']),
+            'Gender'   => $validated['gender'] ?? null,
+            'Address'  => $validated['address'] ?? null,
+            'Role'     => 2, // Cố định tạo tài khoản Patient
+            'IsActive' => 0,
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'Create account successfully!');
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Patient account created successfully.');
     }
 
-    // 4. Form sửa tài khoản
+    /**
+     * Form chỉnh sửa tài khoản Bệnh nhân
+     */
     public function edit($id)
     {
-        $user = DB::table('AccountUser')
-            ->where('UserId', $id)
-            ->whereNull('DeletedAt')
-            ->first();
-
-        if (!$user) {
-            return redirect()->route('admin.users.index')->with('error', 'Account not found!');
-        }
+        // Chỉ cho phép tìm kiếm tài khoản có Role = 2
+        $user = AccountUser::where('Role', 2)->findOrFail($id);
 
         return view('admin.users.edit', compact('user'));
     }
 
-    // 5. Cập nhật tài khoản
+    /**
+     * Cập nhật thông tin Bệnh nhân
+     */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'role'     => 'required|in:Admin,Patient',
-            'name'     => 'required|string|max:100',
-            'username' => 'required|string|max:50|unique:AccountUser,Username,' . $id . ',UserId',
-            'email'    => 'required|email|max:100|unique:AccountUser,Email,' . $id . ',UserId',
-            'gender'   => 'nullable|string|max:10',
-            'address'  => 'nullable|string|max:255',
+        $user = AccountUser::where('Role', 2)->findOrFail($id);
+
+        $validated = $request->validate([
+            'name'     => ['required', 'string', 'max:100'],
+            'username' => ['required', 'string', 'max:50', Rule::unique('AccountUser', 'Username')->ignore($user->UserId, 'UserId')],
+            'email'    => ['required', 'string', 'email', 'max:100', Rule::unique('AccountUser', 'Email')->ignore($user->UserId, 'UserId')],
+            'password' => ['nullable', 'string', 'min:6'],
+            'gender'   => ['nullable', 'string'],
+            'address'  => ['nullable', 'string', 'max:255'],
         ]);
 
-        $roleValue = ($request->input('role') === 'Admin') ? 1 : 2;
-
-        $data = [
-            'FullName'  => $request->input('name'),
-            'Username'  => $request->input('username'),
-            'Email'     => $request->input('email'),
-            'Gender'    => $request->input('gender'),
-            'Address'   => $request->input('address'),
-            'Role'      => $roleValue,
-            'UpdatedAt' => now(),
+        $updateData = [
+            'FullName' => $validated['name'],
+            'Username' => $validated['username'],
+            'Email'    => $validated['email'],
+            'Gender'   => $validated['gender'] ?? null,
+            'Address'  => $validated['address'] ?? null,
+            'Role'     => 2, // Đảm bảo giữ vững Role = 2
         ];
 
-        if ($request->filled('password')) {
-            $data['Password'] = Hash::make($request->input('password'));
+        if (!empty($validated['password'])) {
+            $updateData['Password'] = Hash::make($validated['password']);
         }
 
-        DB::table('AccountUser')->where('UserId', $id)->update($data);
+        $user->update($updateData);
 
-        return redirect()->route('admin.users.index')->with('success', 'Update account successfully!');
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Patient account updated successfully.');
     }
 
-    // 6. Xóa mềm tài khoản
+    /**
+     * Xóa tài khoản Bệnh nhân
+     */
     public function destroy($id)
     {
-        DB::table('AccountUser')->where('UserId', $id)->update(['DeletedAt' => now()]);
+        $user = AccountUser::where('Role', 2)->findOrFail($id);
+        $user->delete();
 
-        return redirect()->route('admin.users.index')->with('success', 'Delete account successfully!');
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Patient account deleted successfully.');
     }
 }

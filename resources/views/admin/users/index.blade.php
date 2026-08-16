@@ -5,11 +5,11 @@
     <!-- Header Title & Button -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">User Management</h1>
-            <p class="text-slate-500 text-sm">List of Administrators and Patients in the system</p>
+            <h1 class="text-2xl font-bold text-slate-800">Patient Management</h1>
+            <p class="text-slate-500 text-sm">List of registered Patients in the system</p>
         </div>
         <a href="{{ route('admin.users.create') }}" class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow transition">
-            <i class="fa-solid fa-user-plus mr-2"></i> Create New Account
+            <i class="fa-solid fa-user-plus mr-2"></i> Create New Patient
         </a>
     </div>
 
@@ -28,9 +28,8 @@
     </div>
     @endif
 
-    <!-- Bảng danh sách Users -->
+    <!-- Bảng danh sách Bệnh nhân -->
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <!-- Scrollbar wrapper khi màn hình nhỏ hoặc dữ liệu rộng -->
         <div class="overflow-x-auto max-w-full">
             <table class="w-full text-left border-collapse whitespace-nowrap">
                 <thead>
@@ -41,7 +40,6 @@
                         <th class="px-6 py-4">Email Address</th>
                         <th class="px-6 py-4 text-center">Gender</th>
                         <th class="px-6 py-4">Address</th>
-                        <th class="px-6 py-4 text-center">Role</th>
                         <th class="px-6 py-4 text-center">Created At</th>
                         <th class="px-6 py-4 text-center">Actions</th>
                     </tr>
@@ -49,7 +47,6 @@
                 <tbody class="divide-y divide-slate-200 text-sm text-slate-700">
                     @forelse($users as $user)
                     <tr class="hover:bg-slate-50/50 transition">
-                        <!-- Số thứ tự tăng dần theo trang -->
                         <td class="px-6 py-4 font-medium text-slate-500 text-center">
                             {{ $users->firstItem() + $loop->index }}
                         </td>
@@ -80,18 +77,6 @@
                             {{ $user->Address ?? 'N/A' }}
                         </td>
 
-                        <td class="px-6 py-4 text-center">
-                            @if($user->Role == 1)
-                            <span class="px-2.5 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full inline-flex items-center">
-                                <i class="fa-solid fa-user-shield mr-1"></i> Administrator
-                            </span>
-                            @else
-                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-full inline-flex items-center">
-                                <i class="fa-solid fa-user mr-1"></i> Patient
-                            </span>
-                            @endif
-                        </td>
-
                         <td class="px-6 py-4 text-center text-xs text-slate-500">
                             {{ $user->CreatedAt ? \Carbon\Carbon::parse($user->CreatedAt)->format('d/m/Y') : 'N/A' }}
                         </td>
@@ -101,7 +86,7 @@
                                 <a href="{{ route('admin.users.edit', $user->UserId) }}" class="text-blue-600 hover:text-blue-800 font-medium text-xs flex items-center">
                                     <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
                                 </a>
-                                <form action="{{ route('admin.users.destroy', $user->UserId) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this account?')" class="inline">
+                                <form action="{{ route('admin.users.destroy', $user->UserId) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this patient account?')" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:text-red-800 font-medium text-xs flex items-center">
@@ -113,9 +98,9 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="px-6 py-8 text-center text-slate-400">
+                        <td colspan="8" class="px-6 py-8 text-center text-slate-400">
                             <i class="fa-solid fa-user-slash text-2xl mb-2 block"></i>
-                            There are no user accounts in the system.
+                            There are no patient accounts in the system.
                         </td>
                     </tr>
                     @endforelse
@@ -123,7 +108,6 @@
             </table>
         </div>
 
-        <!-- Links Phân Trang (15 items/trang) -->
         @if($users->hasPages())
         <div class="p-4 border-t border-slate-200 bg-slate-50">
             {{ $users->links() }}
