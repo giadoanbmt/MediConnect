@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto space-y-6">
-    <!-- Header Title & Button -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Doctor Management</h1>
@@ -13,7 +12,6 @@
         </a>
     </div>
 
-    <!-- Alert Thông báo -->
     @if(session('success'))
     <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-lg text-sm flex items-center">
         <i class="fa-solid fa-circle-check mr-2 text-emerald-500"></i>
@@ -28,9 +26,7 @@
     </div>
     @endif
 
-    <!-- Bảng danh sách Bác sĩ -->
     <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <!-- Thanh cuộn ngang khi bảng quá rộng -->
         <div class="overflow-x-auto max-w-full">
             <table class="w-full text-left border-collapse whitespace-nowrap">
                 <thead>
@@ -44,15 +40,15 @@
                         <th class="px-6 py-4">Specialization</th>
                         <th class="px-6 py-4">Clinic Room</th>
                         <th class="px-6 py-4">Qualifications</th>
+                        <th class="px-6 py-4">District</th>
                         <th class="px-6 py-4">City</th>
-                        <th class="px-6 py-4">Address</th>
+                        <th class="px-6 py-4">Home Address</th>
                         <th class="px-6 py-4 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 text-sm text-slate-700">
                     @forelse($doctors as $doctor)
                     <tr class="hover:bg-slate-50/50 transition">
-                        <!-- Số thứ tự tính theo phân trang -->
                         <td class="px-6 py-4 font-medium text-slate-500 text-center">
                             {{ $doctors->firstItem() + $loop->index }}
                         </td>
@@ -105,6 +101,12 @@
                             {{ $doctor->Qualifications ?? 'N/A' }}
                         </td>
 
+                        <!-- Cột DistrictName -->
+                        <td class="px-6 py-4 text-slate-600">
+                            {{ $doctor->DistrictName ?? 'N/A' }}
+                        </td>
+
+                        <!-- Cột CityName -->
                         <td class="px-6 py-4 text-slate-600">
                             {{ $doctor->CityName ?? 'N/A' }}
                         </td>
@@ -130,7 +132,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="12" class="px-6 py-8 text-center text-slate-400">
+                        <td colspan="13" class="px-6 py-8 text-center text-slate-400">
                             <i class="fa-solid fa-user-doctor text-2xl mb-2 block"></i>
                             There are no doctor accounts in the system.
                         </td>
@@ -140,7 +142,6 @@
             </table>
         </div>
 
-        <!-- Links Phân Trang (15 items/trang) -->
         @if($doctors->hasPages())
         <div class="p-4 border-t border-slate-200 bg-slate-50">
             {{ $doctors->links() }}

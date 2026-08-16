@@ -32,22 +32,22 @@
 
             <!-- 1. Full Name -->
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">Full Name <span class="text-red-500">*</span></label>
-                <input type="text" name="name" value="{{ old('name', $user->FullName) }}" placeholder="Enter full name..." required
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Patient's Full Name <span class="text-red-500">*</span></label>
+                <input type="text" name="name" value="{{ old('name', $user->FullName) }}" placeholder="Enter patient's full name..." required
                     class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
             </div>
 
             <!-- 2. Email & Username -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Email Address <span class="text-red-500">*</span></label>
-                    <input type="email" name="email" value="{{ old('email', $user->Email) }}" placeholder="Enter email address..." required
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Patient's Email Address <span class="text-red-500">*</span></label>
+                    <input type="email" name="email" value="{{ old('email', $user->Email) }}" placeholder="Enter patient's email address..." required
                         class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Username <span class="text-red-500">*</span></label>
-                    <input type="text" name="username" value="{{ old('username', $user->Username) }}" placeholder="Enter username..." required
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Patient's Username <span class="text-red-500">*</span></label>
+                    <input type="text" name="username" value="{{ old('username', $user->Username) }}" placeholder="Enter patient's username..." required
                         class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                 </div>
             </div>
@@ -64,7 +64,7 @@
             <!-- 4. Gender & Address -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Gender</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Patient's Gender</label>
                     @php $currentGender = old('gender', $user->Gender); @endphp
                     <select name="gender" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800">
                         <option value="">-- Select Gender --</option>
@@ -74,7 +74,7 @@
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Address</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Patient's Address</label>
                     <input type="text" name="address" value="{{ old('address', $user->Address) }}" placeholder="Enter detailed address..."
                         class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                 </div>

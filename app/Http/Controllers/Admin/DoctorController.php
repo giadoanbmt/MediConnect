@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 
 class DoctorController extends Controller
 {
-    // 1. Danh sách Bác sĩ
+    // 1. Danh sách Bác sĩ - Sắp xếp tăng dần (ASC) & Lấy DistrictName, CityName
     public function index()
     {
         $doctors = DB::table('Doctor')
@@ -22,9 +22,10 @@ class DoctorController extends Controller
                 'Specialization.SpecializationName',
                 'ClinicRoom.RoomName',
                 'ClinicRoom.RoomNumber',
-                'City.CityName'
+                'City.CityName',
+                'City.DistrictName'
             )
-            ->orderBy('Doctor.CreatedAt', 'desc')
+            ->orderBy('Doctor.DoctorId', 'asc') // Sắp xếp tăng dần theo ID
             ->paginate(15);
 
         return view('admin.doctors.index', compact('doctors'));
@@ -33,9 +34,14 @@ class DoctorController extends Controller
     // 2. Form tạo Bác sĩ
     public function create()
     {
-        $cities = DB::table('City')->get();
-        $specializations = DB::table('Specialization')->get();
-        $rooms = DB::table('ClinicRoom')->where('IsActive', 1)->get();
+        // Sắp xếp địa điểm theo Quận/Huyện rồi đến Thành phố
+        $cities = DB::table('City')
+            ->orderBy('DistrictName', 'asc')
+            ->orderBy('CityName', 'asc')
+            ->get();
+
+        $specializations = DB::table('Specialization')->orderBy('SpecializationName', 'asc')->get();
+        $rooms = DB::table('ClinicRoom')->where('IsActive', 1)->orderBy('RoomNumber', 'asc')->get();
 
         return view('admin.doctors.create', compact('cities', 'specializations', 'rooms'));
     }
@@ -44,17 +50,17 @@ class DoctorController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'             => 'required|string|max:100',
-            'username'         => 'required|string|max:50|unique:Doctor,Username',
-            'email'            => 'required|email|max:100|unique:Doctor,Email',
-            'password'         => 'required|string|min:6',
-            'phone_number'     => 'required|string|max:20',
-            'gender'           => 'nullable|string|max:10',
-            'qualifications'   => 'nullable|string|max:100',
-            'specialization_id' => 'nullable|integer',
-            'city_id'          => 'nullable|integer',
-            'room_id'          => 'nullable|integer',
-            'address'          => 'nullable|string|max:255',
+            'name'              => 'required|string|max:100',
+            'username'          => 'required|string|max:50|unique:Doctor,Username',
+            'email'             => 'required|email|max:100|unique:Doctor,Email',
+            'password'          => 'required|string|min:6',
+            'phone_number'      => 'required|string|max:20',
+            'gender'            => 'nullable|string|max:10',
+            'qualifications'    => 'nullable|string|max:100',
+            'specialization_id'  => 'nullable|integer',
+            'city_id'           => 'nullable|integer',
+            'room_id'           => 'nullable|integer',
+            'address'           => 'nullable|string|max:255',
         ]);
 
         DB::table('Doctor')->insert([
@@ -73,7 +79,7 @@ class DoctorController extends Controller
             'UpdatedAt'        => now(),
         ]);
 
-        return redirect()->route('admin.doctors.index')->with('success', 'Thêm bác sĩ thành công!');
+        return redirect()->route('admin.doctors.index')->with('success', 'Add doctor successfully!');
     }
 
     // 4. Form sửa Bác sĩ
@@ -85,12 +91,16 @@ class DoctorController extends Controller
             ->first();
 
         if (!$doctor) {
-            return redirect()->route('admin.doctors.index')->with('error', 'Không tìm thấy bác sĩ!');
+            return redirect()->route('admin.doctors.index')->with('error', 'Doctor not found!');
         }
 
-        $cities = DB::table('City')->get();
-        $specializations = DB::table('Specialization')->get();
-        $rooms = DB::table('ClinicRoom')->where('IsActive', 1)->get();
+        $cities = DB::table('City')
+            ->orderBy('DistrictName', 'asc')
+            ->orderBy('CityName', 'asc')
+            ->get();
+
+        $specializations = DB::table('Specialization')->orderBy('SpecializationName', 'asc')->get();
+        $rooms = DB::table('ClinicRoom')->where('IsActive', 1)->orderBy('RoomNumber', 'asc')->get();
 
         return view('admin.doctors.edit', compact('doctor', 'cities', 'specializations', 'rooms'));
     }
@@ -125,7 +135,7 @@ class DoctorController extends Controller
 
         DB::table('Doctor')->where('DoctorId', $id)->update($data);
 
-        return redirect()->route('admin.doctors.index')->with('success', 'Cập nhật bác sĩ thành công!');
+        return redirect()->route('admin.doctors.index')->with('success', 'Update doctor information successfully!');
     }
 
     // 6. Xóa mềm Bác sĩ
@@ -133,6 +143,6 @@ class DoctorController extends Controller
     {
         DB::table('Doctor')->where('DoctorId', $id)->update(['DeletedAt' => now()]);
 
-        return redirect()->route('admin.doctors.index')->with('success', 'Xóa bác sĩ thành công!');
+        return redirect()->route('admin.doctors.index')->with('success', 'Delete account doctor successfully!');
     }
 }

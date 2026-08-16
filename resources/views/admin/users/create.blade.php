@@ -31,21 +31,21 @@
 
             <!-- 1. Full Name -->
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">Full Name <span class="text-red-500">*</span></label>
-                <input type="text" name="name" value="{{ old('name') }}" placeholder="Enter full name..." required
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Patient's Full Name <span class="text-red-500">*</span></label>
+                <input type="text" name="name" value="{{ old('name') }}" placeholder="Enter patient's full name..." required
                     class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
             </div>
 
             <!-- 2. Username + Gender -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Username <span class="text-red-500">*</span></label>
-                    <input type="text" name="username" value="{{ old('username') }}" placeholder="Enter username..." required
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Patient's Username <span class="text-red-500">*</span></label>
+                    <input type="text" name="username" value="{{ old('username') }}" placeholder="Enter patient's username..." required
                         class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Gender</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Patient's Gender</label>
                     <select name="gender" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800">
                         <option value="">-- Select Gender --</option>
                         <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
@@ -56,8 +56,8 @@
 
             <!-- 3. Email Address -->
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">Email Address <span class="text-red-500">*</span></label>
-                <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter email address..." required
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Patient's Email Address <span class="text-red-500">*</span></label>
+                <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter patient's email address..." required
                     class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
             </div>
 
@@ -70,8 +70,8 @@
 
             <!-- 5. Address -->
             <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-2">Address</label>
-                <input type="text" name="address" value="{{ old('address') }}" placeholder="Enter detailed address..."
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Patient's Address</label>
+                <input type="text" name="address" value="{{ old('address') }}" placeholder="Enter patient's detailed address..."
                     class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
             </div>
 
