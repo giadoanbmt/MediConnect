@@ -1,1111 +1,832 @@
-<x-layouts.doctor title="MediConnect - Doctor Profile">
+@extends('doctor.layouts.dashboard')
 
-    <style>
+@section('title', 'MediConnect - Doctor Profile')
+
+@section('content')
+
+<style>
+    .doctor-profile {
+        --profile-card: #ffffff;
+        --profile-input: #ffffff;
+        --profile-text: #172b50;
+        --profile-muted: #6c7a89;
+        --profile-border: #d8e3ef;
+        --profile-primary: #0088cc;
+        --profile-primary-dark: #223b6b;
+
+        width: 100%;
+        color: var(--profile-text);
+        box-sizing: border-box;
+    }
+
+    @media (prefers-color-scheme: dark) {
         .doctor-profile {
-            --profile-card: #ffffff;
-            --profile-input: #ffffff;
-            --profile-text: #172b50;
-            --profile-muted: #6c7a89;
-            --profile-border: #d8e3ef;
-            --profile-primary: #0088cc;
+            --profile-card: #16263d;
+            --profile-input: #101a29;
+            --profile-text: #f2f6fb;
+            --profile-muted: #aebdd0;
+            --profile-border: #30445f;
+            --profile-primary: #3da9e0;
             --profile-primary-dark: #223b6b;
-
-            width: 100%;
-            max-width: 100%;
-            color: var(--profile-text);
-            box-sizing: border-box;
         }
+    }
 
-        @media (prefers-color-scheme: dark) {
-            .doctor-profile {
-                --profile-card: #16263d;
-                --profile-input: #101a29;
-                --profile-text: #f2f6fb;
-                --profile-muted: #aebdd0;
-                --profile-border: #30445f;
-                --profile-primary: #3da9e0;
-                --profile-primary-dark: #223b6b;
-            }
-        }
+    .doctor-profile-header {
+        margin-bottom: 28px;
+    }
 
+    .doctor-profile-header h2 {
+        margin: 0;
+        color: var(--profile-primary);
+        font-size: 32px;
+        font-weight: 700;
+    }
 
-        /* Header */
+    .doctor-profile-header p {
+        margin: 5px 0 0;
+        color: var(--profile-muted);
+    }
 
-        .doctor-profile-header {
-            margin-bottom: 28px;
-        }
+    .doctor-profile-card {
+        width: 100%;
+        padding: 32px;
+        background: var(--profile-card);
+        border: 1px solid var(--profile-border);
+        border-radius: 10px;
+        box-shadow: 0 4px 18px rgba(0,0,0,.08);
+        box-sizing: border-box;
+    }
 
+    .profile-avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        width: 100%;
+        padding-bottom: 28px;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--profile-border);
+    }
+
+    .avatar-wrapper {
+        position: relative;
+        width: 160px;
+        height: 160px;
+        flex: 0 0 160px;
+    }
+
+    .avatar-preview {
+        display: block;
+        width: 160px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid var(--profile-primary);
+        background: #eef4f8;
+    }
+
+    .avatar-camera {
+        position: absolute;
+        right: -2px;
+        bottom: 2px;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--profile-primary);
+        color: #fff;
+        border: 3px solid var(--profile-card);
+        cursor: pointer;
+        font-size: 16px;
+        transition: .2s;
+    }
+
+    .avatar-camera:hover {
+        transform: scale(1.08);
+        background: var(--profile-primary-dark);
+    }
+
+    .avatar-info {
+        min-width: 0;
+    }
+
+    .avatar-info h3 {
+        margin-bottom: 8px;
+        color: var(--profile-text);
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .avatar-info p {
+        margin-bottom: 8px;
+        color: var(--profile-muted);
+    }
+
+    .avatar-help {
+        color: var(--profile-muted);
+        font-size: 13px;
+    }
+
+    .profile-row,
+    .profile-select-row {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        margin-bottom: 24px;
+    }
+
+    .profile-row > [class*="col-"],
+    .profile-select-row > [class*="col-"] {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .profile-field {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .profile-field label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--profile-text);
+        font-weight: 600;
+    }
+
+    .profile-field .form-control {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: 54px;
+        padding: 0 15px;
+        background: var(--profile-input);
+        color: var(--profile-text);
+        border: 1px solid var(--profile-border);
+        border-radius: 7px;
+        box-sizing: border-box;
+    }
+
+    .profile-field textarea.form-control {
+        height: auto;
+        min-height: 120px;
+        padding-top: 14px;
+        resize: vertical;
+    }
+
+    .profile-field .form-control:focus {
+        background: var(--profile-input);
+        color: var(--profile-text);
+        border-color: var(--profile-primary);
+        box-shadow: 0 0 0 2px rgba(0,136,204,.12);
+    }
+
+    .profile-field .form-control:disabled {
+        opacity: .75;
+        cursor: not-allowed;
+    }
+
+    .profile-help {
+        display: block;
+        margin-top: 7px;
+        color: var(--profile-muted);
+        font-size: 13px;
+    }
+
+    .profile-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 8px;
+    }
+
+    .profile-actions .btn {
+        min-width: 140px;
+        height: 52px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .btn-save {
+        background: var(--profile-primary);
+        border: 1px solid var(--profile-primary);
+        color: #fff;
+    }
+
+    .btn-save:hover {
+        background: var(--profile-primary-dark);
+        border-color: var(--profile-primary-dark);
+        color: #fff;
+    }
+
+    .btn-reset {
+        background: transparent;
+        border: 1px solid var(--profile-border);
+        color: var(--profile-text);
+    }
+
+    .btn-reset:hover {
+        background: rgba(0,136,204,.08);
+        color: var(--profile-text);
+    }
+
+    @media (max-width: 767px) {
         .doctor-profile-header h2 {
-            margin: 0;
-            color: var(--profile-primary);
-            font-size: 32px;
-            font-weight: 700;
+            font-size: 26px;
         }
 
         .doctor-profile-header p {
-            margin: 5px 0 0;
-            color: var(--profile-muted);
+            font-size: 14px;
         }
-
-
-        /* Card */
 
         .doctor-profile-card {
-            width: 100%;
-            padding: 32px;
-
-            background: var(--profile-card);
-
-            border: 1px solid var(--profile-border);
-            border-radius: 10px;
-
-            box-shadow:
-                0 4px 18px rgba(0, 0, 0, .08);
-
-            box-sizing: border-box;
+            padding: 20px 15px;
         }
 
-
-        /* Avatar */
-
         .profile-avatar-section {
-            display: flex;
-            align-items: center;
-
-            gap: 30px;
-
-            width: 100%;
-
-            padding-bottom: 28px;
-            margin-bottom: 30px;
-
-            border-bottom: 1px solid var(--profile-border);
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .avatar-wrapper {
-            position: relative;
-
-            width: 160px;
-            height: 160px;
-
-            flex: 0 0 160px;
+            width: 140px;
+            height: 140px;
+            flex-basis: 140px;
         }
 
         .avatar-preview {
-            display: block;
-
-            width: 160px;
-            height: 160px;
-
-            object-fit: cover;
-
-            border-radius: 50%;
-
-            border: 3px solid var(--profile-primary);
-
-            background: #eef4f8;
+            width: 140px;
+            height: 140px;
         }
 
-        .avatar-camera {
-            position: absolute;
-
-            right: -2px;
-            bottom: 2px;
-
-            width: 42px;
-            height: 42px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            border-radius: 50%;
-
-            background: var(--profile-primary);
-            color: #fff;
-
-            border: 3px solid var(--profile-card);
-
-            cursor: pointer;
-
-            font-size: 16px;
-
-            transition: .2s;
-        }
-
-        .avatar-camera:hover {
-            transform: scale(1.08);
-
-            background: var(--profile-primary-dark);
-        }
-
-        .avatar-info {
-            min-width: 0;
-        }
-
-        .avatar-info h3 {
-            margin-bottom: 8px;
-
-            color: var(--profile-text);
-
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .avatar-info p {
-            margin-bottom: 8px;
-
-            color: var(--profile-muted);
-        }
-
-        .avatar-help {
-            color: var(--profile-muted);
-
-            font-size: 13px;
-        }
-
-
-        /* Form */
-
-        .profile-row,
-        .profile-select-row {
-            width: 100%;
-
+        .doctor-profile-card .row {
             margin-left: 0 !important;
             margin-right: 0 !important;
-
-            margin-bottom: 24px;
         }
 
-        .profile-row>[class*="col-"],
-        .profile-select-row>[class*="col-"] {
-            padding-left: 10px;
-            padding-right: 10px;
+        .doctor-profile-card .row > [class*="col-"] {
+            padding-left: 0;
+            padding-right: 0;
         }
-
-        .profile-field {
-            width: 100%;
-            min-width: 0;
-        }
-
-        .profile-field label {
-            display: block;
-
-            margin-bottom: 8px;
-
-            color: var(--profile-text);
-
-            font-weight: 600;
-        }
-
-        .profile-field .form-control {
-            display: block;
-
-            width: 100%;
-            max-width: 100%;
-
-            height: 54px;
-
-            padding: 0 15px;
-
-            background: var(--profile-input);
-            color: var(--profile-text);
-
-            border: 1px solid var(--profile-border);
-            border-radius: 7px;
-
-            box-sizing: border-box;
-        }
-
-        .profile-field textarea.form-control {
-            height: auto;
-
-            min-height: 120px;
-
-            padding-top: 14px;
-
-            resize: vertical;
-        }
-
-        .profile-field .form-control:focus {
-            background: var(--profile-input);
-            color: var(--profile-text);
-
-            border-color: var(--profile-primary);
-
-            box-shadow:
-                0 0 0 2px rgba(0, 136, 204, .12);
-        }
-
-        .profile-field .form-control:disabled {
-            opacity: .75;
-
-            cursor: not-allowed;
-        }
-
-        .profile-help {
-            display: block;
-
-            margin-top: 7px;
-
-            color: var(--profile-muted);
-
-            font-size: 13px;
-        }
-
-
-        /* Buttons */
 
         .profile-actions {
-            display: flex;
-            align-items: center;
-
-            gap: 12px;
-
-            padding-top: 8px;
+            flex-direction: column;
+            align-items: stretch;
         }
 
         .profile-actions .btn {
-            min-width: 140px;
-            height: 52px;
-
-            border-radius: 6px;
-
-            font-weight: 600;
+            width: 100%;
         }
+    }
+</style>
 
-        .btn-save {
-            background: var(--profile-primary);
+<div class="doctor-profile">
 
-            border: 1px solid var(--profile-primary);
+    <div class="doctor-profile-header">
+        <h2>Doctor Profile</h2>
+        <p>View and update personal information.</p>
+    </div>
 
-            color: #fff;
-        }
-
-        .btn-save:hover {
-            background: var(--profile-primary-dark);
-
-            border-color: var(--profile-primary-dark);
-
-            color: #fff;
-        }
-
-        .btn-reset {
-            background: transparent;
-
-            border: 1px solid var(--profile-border);
-
-            color: var(--profile-text);
-        }
-
-        .btn-reset:hover {
-            background: rgba(0, 136, 204, .08);
-
-            color: var(--profile-text);
-        }
-
-
-        /* Responsive */
-
-        @media (max-width: 767px) {
-
-            .doctor-profile-header h2 {
-                font-size: 26px;
-            }
-
-            .doctor-profile-header p {
-                font-size: 14px;
-            }
-
-            .doctor-profile-card {
-                padding: 20px 15px;
-            }
-
-            .profile-avatar-section {
-                align-items: flex-start;
-
-                flex-direction: column;
-
-                gap: 20px;
-            }
-
-            .avatar-wrapper {
-                width: 140px;
-                height: 140px;
-
-                flex-basis: 140px;
-            }
-
-            .avatar-preview {
-                width: 140px;
-                height: 140px;
-            }
-
-            .doctor-profile-card .row {
-                margin-left: 0 !important;
-                margin-right: 0 !important;
-            }
-
-            .doctor-profile-card .row>[class*="col-"] {
-                padding-left: 0;
-                padding-right: 0;
-            }
-
-            .profile-actions {
-                flex-direction: column;
-
-                align-items: stretch;
-            }
-
-            .profile-actions .btn {
-                width: 100%;
-            }
-        }
-    </style>
-
-
-    <div class="doctor-profile">
-
-        {{-- Header --}}
-
-        <div class="doctor-profile-header">
-
-            <h2>
-                Doctor Profile
-            </h2>
-
-            <p>
-                View and update personal information.
-            </p>
-
-        </div>
-
-
-        {{-- Success --}}
-
-        @if(session('success'))
-
+    @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
+    @endif
 
-        @endif
-
-
-        {{-- Errors --}}
-
-        @if($errors->any())
-
+    @if($errors->any())
         <div class="alert alert-danger">
-
             <ul class="mb-0">
-
                 @foreach($errors->all() as $error)
-
-                <li>
-                    {{ $error }}
-                </li>
-
+                    <li>{{ $error }}</li>
                 @endforeach
-
             </ul>
-
         </div>
+    @endif
 
-        @endif
-
-
-        {{-- Avatar logic --}}
-
-        @php
-
-        $hasRealAvatar =
-        !empty($doctor->AvatarUrl);
-
-
-        if ($hasRealAvatar) {
-
-        $avatarUrl =
-        asset($doctor->AvatarUrl);
-
-        } elseif (
-        strtolower(
-        $doctor->Gender ?? ''
-        ) === 'female'
-        ) {
-
-        $avatarUrl =
-        asset(
-        'images/avatars/avt-doctor-female.jpg'
+    @php
+        $gender = strtolower(
+            trim((string) ($doctor->Gender ?? ''))
         );
 
+        $avatarPath = trim(
+            (string) ($doctor->AvatarUrl ?? '')
+        );
+
+        $isDefaultAvatar =
+            $avatarPath === '' ||
+            str_contains(
+                strtolower($avatarPath),
+                'default_male.png'
+            ) ||
+            str_contains(
+                strtolower($avatarPath),
+                'default_female.png'
+            );
+
+        if (!$isDefaultAvatar) {
+            $avatarUrl = asset($avatarPath);
+        } elseif ($gender === 'female') {
+            $avatarUrl = asset('images/avatars/default_female.png');
         } else {
-
-        $avatarUrl =
-        asset(
-        'images/avatars/avt-doctor-male.jpg'
-        );
+            $avatarUrl = asset('images/avatars/default_male.png');
         }
 
-
-        $currentCityName =
-        trim(
-        $doctor->city->CityName ?? ''
+        $currentCityName = trim(
+            $doctor->city->CityName ?? ''
         );
 
+        $currentDistrictId = $doctor->CityId;
+    @endphp
 
-        $currentDistrictId =
-        $doctor->CityId;
+    <div class="doctor-profile-card">
 
-        @endphp
+        <form
+            action="{{ route('doctor.profile.update') }}"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+            @csrf
+            @method('PUT')
 
+            <div class="profile-avatar-section">
 
-        <div class="doctor-profile-card">
+                <div class="avatar-wrapper">
 
-            <form
-                action="{{ route('doctor.profile.update') }}"
-                method="POST"
-                enctype="multipart/form-data">
+                    <img
+                        id="avatarPreview"
+                        src="{{ $avatarUrl }}"
+                        alt="Doctor Avatar"
+                        class="avatar-preview"
+                        onerror="this.onerror=null;this.src='{{ asset('images/avatars/default_male.png') }}';"
+                    >
 
-                @csrf
+                    <label
+                        for="AvatarUrl"
+                        class="avatar-camera"
+                        title="Change photo"
+                    >
+                        <i class="fas fa-camera"></i>
+                    </label>
 
-                @method('PUT')
+                    <input
+                        type="file"
+                        name="AvatarUrl"
+                        id="AvatarUrl"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        hidden
+                    >
 
+                </div>
 
-                {{-- =========================================================
-                 Avatar
-                 ========================================================= --}}
+                <div class="avatar-info">
 
-                <div class="profile-avatar-section">
+                    <h3>Avatar</h3>
 
-                    <div class="avatar-wrapper">
+                    <p>
+                        Upload a profile photo to personalize your account.
+                    </p>
 
-                        <img
-                            id="avatarPreview"
-                            src="{{ $avatarUrl }}"
-                            alt="Doctor Avatar"
-                            class="avatar-preview">
+                    <div class="avatar-help">
+                        JPG, PNG or GIF. Max size 2MB.
+                    </div>
 
+                </div>
 
-                        <label
-                            for="AvatarUrl"
-                            class="avatar-camera"
-                            title="Change photo">
+            </div>
 
-                            <i class="fas fa-camera"></i>
+            <div class="row profile-row">
 
-                        </label>
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="profile-field">
 
+                        <label>Doctor Name</label>
 
                         <input
-                            type="file"
-                            name="AvatarUrl"
-                            id="AvatarUrl"
-                            accept="image/png,image/jpeg,image/webp,image/gif"
-                            hidden>
+                            type="text"
+                            name="FullName"
+                            class="form-control"
+                            value="{{ old('FullName', $doctor->FullName) }}"
+                            required
+                        >
 
                     </div>
+                </div>
 
+                <div class="col-md-6">
 
-                    <div class="avatar-info">
+                    <div class="profile-field">
 
-                        <h3>
-                            Avatar
-                        </h3>
+                        <label>Doctor Account</label>
 
-                        <p>
-                            Upload a profile photo to personalize your account.
-                        </p>
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ $doctor->Username }}"
+                            disabled
+                        >
 
-                        <div class="avatar-help">
-                            JPG, PNG or GIF. Max size 2MB.
-                        </div>
+                        <small class="profile-help">
+                            The login account cannot be changed here.
+                        </small>
 
                     </div>
 
                 </div>
 
+            </div>
 
-                {{-- =========================================================
-                 Doctor Name + Account
-                 ========================================================= --}}
+            <div class="row profile-row">
 
-                <div class="row profile-row">
+                <div class="col-md-6 mb-3 mb-md-0">
 
-                    <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="profile-field">
 
-                        <div class="profile-field">
+                        <label>Sex</label>
 
-                            <label>
-                                Doctor Name
-                            </label>
+                        <select
+                            name="Gender"
+                            id="Gender"
+                            class="form-control"
+                            required
+                        >
 
-                            <input
-                                type="text"
-                                name="FullName"
-                                class="form-control"
-                                value="{{ old('FullName', $doctor->FullName) }}"
-                                required>
+                            <option
+                                value="Male"
+                                {{ strtolower(old('Gender', $doctor->Gender)) === 'male' ? 'selected' : '' }}
+                            >
+                                Male
+                            </option>
 
-                        </div>
+                            <option
+                                value="Female"
+                                {{ strtolower(old('Gender', $doctor->Gender)) === 'female' ? 'selected' : '' }}
+                            >
+                                Female
+                            </option>
 
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <div class="profile-field">
-
-                            <label>
-                                Doctor Account
-                            </label>
-
-                            <input
-                                type="text"
-                                class="form-control"
-                                value="{{ $doctor->Username }}"
-                                disabled>
-
-                            <small class="profile-help">
-                                The login account cannot be changed here.
-                            </small>
-
-                        </div>
+                        </select>
 
                     </div>
 
                 </div>
 
+                <div class="col-md-6">
 
-                {{-- =========================================================
-                 Gender + Phone
-                 ========================================================= --}}
+                    <div class="profile-field">
 
-                <div class="row profile-row">
+                        <label>Phone Number</label>
 
-                    <div class="col-md-6 mb-3 mb-md-0">
-
-                        <div class="profile-field">
-
-                            <label>
-                                Sex
-                            </label>
-
-                            <select
-                                name="Gender"
-                                id="Gender"
-                                class="form-control"
-                                required>
-
-                                <option
-                                    value="Male"
-                                    {{ old('Gender', $doctor->Gender) === 'Male' ? 'selected' : '' }}>
-                                    Male
-                                </option>
-
-                                <option
-                                    value="Female"
-                                    {{ old('Gender', $doctor->Gender) === 'Female' ? 'selected' : '' }}>
-                                    Female
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <div class="profile-field">
-
-                            <label>
-                                Phone Number
-                            </label>
-
-                            <input
-                                type="text"
-                                name="PhoneNumber"
-                                class="form-control"
-                                value="{{ old('PhoneNumber', $doctor->PhoneNumber) }}"
-                                required>
-
-                        </div>
+                        <input
+                            type="text"
+                            name="PhoneNumber"
+                            class="form-control"
+                            value="{{ old('PhoneNumber', $doctor->PhoneNumber) }}"
+                            required
+                        >
 
                     </div>
 
                 </div>
 
+            </div>
 
-                {{-- =========================================================
-                 Email + Qualifications
-                 ========================================================= --}}
+            <div class="row profile-row">
 
-                <div class="row profile-row">
+                <div class="col-md-6 mb-3 mb-md-0">
 
-                    <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="profile-field">
 
-                        <div class="profile-field">
+                        <label>Email</label>
 
-                            <label>
-                                Email
-                            </label>
-
-                            <input
-                                type="email"
-                                name="Email"
-                                class="form-control"
-                                value="{{ old('Email', $doctor->Email) }}"
-                                required>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="col-md-6">
-
-                        <div class="profile-field">
-
-                            <label>
-                                Qualifications
-                            </label>
-
-                            <input
-                                type="text"
-                                name="Qualifications"
-                                class="form-control"
-                                value="{{ old('Qualifications', $doctor->Qualifications) }}">
-
-                        </div>
+                        <input
+                            type="email"
+                            name="Email"
+                            class="form-control"
+                            value="{{ old('Email', $doctor->Email) }}"
+                            required
+                        >
 
                     </div>
 
                 </div>
 
+                <div class="col-md-6">
 
-                {{-- =========================================================
-                 Specialization + City + District + Clinic Room
-                 ========================================================= --}}
+                    <div class="profile-field">
 
-                <div class="row profile-select-row">
+                        <label>Qualifications</label>
 
-                    {{-- Specialization --}}
+                        <input
+                            type="text"
+                            name="Qualifications"
+                            class="form-control"
+                            value="{{ old('Qualifications', $doctor->Qualifications) }}"
+                        >
 
-                    <div class="col-md-3">
+                    </div>
 
-                        <div class="profile-field">
+                </div>
 
-                            <label>
-                                Specialization
-                            </label>
+            </div>
 
-                            <select
-                                name="SpecializationId"
-                                class="form-control">
+            <div class="row profile-select-row">
 
-                                <option value="">
-                                    -- Select Specialization --
-                                </option>
+                <div class="col-md-3">
 
-                                @foreach($specializations as $specialization)
+                    <div class="profile-field">
+
+                        <label>Specialization</label>
+
+                        <select
+                            name="SpecializationId"
+                            class="form-control"
+                        >
+
+                            <option value="">
+                                -- Select Specialization --
+                            </option>
+
+                            @foreach($specializations as $specialization)
 
                                 <option
                                     value="{{ $specialization->SpecializationId }}"
-                                    {{ old('SpecializationId', $doctor->SpecializationId) == $specialization->SpecializationId ? 'selected' : '' }}>
-
+                                    {{ old('SpecializationId', $doctor->SpecializationId) == $specialization->SpecializationId ? 'selected' : '' }}
+                                >
                                     {{ $specialization->SpecializationName }}
-
                                 </option>
 
-                                @endforeach
+                            @endforeach
 
-                            </select>
-
-                        </div>
+                        </select>
 
                     </div>
 
+                </div>
 
-                    {{-- City --}}
+                <div class="col-md-3">
 
-                    <div class="col-md-3">
+                    <div class="profile-field">
 
-                        <div class="profile-field">
+                        <label>City</label>
 
-                            <label>
-                                City
-                            </label>
+                        <select
+                            id="CitySelect"
+                            class="form-control"
+                        >
 
-                            <select
-                                id="CitySelect"
-                                class="form-control">
+                            <option value="">
+                                -- Select City --
+                            </option>
 
-                                <option value="">
-                                    -- Select City --
-                                </option>
-
-                                @foreach($cities as $city)
+                            @foreach($cities as $city)
 
                                 @php
-                                $cityName =
-                                trim($city->CityName);
+                                    $cityName = trim($city->CityName);
                                 @endphp
 
                                 <option
                                     value="{{ $cityName }}"
-                                    {{ $currentCityName === $cityName ? 'selected' : '' }}>
-
+                                    {{ $currentCityName === $cityName ? 'selected' : '' }}
+                                >
                                     {{ $cityName }}
-
                                 </option>
 
-                                @endforeach
+                            @endforeach
 
-                            </select>
-
-                        </div>
+                        </select>
 
                     </div>
 
+                </div>
 
-                    {{-- District --}}
+                <div class="col-md-3">
 
-                    <div class="col-md-3">
+                    <div class="profile-field">
 
-                        <div class="profile-field">
+                        <label>District</label>
 
-                            <label>
-                                District
-                            </label>
+                        <select
+                            name="CityId"
+                            id="DistrictSelect"
+                            class="form-control"
+                            required
+                        >
 
-                            <select
-                                name="CityId"
-                                id="DistrictSelect"
-                                class="form-control"
-                                required>
+                            <option value="">
+                                -- Select District --
+                            </option>
 
-                                <option value="">
-                                    -- Select District --
-                                </option>
-
-                                @foreach($locations as $location)
+                            @foreach($locations as $location)
 
                                 <option
                                     value="{{ $location->CityId }}"
                                     data-city="{{ trim($location->CityName) }}"
-                                    {{ old('CityId', $currentDistrictId) == $location->CityId ? 'selected' : '' }}>
-
+                                    {{ old('CityId', $currentDistrictId) == $location->CityId ? 'selected' : '' }}
+                                >
                                     {{ $location->DistrictName }}
-
                                 </option>
 
-                                @endforeach
+                            @endforeach
 
-                            </select>
-
-                        </div>
+                        </select>
 
                     </div>
 
+                </div>
 
-                    {{-- Clinic Room --}}
+                <div class="col-md-3">
 
-                    <div class="col-md-3">
+                    <div class="profile-field">
 
-                        <div class="profile-field">
+                        <label>Clinic Room</label>
 
-                            <label>
-                                Clinic Room
-                            </label>
+                        <select
+                            name="RoomId"
+                            class="form-control"
+                        >
 
-                            <select
-                                name="RoomId"
-                                class="form-control">
+                            <option value="">
+                                -- Select Clinic Room --
+                            </option>
 
-                                <option value="">
-                                    -- Select Clinic Room --
-                                </option>
-
-                                @foreach($rooms as $room)
+                            @foreach($rooms as $room)
 
                                 <option
                                     value="{{ $room->RoomId }}"
-                                    {{ old('RoomId', $doctor->RoomId) == $room->RoomId ? 'selected' : '' }}>
-
+                                    {{ old('RoomId', $doctor->RoomId) == $room->RoomId ? 'selected' : '' }}
+                                >
                                     {{ $room->RoomName }}
 
                                     @if($room->RoomNumber)
-
-                                    - Room
-                                    {{ $room->RoomNumber }}
-
+                                        - Room {{ $room->RoomNumber }}
                                     @endif
 
                                 </option>
 
-                                @endforeach
+                            @endforeach
 
-                            </select>
-
-                        </div>
+                        </select>
 
                     </div>
 
                 </div>
 
+            </div>
 
-                {{-- =========================================================
-                 Address
-                 ========================================================= --}}
+            <div class="profile-row">
 
-                <div class="profile-row">
+                <div class="profile-field">
 
-                    <div class="profile-field">
+                    <label>Address</label>
 
-                        <label>
-                            Address
-                        </label>
-
-                        <textarea
-                            name="Address"
-                            class="form-control"
-                            rows="4">{{ old('Address', $doctor->Address) }}</textarea>
-
-                    </div>
+                    <textarea
+                        name="Address"
+                        class="form-control"
+                        rows="4"
+                    >{{ old('Address', $doctor->Address) }}</textarea>
 
                 </div>
 
+            </div>
 
-                {{-- =========================================================
-                 Buttons
-                 ========================================================= --}}
+            <div class="profile-actions">
 
-                <div class="profile-actions">
+                <button
+                    type="submit"
+                    class="btn btn-save"
+                >
+                    <i class="fas fa-save mr-2"></i>
+                    Save Changes
+                </button>
 
-                    <button
-                        type="submit"
-                        class="btn btn-save">
+                <button
+                    type="reset"
+                    class="btn btn-reset"
+                >
+                    <i class="fas fa-redo mr-2"></i>
+                    Reset
+                </button>
 
-                        <i class="fas fa-save mr-2"></i>
+            </div>
 
-                        Save Changes
-
-                    </button>
-
-
-                    <button
-                        type="reset"
-                        class="btn btn-reset">
-
-                        <i class="fas fa-redo mr-2"></i>
-
-                        Reset
-
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
+        </form>
 
     </div>
 
+</div>
 
-    <script>
-        /* =========================================================
-       Avatar
-       ========================================================= */
+<script>
+    const avatarInput = document.getElementById('AvatarUrl');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const genderInput = document.getElementById('Gender');
 
-        const avatarInput =
-            document.getElementById('AvatarUrl');
+    const defaultMale = "{{ asset('images/avatars/default_male.png') }}";
+    const defaultFemale = "{{ asset('images/avatars/default_female.png') }}";
 
-        const avatarPreview =
-            document.getElementById('avatarPreview');
+    const avatarPath = @json(
+        strtolower(trim((string) ($doctor->AvatarUrl ?? '')))
+    );
 
-        const genderInput =
-            document.getElementById('Gender');
+    const hasRealAvatar =
+        avatarPath !== '' &&
+        !avatarPath.includes('default_male.png') &&
+        !avatarPath.includes('default_female.png');
 
+    if (avatarInput) {
+        avatarInput.addEventListener('change', function () {
 
-        const defaultMale =
-            "{{ asset('images/avatars/avt-doctor-male.jpg') }}";
+            const file = this.files[0];
 
-        const defaultFemale =
-            "{{ asset('images/avatars/avt-doctor-female.jpg') }}";
+            if (!file) {
+                return;
+            }
 
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Avatar must be smaller than 2MB.');
+                this.value = '';
+                return;
+            }
 
-        const hasRealAvatar =
-            "{{ $hasRealAvatar ? 'true' : 'false' }}" === 'true';
+            const reader = new FileReader();
 
-        if (avatarInput) {
+            reader.onload = function (event) {
+                avatarPreview.src = event.target.result;
+            };
 
-            avatarInput.addEventListener(
-                'change',
-                function() {
-                    const file =
-                        this.files[0];
+            reader.readAsDataURL(file);
+        });
+    }
 
-                    if (!file) {
-                        return;
-                    }
+    if (genderInput) {
+        genderInput.addEventListener('change', function () {
 
-
-                    if (
-                        file.size >
-                        2 * 1024 * 1024
-                    ) {
-
-                        alert(
-                            'Avatar must be smaller than 2MB.'
-                        );
-
-                        this.value = '';
-
-                        return;
-                    }
-
-
-                    const reader =
-                        new FileReader();
-
-
-                    reader.onload =
-                        function(event) {
-                            avatarPreview.src = event.target.result;
-                        };
-
-
-                    reader.readAsDataURL(file);
-
-                }
-            );
-
-        }
-
-
-        if (genderInput) {
-
-            genderInput.addEventListener(
-                'change',
-                function() {
-                    /*
-                     * Nếu đã có ảnh thật thì không
-                     * tự thay ảnh thật bằng default.
-                     */
-
-                    if (hasRealAvatar) {
-                        return;
-                    }
-
-
-                    if (
-                        avatarInput &&
-                        avatarInput.files.length > 0
-                    ) {
-                        return;
-                    }
-
-
-                    avatarPreview.src =
-                        this.value === 'Female' ? defaultFemale : defaultMale;
-
-                }
-            );
-
-        }
-
-
-        /* =========================================================
-           City -> District
-           ========================================================= */
-
-        const citySelect =
-            document.getElementById('CitySelect');
-
-        const districtSelect =
-            document.getElementById('DistrictSelect');
-
-
-        function filterDistricts() {
+            if (hasRealAvatar) {
+                return;
+            }
 
             if (
-                !citySelect ||
-                !districtSelect
+                avatarInput &&
+                avatarInput.files &&
+                avatarInput.files.length > 0
             ) {
                 return;
             }
 
-
-            const selectedCity =
-                citySelect.value.trim();
-
-
-            const options =
-                districtSelect.querySelectorAll(
-                    'option[data-city]'
-                );
-
-
-            options.forEach(
-                function(option) {
-
-                    const optionCity =
-                        option.dataset.city.trim();
-
-
-                    const isMatch =
-                        optionCity === selectedCity;
-
-
-                    option.hidden = !isMatch;
-
-                }
-            );
-
-
-            /*
-             * Nếu District hiện tại không thuộc
-             * City mới thì bỏ chọn.
-             */
-
-            const selectedOption =
-                districtSelect.options[
-                    districtSelect.selectedIndex
-                ];
-
-
-            if (
-                selectedOption &&
-                selectedOption.dataset.city &&
-                selectedOption.dataset.city.trim() !== selectedCity
-            ) {
-
-                districtSelect.value = '';
-
+            if (this.value.toLowerCase() === 'female') {
+                avatarPreview.src = defaultFemale;
+            } else {
+                avatarPreview.src = defaultMale;
             }
 
+        });
+    }
+
+    const citySelect = document.getElementById('CitySelect');
+    const districtSelect = document.getElementById('DistrictSelect');
+
+    function filterDistricts() {
+
+        if (!citySelect || !districtSelect) {
+            return;
         }
 
+        const selectedCity = citySelect.value.trim();
 
-        if (citySelect) {
+        const options = districtSelect.querySelectorAll(
+            'option[data-city]'
+        );
 
-            citySelect.addEventListener(
-                'change',
-                function() {
+        options.forEach(function (option) {
 
-                    filterDistricts();
+            const optionCity = option.dataset.city.trim();
 
-                }
-            );
+            option.hidden =
+                selectedCity !== '' &&
+                optionCity !== selectedCity;
 
+        });
+
+        const selectedOption =
+            districtSelect.options[districtSelect.selectedIndex];
+
+        if (
+            selectedOption &&
+            selectedOption.dataset.city &&
+            selectedOption.dataset.city.trim() !== selectedCity
+        ) {
+            districtSelect.value = '';
         }
+    }
 
-        /*
-         * Chạy ngay khi mở Profile.
-         */
-        filterDistricts();
-    </script>
+    if (citySelect) {
+        citySelect.addEventListener(
+            'change',
+            filterDistricts
+        );
+    }
 
-</x-layouts.doctor>
+    filterDistricts();
+</script>
+
+@endsection
