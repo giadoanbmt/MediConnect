@@ -2,19 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DoctorSchedule extends Model
 {
-    use HasFactory;
-
     protected $table = 'DoctorSchedule';
+
     protected $primaryKey = 'ScheduleId';
 
-    public $timestamps = true;
-    const CREATED_AT = 'CreatedAt';
-    const UPDATED_AT = 'UpdatedAt';
+    public $timestamps = false;
 
     protected $fillable = [
         'DoctorId',
@@ -24,10 +20,20 @@ class DoctorSchedule extends Model
         'MaxPatients',
         'Status',
         'Note',
+        'CreatedAt',
+        'UpdatedAt',
+    ];
+
+    protected $casts = [
+        'WorkDate' => 'date',
     ];
 
     public function doctor()
     {
-        return $this->belongsTo(Doctor::class, 'DoctorId', 'DoctorId');
+        return $this->belongsTo(
+            Doctor::class,
+            'DoctorId',
+            'DoctorId'
+        );
     }
 }

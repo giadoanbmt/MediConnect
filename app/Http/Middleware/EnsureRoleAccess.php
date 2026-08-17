@@ -53,10 +53,27 @@ class EnsureRoleAccess
         // 1. Kiểm tra truy cập cho DOCTOR (Session auth_type === 'doctor')
         if (in_array('doctor', $roles)) {
             if ($request->session()->get('auth_type') === 'doctor') {
-                return $next($request);
+                $response = $next($request);
+
+                $response->headers->set(
+                    'Cache-Control',
+                    'no-store, no-cache, must-revalidate, max-age=0'
+                );
+
+                $response->headers->set(
+                    'Pragma',
+                    'no-cache'
+                );
+
+                $response->headers->set(
+                    'Expires',
+                    '0'
+                );
+
+                return $response;
             }
         }
-
+        
         // 2. Kiểm tra truy cập cho ADMIN hoặc PATIENT (Dựa trên Auth::user())
         if (Auth::check()) {
             $userRole = (int) Auth::user()->Role;
