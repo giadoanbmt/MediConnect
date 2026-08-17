@@ -161,3 +161,7 @@ CREATE TABLE IF NOT EXISTS `DoctorSchedule` (
         FOREIGN KEY (`DoctorId`) REFERENCES `Doctor`(`DoctorId`) 
         ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+// Cập nhật cột Status trong bảng Appointment để có giá trị mặc định là 'Pending'
+ALTER TABLE `Appointment` 
+MODIFY COLUMN `Status` VARCHAR(20) DEFAULT 'Pending';

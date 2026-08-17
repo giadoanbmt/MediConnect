@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\DoctorController as AdminDoctorController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
+use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
 
 // Auth
 use App\Http\Controllers\Auth\AdminSetupController;
@@ -114,67 +115,65 @@ Route::middleware('role:doctor')->prefix('doctor')->name('doctor.')->group(funct
     Route::get('/blog/{id}/edit', [DoctorController::class, 'editBlog'])
         ->name('blog.edit');
 });
+
 /*
 |--------------------------------------------------------------------------
 | Admin Routes (Role = 1)
 |--------------------------------------------------------------------------
 */
-Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    // 1. Dashboard Admin (Đang dùng AdminController để lấy dữ liệu thống kê)
+    // 1. Dashboard Admin
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-    // 2. Quản lý Tài khoản (Users & Doctors)
-    // 2.1. Quản lý Bệnh nhân (Patients)
+    // 2. Quản lý Lịch hẹn (Appointments)
+    Route::controller(AdminAppointmentController::class)->prefix('appointments')->name('appointments.')->group(function () {
+        Route::get('/', 'index')->name('index');                        // admin.appointments.index
+        Route::post('/{id}/approve', 'approve')->name('approve');        // admin.appointments.approve
+        Route::post('/{id}/reject', 'reject')->name('reject');          // admin.appointments.reject
+    });
+
+    // 3. Quản lý Bệnh nhân (Patients)
     Route::controller(AdminUserController::class)->prefix('users')->name('users.')->group(function () {
-        Route::get('/', 'index')->name('index');             // admin.users.index
-        Route::get('/create', 'create')->name('create');     // admin.users.create
-        Route::post('/', 'store')->name('store');           // admin.users.store
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
         Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');
         Route::put('/{id}', 'update')->name('update')->whereNumber('id');
         Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id');
     });
 
-    // 2.2. Quản lý Bác sĩ (Doctors)
+    // 4. Quản lý Bác sĩ (Doctors)
     Route::controller(AdminDoctorController::class)->prefix('doctors')->name('doctors.')->group(function () {
-        Route::get('/', 'index')->name('index');             // admin.doctors.index
-        Route::get('/create', 'create')->name('create');     // admin.doctors.create
-        Route::post('/', 'store')->name('store');           // admin.doctors.store
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
         Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');
         Route::put('/{id}', 'update')->name('update')->whereNumber('id');
         Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id');
     });
 
-    // 3. Quản lý Tin tức / Bài viết (News - Đã đổi tên từ Blog)
+    // 5. Quản lý Tin tức (News)
     Route::controller(NewsController::class)->prefix('news')->name('news.')->group(function () {
-        Route::get('/', 'index')->name('index');             // admin.news.index (/admin/news)
-        Route::get('/create', 'create')->name('create');     // admin.news.create
-        Route::post('/', 'store')->name('store');           // admin.news.store
-        Route::get('/{id}', 'show')->name('show')->whereNumber('id');         // admin.news.show
-        Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');     // admin.news.edit
-        Route::put('/{id}', 'update')->name('update')->whereNumber('id');     // admin.news.update
-        Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id'); // admin.news.destroy
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        Route::get('/{id}', 'show')->name('show')->whereNumber('id');
+        Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');
+        Route::put('/{id}', 'update')->name('update')->whereNumber('id');
+        Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id');
     });
 
-    // 4. Quản lý Hồ sơ cá nhân Admin
+    // 6. Quản lý Hồ sơ cá nhân Admin
     Route::controller(ProfileController::class)->prefix('profile')->name('profile.')->group(function () {
-        Route::get('/edit', 'edit')->name('edit');          // admin.profile.edit
-        Route::put('/', 'update')->name('update');          // admin.profile.update
+        Route::get('/edit', 'edit')->name('edit');
+        Route::put('/', 'update')->name('update');
     });
 
-    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
-    Route::post('/appointments/{id}/approve', [AppointmentController::class, 'approve'])->name('appointments.approve');
-    Route::post('/appointments/{id}/reject', [AppointmentController::class, 'reject'])->name('appointments.reject');
-});
-
-// 5. Quản lý ContactQuery
-Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
-    // Trang danh sách câu hỏi
-    Route::get('/contact-queries', [AdminContactController::class, 'index'])->name('admin.contact.index');
-
-    // Trang xem chi tiết / form phản hồi
-    Route::get('/contact-queries/{id}', [AdminContactController::class, 'show'])->name('admin.contact.show');
-
-    // Action lưu phản hồi / cập nhật trạng thái
-    Route::put('/contact-queries/{id}/respond', [AdminContactController::class, 'respond'])->name('admin.contact.respond');
+    // 7. Quản lý Contact Queries
+    Route::controller(AdminContactController::class)->prefix('contact-queries')->name('contact.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{id}', 'show')->name('show');
+        Route::put('/{id}/respond', 'respond')->name('respond');
+    });
 });
