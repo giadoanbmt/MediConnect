@@ -419,7 +419,6 @@
     <script src="{{ asset('Novena/plugins/shuffle/shuffle.min.js') }}"></script>
 
 
-    
     <script src="{{ asset('Novena/js/script.js') }}"></script>
 
   </body>

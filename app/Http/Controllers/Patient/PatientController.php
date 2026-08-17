@@ -98,18 +98,25 @@ class PatientController extends Controller
         abort(404);
     }
 
-    // Hiển thị dánh sách doctor
-    public function Doctor()
+    // Hiển thị danh sách doctor
+    public function Doctor(Request $request)
     {
-        $doctors = Doctor::with('specialization', 'City')->get();
-
-        // Danh sách nút bấm Filter Specializations
+        // 1. Lấy danh sách cho các bộ lọc
         $specializations = Specialization::all();
-
-        // Danh sách nút bấm filter City
         $cities = City::all()->unique('CityName');
 
+        // 2. Lấy từ khóa tìm kiếm
+        $keyword = $request->input('keyword');
 
+        // 3. Truy vấn danh sách Doctor (Eager loading quan hệ + Tìm kiếm)
+        $doctors = Doctor::with(['specialization', 'city'])
+            ->when($keyword, function ($query, $keyword) {
+                return $query->where('FullName', 'like', "%{$keyword}%");
+            })
+            ->paginate(9)
+            ->withQueryString();
+
+        // 4. Trả dữ liệu sang View
         return view('patient.doctor', compact('doctors', 'specializations', 'cities'));
     }
 
