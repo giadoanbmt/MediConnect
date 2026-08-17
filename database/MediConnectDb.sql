@@ -7,6 +7,9 @@ COLLATE utf8mb4_unicode_ci;
 
 USE MediConnectDb;
 
+-- ========================================================
+-- 2. CÁC BẢNG ĐỘC LẬP (BẢNG CHA)
+-- ========================================================
 
 -- 1. Bảng AccountUser
 CREATE TABLE AccountUser (
@@ -33,12 +36,18 @@ CREATE TABLE City (
     DistrictName VARCHAR(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 3. Bảng Specialization
+-- 3. Bảng Specialization (Đã bổ sung ImageUrl và Content)
 CREATE TABLE Specialization (
     SpecializationId INT AUTO_INCREMENT PRIMARY KEY,
     SpecializationName VARCHAR(100) NOT NULL,
-    Description TEXT DEFAULT NULL
+    Description TEXT DEFAULT NULL,
+    ImageUrl VARCHAR(500) DEFAULT NULL,             -- Đường dẫn ảnh minh họa chuyên khoa
+    Content LONGTEXT DEFAULT NULL                    -- Nội dung mô tả chi tiết chuyên khoa
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ========================================================
+-- 3. CÁC BẢNG PHỤ THUỘC CẤP 1
+-- ========================================================
 
 -- 4. Bảng ClinicRoom
 CREATE TABLE ClinicRoom (
@@ -79,7 +88,30 @@ CREATE TABLE Doctor (
     CONSTRAINT FK_Doctor_ClinicRoom FOREIGN KEY (RoomId) REFERENCES ClinicRoom(RoomId) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 6. Bảng Appointment
+-- ========================================================
+-- 4. CÁC BẢNG PHỤ THUỘC CẤP 2 (NGHIỆP VỤ CHÍNH)
+-- ========================================================
+
+-- 6. Bảng DoctorSchedule (Lịch làm việc Bác sĩ)
+CREATE TABLE DoctorSchedule (
+    ScheduleId BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    DoctorId INT NOT NULL,
+    WorkDate DATE NOT NULL,
+    StartTime TIME NOT NULL,
+    EndTime TIME NOT NULL,
+    MaxPatients INT UNSIGNED DEFAULT 10,
+    Status ENUM('Available', 'Full', 'Cancelled', 'Off') DEFAULT 'Available',
+    Note VARCHAR(255) DEFAULT NULL,
+    
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    CONSTRAINT FK_DoctorSchedule_Doctor 
+        FOREIGN KEY (DoctorId) REFERENCES Doctor(DoctorId) 
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. Bảng Appointment
 CREATE TABLE Appointment (
     AppointmentId INT AUTO_INCREMENT PRIMARY KEY,
     UserId INT NOT NULL,
@@ -90,7 +122,7 @@ CREATE TABLE Appointment (
     StartTime TIME NOT NULL,
     EndTime TIME NOT NULL,
     
-    Status ENUM('Pending', 'Confirmed', 'Completed', 'Cancelled') DEFAULT 'Pending',
+    Status VARCHAR(20) DEFAULT 'Pending',
     Reason VARCHAR(255) DEFAULT NULL,
     CancellationReason VARCHAR(255) DEFAULT NULL,
     
@@ -102,7 +134,7 @@ CREATE TABLE Appointment (
     CONSTRAINT FK_Appointment_Room FOREIGN KEY (RoomId) REFERENCES ClinicRoom(RoomId) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 7. Bảng News
+-- 8. Bảng News
 CREATE TABLE News (
     NewsId INT AUTO_INCREMENT PRIMARY KEY,
     Title VARCHAR(300) NOT NULL,
@@ -124,7 +156,7 @@ CREATE TABLE News (
     CONSTRAINT FK_News_Doctor FOREIGN KEY (DoctorId) REFERENCES Doctor(DoctorId) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 8. Bảng ContactQuery
+-- 9. Bảng ContactQuery
 CREATE TABLE ContactQuery (
     QueryId INT AUTO_INCREMENT PRIMARY KEY,
     SenderName VARCHAR(100) NOT NULL,
@@ -143,25 +175,3 @@ CREATE TABLE ContactQuery (
     CONSTRAINT FK_ContactQuery_Admin FOREIGN KEY (RespondedBy) 
         REFERENCES AccountUser(UserId) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Bảng DoctorSchedule (Lịch làm việc của Bác sĩ)
-CREATE TABLE IF NOT EXISTS `DoctorSchedule` (
-    `ScheduleId` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `DoctorId` INT NOT NULL,
-    `WorkDate` DATE NOT NULL,
-    `StartTime` TIME NOT NULL,
-    `EndTime` TIME NOT NULL,
-    `MaxPatients` INT UNSIGNED DEFAULT 10,
-    `Status` ENUM('Available', 'Full', 'Cancelled', 'Off') DEFAULT 'Available',
-    `Note` VARCHAR(255) NULL,
-    `CreatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    `UpdatedAt` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
-    CONSTRAINT `fk_doctorschedule_doctor` 
-        FOREIGN KEY (`DoctorId`) REFERENCES `Doctor`(`DoctorId`) 
-        ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-// Cập nhật cột Status trong bảng Appointment để có giá trị mặc định là 'Pending'
-ALTER TABLE `Appointment` 
-MODIFY COLUMN `Status` VARCHAR(20) DEFAULT 'Pending';
