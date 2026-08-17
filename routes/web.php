@@ -93,28 +93,67 @@ Route::middleware('role:patient')->group(function () {
 | Doctor Routes (Auth Session)
 |--------------------------------------------------------------------------
 */
-Route::middleware('role:doctor')->prefix('doctor')->name('doctor.')->group(function () {
+Route::middleware(['role:doctor'])
+    ->prefix('doctor')
+    ->name('doctor.')
+    ->group(function () {
 
-    // Dashboard
-    Route::get('/dashboard', [DoctorController::class, 'dashboard'])
-        ->name('dashboard');
+        // Dashboard
+        Route::get('/dashboard', [DoctorController::class, 'dashboard'])
+            ->name('dashboard');
 
-    // Quản lý hồ sơ bác sĩ
-    Route::get('/profile', [DoctorController::class, 'profile'])
-        ->name('profile');
 
-    Route::put('/profile', [DoctorController::class, 'updateProfile'])
-        ->name('profile.update');
-    // Quản lý Blog của Bác sĩ
-    Route::get('/blog', [DoctorController::class, 'blogIndex'])
-        ->name('blog.index');
+        // Quản lý hồ sơ bác sĩ
+        Route::get('/profile', [DoctorController::class, 'profile'])
+            ->name('profile');
 
-    Route::get('/blog/create', [DoctorController::class, 'createBlog'])
-        ->name('blog.create');
+        Route::put('/profile', [DoctorController::class, 'updateProfile'])
+            ->name('profile.update');
 
-    Route::get('/blog/{id}/edit', [DoctorController::class, 'editBlog'])
-        ->name('blog.edit');
-});
+
+        // Quản lý News của Bác sĩ
+        Route::get('/news', [DoctorController::class, 'newsIndex'])
+            ->name('news.index');
+
+        Route::get('/news/create', [DoctorController::class, 'createNews'])
+            ->name('news.create');
+
+        Route::get('/news/{id}/edit', [DoctorController::class, 'editNews'])
+            ->name('news.edit');
+
+        Route::delete('/news/{id}', [DoctorController::class, 'deleteNews'])
+            ->name('news.delete');
+
+
+        // Store / Update News
+        Route::post('/news', [DoctorController::class, 'storeNews'])
+            ->name('news.store');
+
+        Route::put('/news/{id}', [DoctorController::class, 'updateNews'])
+            ->name('news.update');
+
+
+        // Quản lý lịch làm việc / khung giờ khám
+        Route::get('/availability', [DoctorController::class, 'availability'])
+            ->name('availability');
+
+        Route::post('/availability', [DoctorController::class, 'saveAvailability'])
+            ->name('availability.save');
+
+
+        // Quản lý lịch hẹn của Bác sĩ
+Route::get('/appointments', [DoctorController::class, 'appointments'])
+    ->name('appointments');
+
+Route::post('/appointments/{id}/confirm', [DoctorController::class, 'confirmAppointment'])
+    ->name('appointments.confirm');
+
+Route::post('/appointments/{id}/cancel', [DoctorController::class, 'cancelAppointment'])
+    ->name('appointments.cancel');
+
+Route::post('/appointments/{id}/complete', [DoctorController::class, 'completeAppointment'])
+    ->name('appointments.complete');
+    });
 
 /*
 |--------------------------------------------------------------------------
