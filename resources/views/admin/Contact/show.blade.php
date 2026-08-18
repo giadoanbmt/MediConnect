@@ -117,7 +117,7 @@
                     name="admin_notes"
                     rows="5"
                     required
-                    placeholder="Type your response to the patient here. This message will be saved to the database and emailed directly to {{ $query->Email }}..."
+                    placeholder="Enter your response to the inquiry here..."
                     class="w-full px-3.5 py-2.5 text-sm text-slate-800 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">{{ old('admin_notes', $query->AdminNotes) }}</textarea>
             </div>
 
