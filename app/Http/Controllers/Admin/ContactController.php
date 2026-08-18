@@ -10,33 +10,56 @@ use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
-    // Danh sách tất cả các liên hệ
-    public function index()
+    /**
+     * Danh sách tất cả các yêu cầu liên hệ (Hỗ trợ lọc theo Pending / Resolved)
+     */
+    public function index(Request $request)
     {
-        $queries = ContactQuery::orderBy('SubmittedAt', 'desc')->paginate(10);
-        return view('admin.contact.index', compact('queries'));
+        $status = $request->get('status', 'All');
+
+        $query = ContactQuery::orderBy('SubmittedAt', 'asc');
+
+        if ($status !== 'All') {
+            $query->where('Status', $status);
+        }
+
+        $queries = $query->paginate(10)->withQueryString();
+
+        // Thống kê số lượng theo 2 trạng thái
+        $counts = [
+            'All'      => ContactQuery::count(),
+            'Pending'  => ContactQuery::where('Status', 'Pending')->count(),
+            'Resolved' => ContactQuery::where('Status', 'Resolved')->count(),
+        ];
+
+        return view('admin.contact.index', compact('queries', 'status', 'counts'));
     }
 
-    // Xem chi tiết câu hỏi
+    /**
+     * Xem chi tiết câu hỏi & form phản hồi
+     */
     public function show($id)
     {
         $query = ContactQuery::with('respondedByAdmin')->findOrFail($id);
         return view('admin.contact.show', compact('query'));
     }
 
-    // Lưu thông tin phản hồi của Admin
+    /**
+     * Lưu thông tin phản hồi của Admin & Gửi Mail cho Bệnh nhân
+     */
     public function respond(Request $request, $id)
     {
         $request->validate([
-            'admin_notes' => 'required|string',
+            'admin_notes' => 'required|string|min:5',
         ], [
-            'admin_notes.required' => 'Please enter the response content.',
+            'admin_notes.required' => 'Please enter your response message.',
+            'admin_notes.min'      => 'Response content must be at least 5 characters.',
         ]);
 
         $query = ContactQuery::findOrFail($id);
         $adminNotes = $request->input('admin_notes');
 
-        // 1. Cập nhật CSDL
+        // 1. Cập nhật trạng thái và nội dung trả lời trong CSDL
         $query->update([
             'AdminNotes'  => $adminNotes,
             'Status'      => 'Resolved',
@@ -44,35 +67,32 @@ class ContactController extends Controller
             'RespondedAt' => now(),
         ]);
 
-        // 2. Tự động gửi Email phản hồi cho khách hàng
+        // 2. Gửi Email phản hồi cho Bệnh nhân
         try {
             Mail::send([], [], function ($message) use ($query, $adminNotes) {
                 $message->to($query->Email, $query->SenderName)
-                        ->subject('MediConnect - Response to your contact inquiry: ' . $query->Subject)
-                        ->html("
-                            <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
-                                <h2 style='color: #0d6efd;'>MediConnect Medical Center</h2>
+                    ->subject('MediConnect - Response to your inquiry: ' . ($query->Subject ?? 'Contact Support'))
+                    ->html("
+                            <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px;'>
+                                <h2 style='color: #2563eb; margin-top: 0;'>MediConnect Medical Center</h2>
                                 <p>Dear <strong>{$query->SenderName}</strong>,</p>
-                                <p>Thank you for reaching out to us. Below is the response regarding your inquiry:</p>
-                                <hr style='border: none; border-top: 1px solid #eee; margin: 15px 0;'>
-                                <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px;'>
-                                    {$adminNotes}
+                                <p>Thank you for contacting us. Here is our response to your inquiry regarding <em>\"" . e($query->Subject) . "\"</em>:</p>
+                                <div style='background-color: #f8fafc; padding: 15px; border-left: 4px solid #2563eb; margin: 15px 0; border-radius: 4px;'>
+                                    " . nl2br(e($adminNotes)) . "
                                 </div>
-                                <hr style='border: none; border-top: 1px solid #eee; margin: 15px 0;'>
-                                <p>If you have further questions, feel free to reply to this email.</p>
-                                <p>Best regards,<br><strong>MediConnect Support Team</strong></p>
+                                <hr style='border: none; border-top: 1px solid #eee; margin: 20px 0;'>
+                                <p style='font-size: 13px; color: #64748b;'>If you have any further questions, please feel free to reply directly to this email.</p>
+                                <p style='font-size: 13px; color: #64748b; margin-bottom: 0;'>Best regards,<br><strong>MediConnect Support Team</strong></p>
                             </div>
                         ");
             });
 
             return redirect()->route('admin.contact.index')
-                             ->with('success', 'Response saved and email sent successfully!');
-
+                ->with('success', 'Response saved and email sent successfully!');
         } catch (\Exception $e) {
-            // Nếu lỗi gửi mail (do chưa cấu hình .env) vẫn lưu DB thành công
+            // Trường hợp cấu hình MAIL trong .env chưa sẵn sàng, dữ liệu vẫn được ghi nhận vào CSDL
             return redirect()->route('admin.contact.index')
-                             ->with('success', 'Response saved to database! (Note: Could not send email, please check .env MAIL settings)');
+                ->with('success', 'Response recorded successfully in database! (Mail not sent due to SMTP configuration)');
         }
     }
 }
-?>
