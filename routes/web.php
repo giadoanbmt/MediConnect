@@ -167,9 +167,7 @@ Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(functi
 
     // 2. Quản lý Lịch hẹn (Appointments)
     Route::controller(AdminAppointmentController::class)->prefix('appointments')->name('appointments.')->group(function () {
-        Route::get('/', 'index')->name('index');                        // admin.appointments.index
-        Route::post('/{id}/approve', 'approve')->name('approve');        // admin.appointments.approve
-        Route::post('/{id}/reject', 'reject')->name('reject');          // admin.appointments.reject
+        Route::get('/', 'index')->name('index'); // admin.appointments.index
     });
 
     // 3. Quản lý Bệnh nhân (Patients)
