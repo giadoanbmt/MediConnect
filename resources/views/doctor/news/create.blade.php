@@ -270,7 +270,7 @@
                     name="Title"
                     class="news-input"
                     value="{{ old('Title') }}"
-                    placeholder="Nhập tiêu đề tin tức..."
+                    placeholder="Enter news headline..."
                     required
                 >
 
@@ -290,7 +290,7 @@
                     class="news-select"
                     required
                 >
-                    <option value="">Chọn danh mục</option>
+                    <option value="">Select Category</option>
 
                     <option
                         value="Health Tips"

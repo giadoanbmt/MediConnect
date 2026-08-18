@@ -305,39 +305,49 @@
     @endif
 
     @php
-        $gender = strtolower(
-            trim((string) ($doctor->Gender ?? ''))
+    $gender = strtolower(
+        trim((string) ($doctor->Gender ?? ''))
+    );
+
+    $avatarPath = trim(
+        (string) ($doctor->AvatarUrl ?? '')
+    );
+
+    $avatarUrl = null;
+
+    if ($avatarPath !== '') {
+        $dbAvatarPath = ltrim(
+            $avatarPath,
+            '/'
         );
 
-        $avatarPath = trim(
-            (string) ($doctor->AvatarUrl ?? '')
-        );
-
-        $isDefaultAvatar =
-            $avatarPath === '' ||
-            str_contains(
-                strtolower($avatarPath),
-                'default_male.png'
-            ) ||
-            str_contains(
-                strtolower($avatarPath),
-                'default_female.png'
+        if (file_exists(
+            public_path($dbAvatarPath)
+        )) {
+            $avatarUrl = asset(
+                $dbAvatarPath
             );
-
-        if (!$isDefaultAvatar) {
-            $avatarUrl = asset($avatarPath);
-        } elseif ($gender === 'female') {
-            $avatarUrl = asset('images/avatars/default_female.png');
-        } else {
-            $avatarUrl = asset('images/avatars/default_male.png');
         }
+    }
 
-        $currentCityName = trim(
-            $doctor->city->CityName ?? ''
-        );
+    if (!$avatarUrl) {
+        if ($gender === 'female') {
+            $avatarUrl = asset(
+                'images/avatars/default_doctor_female.png'
+            );
+        } else {
+            $avatarUrl = asset(
+                'images/avatars/default_doctor_male.png'
+            );
+        }
+    }
 
-        $currentDistrictId = $doctor->CityId;
-    @endphp
+    $currentCityName = trim(
+        $doctor->city->CityName ?? ''
+    );
+
+    $currentDistrictId = $doctor->CityId;
+@endphp
 
     <div class="doctor-profile-card">
 

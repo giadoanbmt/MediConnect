@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,10 @@
     <title>@yield('title', 'MediConnect - Doctor')</title>
 
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <style>
         :root {
@@ -46,17 +47,15 @@
             left: 0;
             top: 0;
             z-index: 1000;
-            background: linear-gradient(
-                180deg,
-                #203861 0%,
-                #162947 100%
-            );
+            background: linear-gradient(180deg,
+                    #203861 0%,
+                    #162947 100%);
             color: white;
         }
 
         .doctor-brand {
             padding: 22px 20px 18px;
-            border-bottom: 1px solid rgba(255,255,255,.12);
+            border-bottom: 1px solid rgba(255, 255, 255, .12);
         }
 
         .doctor-brand h4 {
@@ -119,7 +118,7 @@
 
         .doctor-menu a:hover {
             color: white;
-            background: rgba(0,136,204,.25);
+            background: rgba(0, 136, 204, .25);
             text-decoration: none;
         }
 
@@ -160,7 +159,7 @@
 
         .doctor-menu .logout:hover {
             color: #ff4050;
-            background: rgba(255,64,80,.1);
+            background: rgba(255, 64, 80, .1);
             border-left-color: #ff4050;
         }
 
@@ -293,145 +292,148 @@
 
 <body>
 
-@php
+    @php
     $sidebarDoctor = \App\Models\Doctor::with('specialization')
-        ->find(session('doctor_id'));
+    ->find(session('doctor_id'));
 
     $sidebarGender = strtolower(
-        trim((string) ($sidebarDoctor->Gender ?? ''))
+    trim((string) ($sidebarDoctor->Gender ?? ''))
     );
 
     $sidebarAvatarPath = trim(
-        (string) ($sidebarDoctor->AvatarUrl ?? '')
+    (string) ($sidebarDoctor->AvatarUrl ?? '')
     );
 
-    $sidebarIsDefault =
-        $sidebarAvatarPath === '' ||
-        str_contains(
-            strtolower($sidebarAvatarPath),
-            'default_male.png'
-        ) ||
-        str_contains(
-            strtolower($sidebarAvatarPath),
-            'default_female.png'
-        );
+    $sidebarAvatar = null;
 
-    if (!$sidebarIsDefault) {
-        $sidebarAvatar = asset($sidebarAvatarPath);
-    } elseif ($sidebarGender === 'female') {
-        $sidebarAvatar = asset('images/avatars/default_female.png');
-    } else {
-        $sidebarAvatar = asset('images/avatars/default_male.png');
+    if ($sidebarAvatarPath !== '') {
+    $sidebarAvatarFile = ltrim(
+    $sidebarAvatarPath,
+    '/'
+    );
+
+    if (file_exists(
+    public_path($sidebarAvatarFile)
+    )) {
+    $sidebarAvatar = asset(
+    $sidebarAvatarFile
+    );
     }
-@endphp
+    }
 
-<div class="doctor-sidebar">
+    if (!$sidebarAvatar) {
+    if ($sidebarGender === 'female') {
+    $sidebarAvatar = asset(
+    'images/avatars/default_doctor_female.png'
+    );
+    } else {
+    $sidebarAvatar = asset(
+    'images/avatars/default_doctor_male.png'
+    );
+    }
+    }
+    @endphp
 
-    <div class="doctor-brand">
-        <h4>MediConnect</h4>
-        <small>Doctor portal</small>
-    </div>
+    <div class="doctor-sidebar">
 
-    <div class="doctor-profile-box">
-
-        <img
-            src="{{ $sidebarAvatar }}"
-            alt="Avatar"
-            onerror="this.onerror=null;this.src='{{ asset('images/avatars/default_male.png') }}';"
-        >
-
-        <h6>
-            {{ $sidebarDoctor->FullName ?? 'Doctor' }}
-        </h6>
-
-        <small>
-            {{ $sidebarDoctor?->specialization?->SpecializationName ?? 'Doctor' }}
-        </small>
-
-    </div>
-
-    <div class="doctor-menu">
-
-        <a
-            href="{{ url('/doctor/dashboard') }}"
-            class="{{ request()->is('doctor/dashboard') ? 'active' : '' }}"
-        >
-            <i class="fas fa-th-large"></i>
-            <span>Dashboard</span>
-        </a>
-
-        <a
-            href="{{ url('/doctor/profile') }}"
-            class="{{ request()->is('doctor/profile') ? 'active' : '' }}"
-        >
-            <i class="fas fa-user-md"></i>
-            <span>Profile</span>
-        </a>
-
-        <a
-            href="{{ url('/doctor/news') }}"
-            class="{{ request()->is('doctor/news*') ? 'active' : '' }}"
-        >
-            <i class="fas fa-newspaper"></i>
-            <span>News</span>
-        </a>
-
-        <a
-            href="{{ url('/doctor/availability') }}"
-            class="{{ request()->is('doctor/availability*') ? 'active' : '' }}"
-        >
-            <i class="fas fa-calendar-alt"></i>
-            <span>Availability</span>
-        </a>
-
-        <a
-            href="{{ url('/doctor/appointments') }}"
-            class="{{ request()->is('doctor/appointments*') ? 'active' : '' }}"
-        >
-            <i class="fas fa-calendar-check"></i>
-            <span>Appointments</span>
-        </a>
-
-        <form
-            action="{{ route('logout') }}"
-            method="POST"
-            class="logout-form"
-        >
-            @csrf
-
-            <button
-                type="submit"
-                class="logout"
-            >
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </button>
-        </form>
-
-    </div>
-
-</div>
-
-<div class="doctor-main">
-
-    <div class="doctor-navbar">
-
-        <div class="doctor-navbar-title">
-            <i class="fas fa-home mr-2"></i>
-            Welcome back, Doctor! 👋
+        <div class="doctor-brand">
+            <h4>MediConnect</h4>
+            <small>Doctor portal</small>
         </div>
 
-        <i class="fas fa-bell"></i>
+        <div class="doctor-profile-box">
+
+            <img
+                src="{{ $sidebarAvatar }}"
+                alt="Avatar"
+                onerror="this.onerror=null;this.src='{{ asset('images/avatars/default_doctor_male.png') }}';">
+
+            <h6>
+                {{ $sidebarDoctor->FullName ?? 'Doctor' }}
+            </h6>
+
+            <small>
+                {{ $sidebarDoctor?->specialization?->SpecializationName ?? 'Doctor' }}
+            </small>
+
+        </div>
+
+        <div class="doctor-menu">
+
+            <a
+                href="{{ url('/doctor/dashboard') }}"
+                class="{{ request()->is('doctor/dashboard') ? 'active' : '' }}">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a
+                href="{{ url('/doctor/profile') }}"
+                class="{{ request()->is('doctor/profile') ? 'active' : '' }}">
+                <i class="fas fa-user-md"></i>
+                <span>Profile</span>
+            </a>
+
+            <a
+                href="{{ url('/doctor/news') }}"
+                class="{{ request()->is('doctor/news*') ? 'active' : '' }}">
+                <i class="fas fa-newspaper"></i>
+                <span>News</span>
+            </a>
+
+            <a
+                href="{{ url('/doctor/availability') }}"
+                class="{{ request()->is('doctor/availability*') ? 'active' : '' }}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Availability</span>
+            </a>
+
+            <a
+                href="{{ url('/doctor/appointments') }}"
+                class="{{ request()->is('doctor/appointments*') ? 'active' : '' }}">
+                <i class="fas fa-calendar-check"></i>
+                <span>Appointments</span>
+            </a>
+
+            <form
+                action="{{ route('logout') }}"
+                method="POST"
+                class="logout-form">
+                @csrf
+
+                <button
+                    type="submit"
+                    class="logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
+
+        </div>
 
     </div>
 
-    <main class="doctor-content">
-        @yield('content')
-    </main>
+    <div class="doctor-main">
 
-</div>
+        <div class="doctor-navbar">
 
-@stack('scripts')
+            <div class="doctor-navbar-title">
+                <i class="fas fa-home mr-2"></i>
+                Welcome back, Doctor! 👋
+            </div>
+
+            <i class="fas fa-bell"></i>
+
+        </div>
+
+        <main class="doctor-content">
+            @yield('content')
+        </main>
+
+    </div>
+
+    @stack('scripts')
 
 </body>
+
 </html>

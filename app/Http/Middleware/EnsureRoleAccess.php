@@ -1,44 +1,5 @@
 <?php
 
-// class EnsureRoleAccess
-// {
-//     /**
-//      * @param  string  $roles  Comma-separated list of allowed roles.
-//      */
-//     public function handle(Request $request, Closure $next, string $roles): SymfonyResponse|RedirectResponse|Response
-//     {
-//         $allowedRoles = array_values(array_filter(array_map('trim', explode(',', $roles))));
-
-//         if ($request->session()->get('auth_type') === 'doctor' && in_array('doctor', $allowedRoles, true)) {
-//             return $next($request);
-//         }
-
-//         if (! Auth::check()) {
-//             return redirect()->route('login');
-//         }
-
-//         $user = Auth::user();
-
-//         if (! $user) {
-//             return redirect()->route('login');
-//         }
-
-//         $currentRole = (int) $user->Role;
-
-//         foreach ($allowedRoles as $role) {
-//             if ($role === 'admin' && $currentRole === 1) {
-//                 return $next($request);
-//             }
-
-//             if ($role === 'patient' && $currentRole === 2) {
-//                 return $next($request);
-//             }
-//         }
-
-//         return redirect()->route('login');
-//     }
-// }
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -48,55 +9,46 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureRoleAccess
 {
+    /**
+     * Handle an incoming request.
+     *
+     * @param  string  ...$roles
+     */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // 1. Kiểm tra truy cập cho DOCTOR (Session auth_type === 'doctor')
-        if (in_array('doctor', $roles)) {
-            if ($request->session()->get('auth_type') === 'doctor') {
-                $response = $next($request);
+        $isDoctor = $request->session()->get('auth_type') === 'doctor';
+        $isAuthUser = Auth::check();
 
-                $response->headers->set(
-                    'Cache-Control',
-                    'no-store, no-cache, must-revalidate, max-age=0'
-                );
-
-                $response->headers->set(
-                    'Pragma',
-                    'no-cache'
-                );
-
-                $response->headers->set(
-                    'Expires',
-                    '0'
-                );
-
-                return $response;
-            }
+        // 1. Nếu chưa đăng nhập ở bất kỳ vai trò nào -> Chuyển hướng về trang login
+        if (!$isDoctor && !$isAuthUser) {
+            return redirect()->route('login')->withErrors([
+                'username' => 'Please log in to perform this action.'
+            ]);
         }
-        
-        // 2. Kiểm tra truy cập cho ADMIN hoặc PATIENT (Dựa trên Auth::user())
-        if (Auth::check()) {
+
+        // 2. Nếu route yêu cầu 'doctor' và người dùng là Doctor
+        if (in_array('doctor', $roles) && $isDoctor) {
+            $response = $next($request);
+            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+            return $response;
+        }
+
+        // 3. Nếu route yêu cầu 'admin' hoặc 'patient'
+        if ($isAuthUser) {
             $userRole = (int) Auth::user()->Role;
 
-            // Chỉ Admin mới được vào route có 'admin' (Role = 1)
             if (in_array('admin', $roles) && $userRole === 1) {
                 return $next($request);
             }
 
-            // Chỉ Patient mới được vào route có 'patient' (Role = 2)
             if (in_array('patient', $roles) && $userRole === 2) {
                 return $next($request);
             }
         }
 
-        // 3. Xử lý truy cập trái quyền hoặc chưa đăng nhập
-        if (!Auth::check() && $request->session()->get('auth_type') !== 'doctor') {
-            return redirect()->route('login')->withErrors([
-                'username' => 'Vui lòng đăng nhập để thực hiện thao tác này.'
-            ]);
-        }
-
-        // Đã đăng nhập nhưng cố tình vào khu vực của Role khác
-        abort(403, 'Bạn không có quyền truy cập vào khu vực này.');
+        // 4. Trường hợp đã đăng nhập (Doctor, Admin hoặc Patient) nhưng vào sai khu vực -> Báo lỗi 403
+        abort(403, 'You do not have permission to access this page.');
     }
 }

@@ -1,563 +1,137 @@
 @extends('components.layouts.admin.master')
 
 @section('content')
-
-{{-- ========================================================= --}}
-{{-- SUMMERNOTE CSS --}}
-{{-- ========================================================= --}}
-<link
-    href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css"
-    rel="stylesheet"
->
-
-<div class="container-fluid py-4">
-
-    {{-- ========================================================= --}}
-    {{-- PAGE HEADER --}}
-    {{-- ========================================================= --}}
-    <div class="d-flex align-items-center justify-content-between mb-4">
-
-        <div>
-
-            {{-- Back Button --}}
-            <a href="{{ route('admin.contact.index') }}"
-               class="btn btn-outline-primary btn-sm px-3 mb-2"
-               style="border-radius: 6px;">
-
-                &larr; Back to Contact List
-
+<div class="max-w-4xl mx-auto space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+        <div class="space-y-1">
+            <a href="{{ route('admin.contact.index') }}" class="inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-800 transition mb-1">
+                <i class="fa-solid fa-arrow-left mr-1.5"></i> Back to Contact List
             </a>
-
-            <h2 class="h3 mb-0 text-gray-800 fw-bold">
-                Inquiry Details #{{ $query->QueryId }}
-            </h2>
-            <br>
-
+            <h1 class="text-2xl font-bold text-slate-800">Inquiry Details #{{ $query->QueryId }}</h1>
         </div>
 
-
-        {{-- STATUS --}}
         <div>
-
-            @if ($query->Status === 'Responded')
-
-                <span class="badge px-3 py-2 fw-semibold"
-                      style="
-                        background-color: #198754;
-                        color: white;
-                        border-radius: 20px;
-                      ">
-
-                    Responded
-
-                </span>
-
+            @if ($query->Status === 'Resolved')
+            <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 inline-flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Resolved</span>
+            </span>
             @else
-
-                <span class="badge px-3 py-2 fw-semibold"
-                      style="
-                        background-color: #dc3545;
-                        color: white;
-                        border-radius: 20px;
-                      ">
-
-                    Pending
-
-                </span>
-
+            <span class="px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 inline-flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>Pending Response</span>
+            </span>
             @endif
-
         </div>
-
     </div>
 
+    @if ($errors->any())
+    <div class="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm space-y-1">
+        @foreach ($errors->all() as $error)
+        <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-circle-exclamation text-red-500"></i>
+            <span>{{ $error }}</span>
+        </div>
+        @endforeach
+    </div>
+    @endif
 
-    {{-- ========================================================= --}}
-    {{-- MAIN CONTENT --}}
-    {{-- ========================================================= --}}
-    <div class="row g-4">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-6">
+        <h2 class="text-base font-semibold text-slate-800 border-b border-slate-100 pb-3 flex items-center space-x-2">
+            <i class="fa-solid fa-user-gear text-blue-600"></i>
+            <span>Patient Inquiry Information</span>
+        </h2>
 
-
-        {{-- ===================================================== --}}
-        {{-- LEFT COLUMN --}}
-        {{-- ===================================================== --}}
-        <div class="col-lg-5">
-
-            <div class="card shadow-sm border-0 h-100"
-                 style="border-radius: 8px; overflow: hidden;">
-
-
-                {{-- ================================================= --}}
-                {{-- SENDER INFORMATION HEADER --}}
-                {{-- ================================================= --}}
-                <div class="card-header text-white py-3"
-                     style="
-                        background: linear-gradient(
-                            135deg,
-                            #0d6efd 0%,
-                            #0a58ca 100%
-                        );
-                     ">
-
-                    <h6 class="m-0 fw-bold text-white">
-                        Sender Information
-                    </h6>
-
-                </div>
-
-
-                {{-- ================================================= --}}
-                {{-- SENDER INFORMATION BODY --}}
-                {{-- ================================================= --}}
-                <div class="card-body">
-
-
-                    {{-- Full Name --}}
-                    <div class="pb-3 mb-3 border-bottom">
-
-                        <label class="text-muted small text-uppercase fw-semibold d-block mb-1">
-                            Full Name
-                        </label>
-
-                        <div class="fw-bold text-dark">
-                            {{ $query->SenderName }}
-                        </div>
-
-                    </div>
-
-
-                    {{-- Email --}}
-                    <div class="pb-3 mb-3 border-bottom">
-
-                        <label class="text-muted small text-uppercase fw-semibold d-block mb-1">
-                            Email Address
-                        </label>
-
-                        <a href="mailto:{{ $query->Email }}"
-                           class="text-primary fw-medium text-decoration-none">
-
-                            {{ $query->Email }}
-
-                        </a>
-
-                    </div>
-
-
-                    {{-- Phone --}}
-                    <div class="pb-3 mb-3 border-bottom">
-
-                        <label class="text-muted small text-uppercase fw-semibold d-block mb-1">
-                            Phone Number
-                        </label>
-
-                        <div class="text-dark">
-                            {{ $query->PhoneNumber ?? 'Not provided' }}
-                        </div>
-
-                    </div>
-
-
-                    {{-- Submitted Date --}}
-                    <div class="pb-3 mb-4 border-bottom">
-
-                        <label class="text-muted small text-uppercase fw-semibold d-block mb-1">
-                            Submitted Date
-                        </label>
-
-                        <div class="text-dark">
-                            {{ $query->SubmittedAt
-                                ? $query->SubmittedAt->format('d/m/Y H:i:s')
-                                : 'N/A'
-                            }}
-                        </div>
-
-                    </div>
-
-
-                    {{-- ================================================= --}}
-                    {{-- SUBJECT --}}
-                    {{-- ================================================= --}}
-                    <div class="mb-4">
-
-                        <label class="text-muted small text-uppercase fw-semibold d-block mb-1">
-                            Subject
-                        </label>
-
-                        <div class="fw-bold text-dark fs-6">
-                            {{ $query->Subject }}
-                        </div>
-
-                    </div>
-
-
-                    {{-- ================================================= --}}
-                    {{-- MESSAGE --}}
-                    {{-- ================================================= --}}
-                    <div>
-
-                        <label class="text-muted small text-uppercase fw-semibold d-block mb-2">
-                            Message Content
-                        </label>
-
-
-                        <div class="p-3 text-dark"
-                             style="
-                                background-color: #f8f9fa;
-                                border: 1px solid #dee2e6;
-                                border-radius: 6px;
-                                white-space: pre-line;
-                                min-height: 150px;
-                             ">
-
-                            {{ $query->MessageText }}
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <div>
+                <span class="block text-xs font-medium text-slate-400 uppercase">Sender Name</span>
+                <span class="text-sm font-semibold text-slate-800">{{ $query->SenderName }}</span>
             </div>
-
+            <div>
+                <span class="block text-xs font-medium text-slate-400 uppercase">Email Address</span>
+                <span class="text-sm font-semibold text-blue-600">{{ $query->Email }}</span>
+            </div>
+            <div>
+                <span class="block text-xs font-medium text-slate-400 uppercase">Phone Number</span>
+                <span class="text-sm font-semibold text-slate-800">{{ $query->PhoneNumber }}</span>
+            </div>
         </div>
 
-
-
-        {{-- ===================================================== --}}
-        {{-- RIGHT COLUMN --}}
-        {{-- ===================================================== --}}
-        <div class="col-lg-7">
-
-            <div class="card shadow-sm border-0 h-100"
-                 style="border-radius: 8px; overflow: hidden;">
-
-
-                {{-- ================================================= --}}
-                {{-- REPLY HEADER --}}
-                {{-- ================================================= --}}
-                <div class="card-header text-white py-3"
-                     style="
-                        background: linear-gradient(
-                            135deg,
-                            #0d6efd 0%,
-                            #0a58ca 100%
-                        );
-                     ">
-
-                    <h6 class="m-0 fw-bold text-white">
-                        Response &amp; Auto-Email
-                    </h6>
-
+        <div class="space-y-3">
+            <div>
+                <span class="text-xs font-semibold text-slate-400 uppercase block mb-1">Subject</span>
+                <div class="text-base font-semibold text-slate-800 bg-white border border-slate-200 rounded-lg px-4 py-2.5">
+                    {{ $query->Subject ?? 'No Subject Provided' }}
                 </div>
-
-
-                {{-- ================================================= --}}
-                {{-- REPLY BODY --}}
-                {{-- ================================================= --}}
-                <div class="card-body">
-
-
-                    {{-- Information Box --}}
-                    <div class="p-3 mb-4"
-                         style="
-                            background-color: #e7f1ff;
-                            border: 1px solid #b6d4fe;
-                            border-left: 4px solid #0d6efd;
-                            border-radius: 6px;
-                         ">
-
-                        <div class="d-flex">
-
-                            <div class="me-2 text-primary">
-                                <strong>To:</strong>
-                            </div>
-
-                            <div class="text-dark">
-                                {{ $query->Email }}
-                            </div>
-
-                        </div>
-
-                        <small class="text-muted d-block mt-1">
-                            Your response will be automatically sent to this email address.
-                        </small>
-
-                    </div>
-
-
-                    {{-- ================================================= --}}
-                    {{-- FORM --}}
-                    {{-- ================================================= --}}
-                    <form action="{{ route('admin.contact.respond', $query->QueryId) }}"
-                          method="POST">
-
-                        @csrf
-
-                        @method('PUT')
-
-
-                        {{-- ================================================= --}}
-                        {{-- REPLY MESSAGE --}}
-                        {{-- ================================================= --}}
-                        <div class="mb-4">
-
-                            <label for="admin_notes"
-                                   class="form-label fw-bold text-dark">
-
-                                Reply Message
-
-                                <span class="text-danger">
-                                    *
-                                </span>
-
-                            </label>
-
-
-                            <textarea
-                                name="admin_notes"
-                                id="admin_notes"
-                                class="form-control @error('admin_notes') is-invalid @enderror"
-                            >{{ old('admin_notes', $query->AdminNotes) }}</textarea>
-
-
-                            @error('admin_notes')
-
-                                <div class="invalid-feedback d-block">
-                                    {{ $message }}
-                                </div>
-
-                            @enderror
-
-                        </div>
-
-
-
-                        {{-- ================================================= --}}
-                        {{-- RESPONSE INFORMATION --}}
-                        {{-- ================================================= --}}
-                        @if ($query->Status === 'Responded')
-
-                            <div class="mb-4 p-3"
-                                 style="
-                                    background-color: #eaf7ef;
-                                    border: 1px solid #badbcc;
-                                    border-left: 4px solid #198754;
-                                    border-radius: 6px;
-                                 ">
-
-                                <div class="text-success fw-bold mb-1">
-                                    Response Information
-                                </div>
-
-                                <div class="small text-dark">
-
-                                    <div>
-                                        <strong>Responded by:</strong>
-                                        {{ $query->respondedByAdmin->FullName ?? 'Admin' }}
-                                    </div>
-
-                                    <div class="mt-1">
-                                        <strong>Date:</strong>
-                                        {{ $query->RespondedAt
-                                            ? $query->RespondedAt->format('d/m/Y H:i:s')
-                                            : 'N/A'
-                                        }}
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        @endif
-
-
-
-                        {{-- ================================================= --}}
-                        {{-- ACTION BUTTON --}}
-                        {{-- ================================================= --}}
-                        <div class="pt-3 border-top">
-
-                            <div class="d-flex justify-content-end">
-
-                                <button type="submit"
-                                        class="btn px-4 py-2 fw-bold shadow-sm"
-                                        style="
-                                            background-color: #0d6efd;
-                                            color: white;
-                                            border: none;
-                                            border-radius: 6px;
-                                        ">
-
-                                    {{ $query->Status === 'Responded'
-                                        ? 'Update & Resend Email'
-                                        : 'Send Response & Email Patient'
-                                    }}
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
             </div>
 
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-semibold text-slate-400 uppercase">Message Content</span>
+                    <span class="text-xs text-slate-400">
+                        <i class="fa-regular fa-clock mr-1"></i>
+                        Submitted: {{ $query->SubmittedAt ? \Carbon\Carbon::parse($query->SubmittedAt)->format('d/m/Y H:i') : 'N/A' }}
+                    </span>
+                </div>
+                <div class="text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-lg p-4 leading-relaxed whitespace-pre-line">
+                    {{ $query->MessageText }}
+                </div>
+            </div>
         </div>
-
     </div>
 
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h2 class="text-base font-semibold text-slate-800 border-b border-slate-100 pb-3 flex items-center space-x-2">
+            <i class="fa-solid fa-reply text-emerald-600"></i>
+            <span>Admin Response</span>
+        </h2>
+
+        @if($query->Status === 'Resolved')
+        <div class="space-y-3">
+            <div class="bg-emerald-50/60 border border-emerald-200 text-slate-800 rounded-lg p-4 space-y-2">
+                <p class="text-sm leading-relaxed whitespace-pre-line text-slate-700">{{ $query->AdminNotes }}</p>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-500 pt-2 px-1">
+                <div>
+                    <span class="font-medium">Responded by:</span>
+                    <span class="text-slate-700 font-semibold">{{ $query->respondedByAdmin->FullName ?? 'Admin' }}</span>
+                </div>
+                <div>
+                    <i class="fa-regular fa-circle-check text-emerald-600 mr-1"></i>
+                    <span>Responded on: {{ $query->RespondedAt ? \Carbon\Carbon::parse($query->RespondedAt)->format('d/m/Y H:i') : 'N/A' }}</span>
+                </div>
+            </div>
+        </div>
+        @else
+        <form action="{{ route('admin.contact.respond', $query->QueryId) }}" method="POST" class="space-y-4">
+            @csrf
+            @method('PUT')
+
+            <div>
+                <label for="admin_notes" class="block text-sm font-semibold text-slate-700 mb-1">
+                    Response Message <span class="text-red-500">*</span>
+                </label>
+                <textarea
+                    id="admin_notes"
+                    name="admin_notes"
+                    rows="5"
+                    required
+                    placeholder="Enter your response to the inquiry here..."
+                    class="w-full px-3.5 py-2.5 text-sm text-slate-800 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">{{ old('admin_notes', $query->AdminNotes) }}</textarea>
+            </div>
+
+            <div class="flex items-center justify-end space-x-3 pt-2">
+                <a href="{{ route('admin.contact.index') }}" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition">
+                    Cancel
+                </a>
+                <button type="submit" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg shadow-sm transition flex items-center space-x-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Send Response & Mark Resolved</span>
+                </button>
+            </div>
+        </form>
+        @endif
+    </div>
 </div>
-
-
-
-{{-- ========================================================= --}}
-{{-- SUMMERNOTE JS --}}
-{{-- ========================================================= --}}
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-
-
-<script>
-
-    $(document).ready(function () {
-
-        $('#admin_notes').summernote({
-
-            placeholder: 'Type your official response here...',
-
-            tabsize: 2,
-
-            height: 260,
-
-            toolbar: [
-
-                ['style', ['style']],
-
-                ['font', [
-                    'bold',
-                    'underline',
-                    'clear',
-                    'italic'
-                ]],
-
-                ['color', ['color']],
-
-                ['para', [
-                    'ul',
-                    'ol',
-                    'paragraph'
-                ]],
-
-                ['table', ['table']],
-
-                ['insert', ['link']],
-
-                ['view', [
-                    'fullscreen',
-                    'codeview'
-                ]]
-
-            ]
-
-        });
-
-    });
-
-</script>
-
-
-
-{{-- ========================================================= --}}
-{{-- CUSTOM SUMMERNOTE STYLE --}}
-{{-- ========================================================= --}}
-
-<style>
-
-    /* Summernote container */
-    .note-editor.note-frame {
-
-        border: 1px solid #dee2e6 !important;
-
-        border-radius: 6px !important;
-
-        overflow: hidden;
-
-        box-shadow: none;
-
-    }
-
-
-    /* Summernote toolbar */
-    .note-toolbar {
-
-        background-color: #f8f9fa !important;
-
-        border-bottom: 1px solid #dee2e6 !important;
-
-    }
-
-
-    /* Toolbar buttons */
-    .note-btn {
-
-        border-radius: 4px !important;
-
-    }
-
-
-    /* Editor area */
-    .note-editable {
-
-        min-height: 260px;
-
-        font-size: 15px;
-
-        line-height: 1.6;
-
-        color: #212529;
-
-    }
-
-
-    /* Summernote status bar */
-    .note-statusbar {
-
-        background-color: #f8f9fa !important;
-
-        border-top: 1px solid #dee2e6 !important;
-
-    }
-
-
-    /* Card divider */
-    .border-bottom {
-
-        border-color: #e9ecef !important;
-
-    }
-
-
-    /* Button hover */
-    button[type="submit"] {
-
-        transition: all 0.2s ease;
-
-    }
-
-
-    button[type="submit"]:hover {
-
-        background-color: #0b5ed7 !important;
-
-        transform: translateY(-1px);
-
-    }
-
-</style>
-
 @endsection
