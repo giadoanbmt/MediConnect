@@ -78,7 +78,7 @@
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.about') ? 'active' : '' }}" href="{{ route('public.about') }}">About</a></li>
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.service') ? 'active' : '' }}" href="{{ route('public.service') }}">Services</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/specialization') }}" id="dropdown02" data-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href="{{ route('public.specialization') }}" id="dropdown02" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">Specialization <i class="icofont-thin-down"></i></a>
                         <ul class="dropdown-menu" aria-labelledby="dropdown02">
                             <li><a class="dropdown-item" href="{{ route('specializations.Pediatrics') }}">Pediatrics</a></li>

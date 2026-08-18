@@ -73,6 +73,8 @@ Route::post('/logout', [AuthController::class, 'logout'])
 | Patient Routes (Role = 2)
 |--------------------------------------------------------------------------
 */
+
+
 Route::middleware('role:patient')->group(function () {
     Route::controller(PatientController::class)->group(function () {
         Route::get('/appointment', 'appointment')->name('patient.appointment');

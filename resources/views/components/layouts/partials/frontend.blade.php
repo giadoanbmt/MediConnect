@@ -32,7 +32,7 @@
 <body id="top">
 
     {{-- Top Header --}}
-    @include('layouts.partials.header')
+    @include('components.layouts.partials.header')
 
     {{-- Dynamic Content --}}
     <main>
@@ -40,10 +40,10 @@
     </main>
 
     {{-- Footer --}}
-    @include('layouts.partials.footer')
+    @include('components.layouts.partials.footer')
 
     {{-- Scripts & SPA Navigation --}}
-    @include('layouts.partials.script')
+    @include('components.layouts.partials.scripts')
 
 </body>
 

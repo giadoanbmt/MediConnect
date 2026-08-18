@@ -3,6 +3,8 @@
 <script src="{{ asset('Novena/plugins/slick-carousel/slick/slick.min.js') }}"></script>
 <script src="{{ asset('Novena/plugins/shuffle/shuffle.min.js') }}"></script>
 <script src="{{ asset('Novena/js/script.js') }}"></script>
+
+
 <script>
     // Fallback cho menu tài khoản vì bộ Bootstrap hiện tại không kèm Popper.js.
     document.addEventListener('click', (event) => {
