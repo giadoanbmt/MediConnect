@@ -597,85 +597,93 @@
 
                     @foreach($otherNews as $item)
 
-                        @php
-                            $itemImage = data_get($item, 'Image')
-                                ?: data_get($item, 'ThumbnailUrl');
-                        @endphp
+    @php
+        $itemImage = data_get($item, 'Image')
+            ?: data_get($item, 'ThumbnailUrl');
 
-                        <div class="news-card">
+        $newsImage = null;
 
-                            {{-- Card image --}}
-                            @if($itemImage)
+        if ($itemImage) {
+            $newsImagePath = ltrim(
+                trim((string) $itemImage),
+                '/'
+            );
 
-                                <img
-                                    src="{{ asset($itemImage) }}"
-                                    class="news-card-image"
-                                    alt="{{ $item->Title }}"
-                                    onerror="this.onerror=null;this.src='{{ asset($placeholder) }}';"
-                                >
+            if (file_exists(
+                public_path($newsImagePath)
+            )) {
+                $newsImage = asset(
+                    $newsImagePath
+                );
+            }
+        }
 
-                            @else
+        if (!$newsImage) {
+            $newsImage = asset($placeholder);
+        }
+    @endphp
 
-                                <img
-                                    src="{{ asset($placeholder) }}"
-                                    class="news-card-image"
-                                    alt="News placeholder"
-                                >
+    <div class="news-card">
 
-                            @endif
+        <img
+            src="{{ $newsImage }}"
+            class="news-card-image"
+            alt="{{ $item->Title }}"
+            onerror="this.onerror=null;this.src='{{ asset($placeholder) }}';"
+        >
 
-                            <div class="news-card-body">
+        <div class="news-card-body">
 
-                                <div class="news-card-meta">
+            <div class="news-card-meta">
 
-                                    <span class="card-category">
-                                        {{ $item->Category }}
-                                    </span>
+                <span class="card-category">
+                    {{ $item->Category }}
+                </span>
 
-                                    <span class="card-date">
-                                        <i class="far fa-calendar-alt"></i>
-                                        {{ \Carbon\Carbon::parse($item->CreatedAt)->format('d M Y') }}
-                                    </span>
+                <span class="card-date">
+                    <i class="far fa-calendar-alt"></i>
+                    {{ \Carbon\Carbon::parse($item->CreatedAt)->format('d M Y') }}
+                </span>
 
-                                </div>
+            </div>
 
-                                <h4>
-                                    {{ $item->Title }}
-                                </h4>
+            <h4>
+                {{ $item->Title }}
+            </h4>
 
-                                <div class="news-card-bottom">
+            <div class="news-card-bottom">
 
-                                    <div class="card-actions">
+                <div class="card-actions">
 
-                                        <a
-                                            href="{{ route('doctor.news.edit', $item->NewsId) }}"
-                                            class="card-action"
-                                            title="Edit"
-                                        >
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                    <a
+                        href="{{ route('doctor.news.edit', $item->NewsId) }}"
+                        class="card-action"
+                        title="Edit"
+                    >
+                        <i class="fas fa-edit"></i>
+                    </a>
 
-                                        <button
-                                            type="button"
-                                            class="card-action delete"
-                                            title="Delete"
-                                            onclick="openDeleteModal(
-                                                '{{ $item->NewsId }}',
-                                                @js($item->Title)
-                                            )"
-                                        >
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                    <button
+                        type="button"
+                        class="card-action delete"
+                        title="Delete"
+                        onclick="openDeleteModal(
+                            '{{ $item->NewsId }}',
+                            @js($item->Title)
+                        )"
+                    >
+                        <i class="fas fa-trash"></i>
+                    </button>
 
-                                    </div>
+                </div>
 
-                                </div>
+            </div>
 
-                            </div>
+        </div>
 
-                        </div>
+    </div>
 
-                    @endforeach
+@endforeach
 
                 </div>
 
