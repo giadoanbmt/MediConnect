@@ -72,6 +72,11 @@ class Doctor extends Authenticatable
         return $this->belongsTo(ClinicRoom::class, 'RoomId', 'RoomId');
     }
 
+    public function clinicRoom()
+    {
+        return $this->room();
+    }
+
     public function schedules()
     {
         return $this->hasMany(DoctorSchedule::class, 'DoctorId', 'DoctorId');
