@@ -11,12 +11,6 @@
                 <div class="block text-center">
                     <span class="text-white">All Specialization</span>
                     <h1 class="text-capitalize mb-5 text-lg">Medical Specialties</h1>
-
-                    <!-- <ul class="list-inline breadcumb-nav">
-            <li class="list-inline-item"><a href="{{ url('/') }}" class="text-white">Home</a></li>
-            <li class="list-inline-item"><span class="text-white">/</span></li>
-            <li class="list-inline-item"><a href="#" class="text-white-50">All Specialization</a></li>
-          </ul> -->
                 </div>
             </div>
         </div>
@@ -36,50 +30,46 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-4 col-md-6">
-                <div class="Specialization-block mb-5 border rounded shadow-sm overflow-hidde">
-                    <img src="{{ asset('Novena/images/service/Orthopedics_service.jpg') }}" alt="" class="img-fluid w-100 border-bottom">
-                    <div class="content p-4">
-                        <h4 class="mt-4 mb-2 title-color">Orthopedics</h4>
-                        <p class="mb-4">Diagnosis and Treatment of Bone and Joint Disorders.</p>
-                        <a href="{{route('specializations.Orthopedics')}}" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
+            @forelse($specializations as $item)
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="Specialization-block border rounded shadow-sm overflow-hidden h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <!-- 1. HÌNH ẢNH CÓ LINK & CỐ ĐỊNH KÍCH THƯỚC -->
+                        <a href="{{ url('/specialization/' . ($item->SpecializationId ?? $item->id)) }}">
+                            <img src="{{ !empty($item->ImageUrl) && file_exists(public_path($item->ImageUrl)) ? asset($item->ImageUrl) : asset('images/default-specialization.jpg') }}"
+                                alt="{{ $item->SpecializationName ?? $item->name }}"
+                                class="img-fluid w-100 border-bottom"
+                                style="height: 220px; object-fit: cover; transition: transform 0.3s ease;">
+                        </a>
+
+                        <div class="content p-4">
+                            <!-- 2. TIÊU ĐỀ CÓ LINK -->
+                            <h4 class="mt-2 mb-2 title-color">
+                                <a href="{{ url('/specialization-single/' . ($item->SpecializationId ?? $item->id)) }}" class="text-dark">
+                                    {{ $item->SpecializationName ?? $item->name }}
+                                </a>
+                            </h4>
+
+                            <!-- 3. MÔ TẢ TÓM TẮT -->
+                            <p class="mb-4 text-muted">
+                                {{ Str::limit(strip_tags($item->Content), 110) }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 4. NÚT LEARN MORE CÓ LINK -->
+                    <div class="px-4 pb-4">
+                        <a href="{{ url('/specialization-single/' . ($item->SpecializationId ?? $item->id)) }}" class="read-more">
+                            Learn More <i class="icofont-simple-right ml-2"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-4 col-md-6">
-                <div class="Specialization-block mb-5 border rounded shadow-sm overflow-hidde">
-                    <img src="{{ asset('Novena/images/service/Cardiology_service.jpg') }}" alt="" class="img-fluid w-100  border-bottom">
-                    <div class="content p-4">
-                        <h4 class="mt-4 mb-2  title-color">Cardiology</h4>
-                        <p class="mb-4">Comprehensive Diagnosis and Treatment for Heart and Cardiovascular Diseases.</p>
-                        <a href="{{ route('specializations.Cardiology') }}" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
-                    </div>
-                </div>
+            @empty
+            <div class="col-12 text-center py-5">
+                <p class="text-muted fs-5">No specialized data is available yet.</p>
             </div>
-
-            <div class="col-lg-4 col-md-6 ">
-                <div class="Specialization-block  mb-5 border rounded shadow-sm overflow-hidde">
-                    <img src="{{ asset('Novena/images/service/Pediatrics_service.jpg') }}" alt="" class="img-fluid w-100  border-bottom">
-                    <div class="content p-4">
-                        <h4 class="mt-4 mb-2 title-color">Pediatrics</h4>
-                        <p class="mb-4">Comprehensive Healthcare Services for Children.</p>
-                        <a href="{{ route('specializations.Pediatrics') }}" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 col-md-6">
-                <div class="Specialization-block mb-5 border rounded shadow-sm overflow-hidde">
-                    <img src="{{ asset('Novena/images/service/Dermatology_service.jpg') }}" alt="" class="img-fluid w-100  border-bottom">
-                    <div class="content p-4">
-                        <h4 class="mt-4 mb-2 title-color">Dermatology</h4>
-                        <p class="mb-4">Comprehensive Diagnosis and Treatment of Skin Conditions</p>
-                        <a href="{{ route('specializations.Dermatology') }}" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
-                    </div>
-                </div>
-            </div>
-
+            @endforelse
         </div>
     </div>
 </section>

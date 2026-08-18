@@ -28,30 +28,32 @@ class PatientController extends Controller
         return view('patient.service');
     }
 
-    public function specialization(): View
+    public function specialization()
     {
-        return view('patient.specialization');
+        // Lấy tất cả chuyên khoa từ Database
+        $specializations = Specialization::all();
+
+        // Trả về view danh sách (Đổi tên path view cho đúng với file của bạn)
+        return view('patient.specialization', compact('specializations'));
     }
 
-    public function specializationCardiology(): View
+    public function specializationSingle($id)
     {
-        return view('patient.specializations-single.Cardiology');
+        // 1. Tìm chuyên khoa theo ID (tương thích với cả SpecializationId hoặc id)
+        $specialization = Specialization::where('SpecializationId', $id)
+            ->orWhere('SpecializationId', $id)
+            ->firstOrFail();
+
+        // 2. Lấy danh sách các chuyên khoa khác hiển thị ở Sidebar (trừ trang hiện tại)
+        $primaryKey = $specialization->SpecializationId ? 'SpecializationId' : 'id';
+        $otherSpecializations = Specialization::where($primaryKey, '!=', $specialization->$primaryKey)
+            ->take(5)
+            ->get();
+
+        // 3. Trả về view chi tiết
+        return view('patient.specialization-single', compact('specialization', 'otherSpecializations'));
     }
 
-    public function specializationDermatology(): View
-    {
-        return view('patient.specializations-single.Dermatology');
-    }
-
-    public function specializationOrthopedics(): View
-    {
-        return view('patient.specializations-single.Orthopedics');
-    }
-
-    public function specializationPediatrics(): View
-    {
-        return view('patient.specializations-single.Pediatrics');
-    }
 
     public function appointment(): View
     {
@@ -100,6 +102,25 @@ class PatientController extends Controller
 
         return view('patient.blog-sidebar', compact('news', 'popularNews', 'categories'));
     }
+
+    // Hiển thị newsSingle (blog-Single cũ)
+    public function blogSingle($id)
+    {
+        // Tìm bài viết theo NewsId hoặc id
+        $news = News::where('NewsId', $id)
+            ->orWhere('NewsId', $id)
+            ->firstOrFail();
+
+        // Lấy danh sách các bài viết mới nhất khác cho Sidebar (trừ bài hiện tại)
+        $recentNews = News::where($news->getKeyName(), '!=', $news->getKey())
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Trả về view chi tiết bài viết
+        return view('patient.blog-single', compact('news', 'recentNews'));
+    }
+
     // Hiển thị trang contact
     public function contact(): View
     {
@@ -112,19 +133,19 @@ class PatientController extends Controller
     /**
      * Hiển thị trang chi tiết chuyên khoa động dựa vào tên chuyên khoa
      */
-    public function specializationSingle(string $slug)
-    {
-        // Chuẩn hóa tên view (Ví dụ: cardiology -> Cardiology)
-        $formattedName = ucfirst($slug);
-        $viewPath = "patient.specializations-single.{$formattedName}";
+    // public function specializationSingle(string $slug)
+    // {
+    //     // Chuẩn hóa tên view (Ví dụ: cardiology -> Cardiology)
+    //     $formattedName = ucfirst($slug);
+    //     $viewPath = "patient.specializations-single.{$formattedName}";
 
-        // Kiểm tra nếu view tồn tại thì render, ngược lại trả về 404
-        if (view()->exists($viewPath)) {
-            return view($viewPath);
-        }
+    //     // Kiểm tra nếu view tồn tại thì render, ngược lại trả về 404
+    //     if (view()->exists($viewPath)) {
+    //         return view($viewPath);
+    //     }
 
-        abort(404);
-    }
+    //     abort(404);
+    // }
 
     // Hiển thị danh sách doctor
     public function Doctor(Request $request)

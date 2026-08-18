@@ -33,7 +33,7 @@
                     {{ Str::limit(strip_tags($item->Summary ?? $item->Content), 200) }}
                 </p>
 
-                <a href="{{ url('/blog/' . $item->NewsId) }}" class="btn btn-main btn-icon btn-round-full">
+                <a href="{{ url('/blog-single/' . $item->NewsId) }}" class="btn btn-main btn-icon btn-round-full">
                     Read More <i class="icofont-simple-right ml-2"></i>
                 </a>
             </div>
