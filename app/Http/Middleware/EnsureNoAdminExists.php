@@ -14,7 +14,7 @@ class EnsureNoAdminExists
         $adminExists = DB::table('AccountUser')->where('Role', 1)->exists();
 
         if ($adminExists) {
-            return redirect()->route('login')->with('error', 'Hệ thống đã có tài khoản Quản trị viên!');
+            return redirect()->route('login')->with('error', 'The system already has an administrator account!');
         }
 
         return $next($request);

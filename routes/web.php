@@ -142,17 +142,17 @@ Route::middleware(['role:doctor'])
 
 
         // Quản lý lịch hẹn của Bác sĩ
-Route::get('/appointments', [DoctorController::class, 'appointments'])
-    ->name('appointments');
+        Route::get('/appointments', [DoctorController::class, 'appointments'])
+            ->name('appointments');
 
-Route::post('/appointments/{id}/confirm', [DoctorController::class, 'confirmAppointment'])
-    ->name('appointments.confirm');
+        Route::post('/appointments/{id}/confirm', [DoctorController::class, 'confirmAppointment'])
+            ->name('appointments.confirm');
 
-Route::post('/appointments/{id}/cancel', [DoctorController::class, 'cancelAppointment'])
-    ->name('appointments.cancel');
+        Route::post('/appointments/{id}/cancel', [DoctorController::class, 'cancelAppointment'])
+            ->name('appointments.cancel');
 
-Route::post('/appointments/{id}/complete', [DoctorController::class, 'completeAppointment'])
-    ->name('appointments.complete');
+        Route::post('/appointments/{id}/complete', [DoctorController::class, 'completeAppointment'])
+            ->name('appointments.complete');
     });
 
 /*
@@ -160,7 +160,7 @@ Route::post('/appointments/{id}/complete', [DoctorController::class, 'completeAp
 | Admin Routes (Role = 1)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // 1. Dashboard Admin
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
