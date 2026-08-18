@@ -9,6 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureRoleAccess
 {
+    /**
+     * Handle an incoming request.
+     *
+     * @param  string  ...$roles
+     */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
         $isDoctor = $request->session()->get('auth_type') === 'doctor';
