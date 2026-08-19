@@ -95,9 +95,10 @@ Route::middleware('role:patient')->group(function () {
 */
 Route::middleware(['role:doctor'])->prefix('doctor')->name('doctor.')->group(function () {
     // Dashboard
-
     Route::get('/dashboard', [DoctorController::class, 'dashboard'])
         ->name('dashboard');
+    Route::post('/notifications/read', [DoctorController::class, 'markNotificationsRead'])
+        ->name('notifications.read');
 
 
     // Quản lý hồ sơ bác sĩ
