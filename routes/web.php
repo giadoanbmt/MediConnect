@@ -8,6 +8,9 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\DoctorController as AdminDoctorController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentController;
+use App\Http\Controllers\Admin\SpecializationController as AdminSpecializationController;
+use App\Http\Controllers\Admin\CityController as AdminCityController;
+
 
 // Auth
 use App\Http\Controllers\Auth\AdminSetupController;
@@ -210,5 +213,23 @@ Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(functi
         Route::get('/', 'index')->name('index');
         Route::get('/{id}', 'show')->name('show');
         Route::put('/{id}/respond', 'respond')->name('respond');
+    });
+
+    // 8. Quản lý Chuyên khoa & Phòng khám
+    Route::controller(AdminSpecializationController::class)->prefix('specializations')->name('specializations.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::delete('/{id}', 'destroy')->name('destroy');
+        Route::post('/{id}/add-room', 'addRoom')->name('addRoom');
+        Route::delete('/room/{roomId}', 'destroyRoom')->name('destroyRoom');
+    });
+
+    // 9. Quản lý Thành phố & Quận/Huyện
+    Route::controller(AdminCityController::class)->prefix('cities')->name('cities.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::delete('/{id}', 'destroy')->name('destroy');
+        Route::post('/{id}/add-district', 'addDistrict')->name('addDistrict');
+        Route::delete('/district/{districtId}', 'destroyDistrict')->name('destroyDistrict');
     });
 });

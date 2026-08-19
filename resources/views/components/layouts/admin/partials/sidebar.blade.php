@@ -11,11 +11,18 @@
                 <span>Dashboard</span>
             </a>
 
-            <div class="pt-4 pb-1 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Appointments</div>
+            <div class="pt-4 pb-1 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Medical and System Configuration</div>
 
-            <a href="{{ route('admin.appointments.index') }}" class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors {{ request()->routeIs('admin.appointments.*') ? 'bg-blue-600 text-white font-semibold' : '' }}">
-                <i class="fa-solid fa-calendar-check w-6 text-center mr-2"></i>
-                <span>Appointments List</span>
+            <!-- Specialization & Room -->
+            <a href="{{ route('admin.specializations.index') }}" class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors {{ request()->routeIs('admin.specializations.*') ? 'bg-blue-600 text-white font-semibold' : '' }}">
+                <i class="fa-solid fa-stethoscope w-6 text-center mr-2"></i>
+                <span>Specializations & Rooms</span>
+            </a>
+
+            <!-- Cities & Districts -->
+            <a href="{{ route('admin.cities.index') }}" class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors {{ request()->routeIs('admin.cities.*') ? 'bg-blue-600 text-white font-semibold' : '' }}">
+                <i class="fa-solid fa-city w-6 text-center mr-2"></i>
+                <span>Cities & Districts</span>
             </a>
 
             <div class="pt-4 pb-1 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Users & Doctors</div>
@@ -35,11 +42,11 @@
                 <span>Create Account</span>
             </a>
 
-            <div class="pt-4 pb-1 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Support & Inquiries</div>
+            <div class="pt-4 pb-1 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Appointments</div>
 
-            <a href="{{ route('admin.contact.index') }}" class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors {{ request()->routeIs('admin.contact.*') ? 'bg-blue-600 text-white font-semibold' : '' }}">
-                <i class="fa-solid fa-comments w-6 text-center mr-2"></i>
-                <span>Contact Queries</span>
+            <a href="{{ route('admin.appointments.index') }}" class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors {{ request()->routeIs('admin.appointments.*') ? 'bg-blue-600 text-white font-semibold' : '' }}">
+                <i class="fa-solid fa-calendar-check w-6 text-center mr-2"></i>
+                <span>Appointments List</span>
             </a>
 
             <div class="pt-4 pb-1 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">News & Content</div>
@@ -52,6 +59,13 @@
             <a href="{{ route('admin.news.create') }}" class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors {{ request()->routeIs('admin.news.create') ? 'bg-blue-600 text-white font-semibold' : '' }}">
                 <i class="fa-solid fa-pen-to-square w-6 text-center mr-2"></i>
                 <span>Create Post</span>
+            </a>
+
+            <div class="pt-4 pb-1 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Support & Inquiries</div>
+
+            <a href="{{ route('admin.contact.index') }}" class="flex items-center px-4 py-2.5 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors {{ request()->routeIs('admin.contact.*') ? 'bg-blue-600 text-white font-semibold' : '' }}">
+                <i class="fa-solid fa-comments w-6 text-center mr-2"></i>
+                <span>Contact Queries</span>
             </a>
 
             <div class="pt-4 pb-1 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Account Settings</div>
