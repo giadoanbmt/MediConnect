@@ -270,7 +270,7 @@
                     name="Title"
                     class="news-input"
                     value="{{ old('Title') }}"
-                    placeholder="Nhập tiêu đề tin tức..."
+                    placeholder="Enter news headline..."
                     required
                 >
 
@@ -290,34 +290,34 @@
                     class="news-select"
                     required
                 >
-                    <option value="">Chọn danh mục</option>
+                    <option value="">Select Category</option>
 
                     <option
-                        value="Health Tips"
-                        {{ old('Category') == 'Health Tips' ? 'selected' : '' }}
+                        value="MediConnect News"
+                        {{ old('Category') == 'MediConnect News' ? 'selected' : '' }}
                     >
-                        Health Tips
+                        MediConnect News
                     </option>
 
                     <option
-                        value="Medical Research"
-                        {{ old('Category') == 'Medical Research' ? 'selected' : '' }}
+                        value="Health & Lifestyle"
+                        {{ old('Category') == 'Health & Lifestyle' ? 'selected' : '' }}
                     >
-                        Medical Research
+                        Health & Lifestyle
                     </option>
 
                     <option
-                        value="Healthy Living"
-                        {{ old('Category') == 'Healthy Living' ? 'selected' : '' }}
+                        value="General Medicine"
+                        {{ old('Category') == 'General Medicine' ? 'selected' : '' }}
                     >
-                        Healthy Living
+                        General Medicine
                     </option>
 
                     <option
-                        value="Disease Prevention"
-                        {{ old('Category') == 'Disease Prevention' ? 'selected' : '' }}
+                        value="Doctor Advice"
+                        {{ old('Category') == 'Doctor Advice' ? 'selected' : '' }}
                     >
-                        Disease Prevention
+                        Doctor Advice
                     </option>
                 </select>
 

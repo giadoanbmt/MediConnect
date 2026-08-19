@@ -586,6 +586,16 @@
                         {{ \Illuminate\Support\Str::limit(strip_tags($featured->Content), 180) }}
                     </p>
 
+                    <a
+                        href="{{ route('doctor.news.show', $featured->NewsId) }}"
+                        class="edit-btn"
+                        style="width: fit-content; margin-top: 12px;"
+                        title="Read More"
+                    >
+                        <i class="fas fa-book-open"></i>
+                        Read More
+                    </a>
+
                 </div>
 
             </div>
@@ -597,85 +607,101 @@
 
                     @foreach($otherNews as $item)
 
-                        @php
-                            $itemImage = data_get($item, 'Image')
-                                ?: data_get($item, 'ThumbnailUrl');
-                        @endphp
+    @php
+        $itemImage = data_get($item, 'Image')
+            ?: data_get($item, 'ThumbnailUrl');
 
-                        <div class="news-card">
+        $newsImage = null;
 
-                            {{-- Card image --}}
-                            @if($itemImage)
+        if ($itemImage) {
+            $newsImagePath = ltrim(
+                trim((string) $itemImage),
+                '/'
+            );
 
-                                <img
-                                    src="{{ asset($itemImage) }}"
-                                    class="news-card-image"
-                                    alt="{{ $item->Title }}"
-                                    onerror="this.onerror=null;this.src='{{ asset($placeholder) }}';"
-                                >
+            if (file_exists(
+                public_path($newsImagePath)
+            )) {
+                $newsImage = asset(
+                    $newsImagePath
+                );
+            }
+        }
 
-                            @else
+        if (!$newsImage) {
+            $newsImage = asset($placeholder);
+        }
+    @endphp
 
-                                <img
-                                    src="{{ asset($placeholder) }}"
-                                    class="news-card-image"
-                                    alt="News placeholder"
-                                >
+    <div class="news-card">
 
-                            @endif
+        <img
+            src="{{ $newsImage }}"
+            class="news-card-image"
+            alt="{{ $item->Title }}"
+            onerror="this.onerror=null;this.src='{{ asset($placeholder) }}';"
+        >
 
-                            <div class="news-card-body">
+        <div class="news-card-body">
 
-                                <div class="news-card-meta">
+            <div class="news-card-meta">
 
-                                    <span class="card-category">
-                                        {{ $item->Category }}
-                                    </span>
+                <span class="card-category">
+                    {{ $item->Category }}
+                </span>
 
-                                    <span class="card-date">
-                                        <i class="far fa-calendar-alt"></i>
-                                        {{ \Carbon\Carbon::parse($item->CreatedAt)->format('d M Y') }}
-                                    </span>
+                <span class="card-date">
+                    <i class="far fa-calendar-alt"></i>
+                    {{ \Carbon\Carbon::parse($item->CreatedAt)->format('d M Y') }}
+                </span>
 
-                                </div>
+            </div>
 
-                                <h4>
-                                    {{ $item->Title }}
-                                </h4>
+            <h4>
+                {{ $item->Title }}
+            </h4>
 
-                                <div class="news-card-bottom">
+            <div class="news-card-bottom">
 
-                                    <div class="card-actions">
+                <div class="card-actions">
 
-                                        <a
-                                            href="{{ route('doctor.news.edit', $item->NewsId) }}"
-                                            class="card-action"
-                                            title="Edit"
-                                        >
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                    <a
+                        href="{{ route('doctor.news.show', $item->NewsId) }}"
+                        class="card-action"
+                        title="Read More"
+                    >
+                        <i class="fas fa-book-open"></i>
+                    </a>
 
-                                        <button
-                                            type="button"
-                                            class="card-action delete"
-                                            title="Delete"
-                                            onclick="openDeleteModal(
-                                                '{{ $item->NewsId }}',
-                                                @js($item->Title)
-                                            )"
-                                        >
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                    <a
+                        href="{{ route('doctor.news.edit', $item->NewsId) }}"
+                        class="card-action"
+                        title="Edit"
+                    >
+                        <i class="fas fa-edit"></i>
+                    </a>
 
-                                    </div>
+                    <button
+                        type="button"
+                        class="card-action delete"
+                        title="Delete"
+                        onclick="openDeleteModal(
+                            '{{ $item->NewsId }}',
+                            @js($item->Title)
+                        )"
+                    >
+                        <i class="fas fa-trash"></i>
+                    </button>
 
-                                </div>
+                </div>
 
-                            </div>
+            </div>
 
-                        </div>
+        </div>
 
-                    @endforeach
+    </div>
+
+@endforeach
 
                 </div>
 
@@ -690,35 +716,75 @@
 
                 <div class="pagination">
 
-                    <button type="button" class="page-btn">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
+    {{-- Previous --}}
+    @if($news->onFirstPage())
 
-                    <button type="button" class="page-btn active">
-                        1
-                    </button>
+        <button
+            type="button"
+            class="page-btn"
+            disabled
+        >
+            <i class="fas fa-chevron-left"></i>
+        </button>
 
-                    <button type="button" class="page-btn">
-                        2
-                    </button>
+    @else
 
-                    <button type="button" class="page-btn">
-                        3
-                    </button>
+        <a
+            href="{{ $news->previousPageUrl() }}"
+            class="page-btn"
+        >
+            <i class="fas fa-chevron-left"></i>
+        </a>
 
-                    <button type="button" class="page-btn">
-                        ...
-                    </button>
+    @endif
 
-                    <button type="button" class="page-btn">
-                        5
-                    </button>
 
-                    <button type="button" class="page-btn">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+    {{-- Page numbers --}}
+    @foreach($news->getUrlRange(1, $news->lastPage()) as $page => $url)
 
-                </div>
+        @if($page == $news->currentPage())
+
+            <span class="page-btn active">
+                {{ $page }}
+            </span>
+
+        @else
+
+            <a
+                href="{{ $url }}"
+                class="page-btn"
+            >
+                {{ $page }}
+            </a>
+
+        @endif
+
+    @endforeach
+
+
+    {{-- Next --}}
+    @if($news->hasMorePages())
+
+        <a
+            href="{{ $news->nextPageUrl() }}"
+            class="page-btn"
+        >
+            <i class="fas fa-chevron-right"></i>
+        </a>
+
+    @else
+
+        <button
+            type="button"
+            class="page-btn"
+            disabled
+        >
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+    @endif
+
+</div>
 
             </div>
 

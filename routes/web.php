@@ -101,6 +101,8 @@ Route::middleware(['role:doctor'])
         // Dashboard
         Route::get('/dashboard', [DoctorController::class, 'dashboard'])
             ->name('dashboard');
+        Route::post('/notifications/read', [DoctorController::class, 'markNotificationsRead'])
+            ->name('notifications.read');
 
 
         // Quản lý hồ sơ bác sĩ
@@ -109,6 +111,7 @@ Route::middleware(['role:doctor'])
 
         Route::put('/profile', [DoctorController::class, 'updateProfile'])
             ->name('profile.update');
+
 
 
         // Quản lý News của Bác sĩ
@@ -123,6 +126,9 @@ Route::middleware(['role:doctor'])
 
         Route::delete('/news/{id}', [DoctorController::class, 'deleteNews'])
             ->name('news.delete');
+
+        Route::get('/news/{id}', [DoctorController::class, 'showNews'])
+            ->name('news.show');
 
 
         // Store / Update News
@@ -142,17 +148,17 @@ Route::middleware(['role:doctor'])
 
 
         // Quản lý lịch hẹn của Bác sĩ
-Route::get('/appointments', [DoctorController::class, 'appointments'])
-    ->name('appointments');
+        Route::get('/appointments', [DoctorController::class, 'appointments'])
+            ->name('appointments');
 
-Route::post('/appointments/{id}/confirm', [DoctorController::class, 'confirmAppointment'])
-    ->name('appointments.confirm');
+        Route::post('/appointments/{id}/confirm', [DoctorController::class, 'confirmAppointment'])
+            ->name('appointments.confirm');
 
-Route::post('/appointments/{id}/cancel', [DoctorController::class, 'cancelAppointment'])
-    ->name('appointments.cancel');
+        Route::post('/appointments/{id}/cancel', [DoctorController::class, 'cancelAppointment'])
+            ->name('appointments.cancel');
 
-Route::post('/appointments/{id}/complete', [DoctorController::class, 'completeAppointment'])
-    ->name('appointments.complete');
+        Route::post('/appointments/{id}/complete', [DoctorController::class, 'completeAppointment'])
+            ->name('appointments.complete');
     });
 
 /*

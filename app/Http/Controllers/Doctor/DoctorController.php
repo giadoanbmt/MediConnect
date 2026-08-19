@@ -255,7 +255,7 @@ class DoctorController extends Controller
             ->route('doctor.profile')
             ->with(
                 'success',
-                'Cập nhật hồ sơ thành công!'
+                'Profile updated successfully!'
             );
     }
 
@@ -282,27 +282,28 @@ class DoctorController extends Controller
         // Lấy danh sách News
         $news = $query
             ->orderBy('CreatedAt', 'desc')
-            ->get()
-            ->map(function ($n) {
-                return (object) [
-                    'NewsId' => $n->NewsId,
-                    'Title' => $n->Title,
-                    'Category' => $n->Category,
-                    'Content' => $n->Content,
-                    'ThumbnailUrl' => $n->ThumbnailUrl,
-                    'CreatedAt' => $n->CreatedAt,
-                    'Status' => $n->IsPublished
-                        ? 'Published'
-                        : 'Draft',
-                ];
-            });
+            ->paginate(7);
+
+        // Chuyển dữ liệu về object giống logic cũ
+        $news->getCollection()->transform(function ($n) {
+            return (object) [
+                'NewsId' => $n->NewsId,
+                'Title' => $n->Title,
+                'Category' => $n->Category,
+                'Content' => $n->Content,
+                'ThumbnailUrl' => $n->ThumbnailUrl,
+                'CreatedAt' => $n->CreatedAt,
+                'Status' => $n->IsPublished
+                    ? 'Published'
+                    : 'Draft',
+            ];
+        });
 
         return view(
             'doctor.news.index',
             compact('news')
         );
     }
-
     public function createNews()
     {
         return view(
@@ -504,561 +505,580 @@ class DoctorController extends Controller
 
         return redirect()
             ->route('doctor.news.index')
-            ->with('success', 'Xóa tin tức thành công!');
+            ->with('success', 'News deleted successfully!');
     }
 
     /// Availability
-public function availability(Request $request)
-{
-    $doctor = Doctor::findOrFail(
-        session('doctor_id')
-    );
+    public function availability(Request $request)
+    {
+        $doctor = Doctor::findOrFail(
+            session('doctor_id')
+        );
 
-    $week = $request->input(
-        'week',
-        now()->startOfWeek()->toDateString()
-    );
+        $week = $request->input(
+            'week',
+            now()->startOfWeek()->toDateString()
+        );
 
-    $startOfWeek = \Carbon\Carbon::parse($week)
-        ->startOfWeek();
+        $startOfWeek = \Carbon\Carbon::parse($week)
+            ->startOfWeek();
 
-    $endOfWeek = $startOfWeek
-        ->copy()
-        ->endOfWeek();
+        $endOfWeek = $startOfWeek
+            ->copy()
+            ->endOfWeek();
 
-    $schedules = $doctor->schedules()
-        ->whereBetween(
-            'WorkDate',
-            [
-                $startOfWeek->toDateString(),
-                $endOfWeek->toDateString()
-            ]
-        )
-        ->orderBy('WorkDate')
-        ->orderBy('StartTime')
-        ->get();
-
-    $appointments = Appointment::with('accountUser')
-        ->where(
-            'DoctorId',
-            $doctor->DoctorId
-        )
-        ->whereBetween(
-            'AppointmentDate',
-            [
-                $startOfWeek->toDateString(),
-                $endOfWeek->toDateString()
-            ]
-        )
-        ->orderBy('AppointmentDate')
-        ->orderBy('StartTime')
-        ->get();
-
-    return view(
-        'doctor.availability.index',
-        compact(
-            'doctor',
-            'schedules',
-            'appointments',
-            'startOfWeek'
-        )
-    );
-}
-
-public function saveAvailability(Request $request)
-{
-    $doctor = Doctor::findOrFail(
-        session('doctor_id')
-    );
-
-    $validated = $request->validate([
-        'schedules' => [
-            'required',
-            'array',
-            'size:14',
-        ],
-
-        'schedules.*.WorkDate' => [
-            'required',
-            'date',
-        ],
-
-        'schedules.*.StartTime' => [
-            'required',
-            'date_format:H:i',
-        ],
-
-        'schedules.*.EndTime' => [
-            'required',
-            'date_format:H:i',
-        ],
-
-        'schedules.*.Status' => [
-            'required',
-            'in:Available,Off',
-        ],
-
-        'schedules.*.Note' => [
-            'nullable',
-            'string',
-            'max:255',
-        ],
-    ]);
-
-    foreach ($validated['schedules'] as $index => $schedule) {
-
-        if (
-            $schedule['Status'] === 'Off' &&
-            (
-                empty($schedule['Note']) ||
-                trim($schedule['Note']) === ''
+        $schedules = $doctor->schedules()
+            ->whereBetween(
+                'WorkDate',
+                [
+                    $startOfWeek->toDateString(),
+                    $endOfWeek->toDateString()
+                ]
             )
-        ) {
-            return back()
-                ->withErrors([
-                    "schedules.$index.Note" =>
-                    'A reason is required when a shift is marked as Day Off.'
-                ])
-                ->withInput();
-        }
+            ->orderBy('WorkDate')
+            ->orderBy('StartTime')
+            ->get();
+
+        $appointments = Appointment::with('accountUser')
+            ->where(
+                'DoctorId',
+                $doctor->DoctorId
+            )
+            ->whereBetween(
+                'AppointmentDate',
+                [
+                    $startOfWeek->toDateString(),
+                    $endOfWeek->toDateString()
+                ]
+            )
+            ->orderBy('AppointmentDate')
+            ->orderBy('StartTime')
+            ->get();
+
+        return view(
+            'doctor.availability.index',
+            compact(
+                'doctor',
+                'schedules',
+                'appointments',
+                'startOfWeek'
+            )
+        );
     }
 
-    foreach ($validated['schedules'] as $schedule) {
+    public function saveAvailability(Request $request)
+    {
+        $doctor = Doctor::findOrFail(
+            session('doctor_id')
+        );
 
-        DoctorSchedule::updateOrCreate(
-            [
-                'DoctorId' =>
+        $validated = $request->validate([
+            'schedules' => [
+                'required',
+                'array',
+                'size:14',
+            ],
+
+            'schedules.*.WorkDate' => [
+                'required',
+                'date',
+            ],
+
+            'schedules.*.StartTime' => [
+                'required',
+                'date_format:H:i',
+            ],
+
+            'schedules.*.EndTime' => [
+                'required',
+                'date_format:H:i',
+            ],
+
+            'schedules.*.Status' => [
+                'required',
+                'in:Available,Off',
+            ],
+
+            'schedules.*.Note' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+        ]);
+
+        foreach ($validated['schedules'] as $index => $schedule) {
+
+            if (
+                $schedule['Status'] === 'Off' &&
+                (
+                    empty($schedule['Note']) ||
+                    trim($schedule['Note']) === ''
+                )
+            ) {
+                return back()
+                    ->withErrors([
+                        "schedules.$index.Note" =>
+                        'A reason is required when a shift is marked as Day Off.'
+                    ])
+                    ->withInput();
+            }
+        }
+
+        foreach ($validated['schedules'] as $schedule) {
+
+            DoctorSchedule::updateOrCreate(
+                [
+                    'DoctorId' =>
                     $doctor->DoctorId,
 
-                'WorkDate' =>
+                    'WorkDate' =>
                     $schedule['WorkDate'],
 
-                'StartTime' =>
+                    'StartTime' =>
                     $schedule['StartTime'],
-            ],
-            [
-                'EndTime' =>
+                ],
+                [
+                    'EndTime' =>
                     $schedule['EndTime'],
 
-                'Status' =>
+                    'Status' =>
                     $schedule['Status'],
 
-                'Note' =>
+                    'Note' =>
                     $schedule['Status'] === 'Off'
                         ? trim($schedule['Note'])
                         : null,
-            ]
-        );
-    }
+                ]
+            );
+        }
 
-    return redirect()
-        ->route(
-            'doctor.availability',
-            [
-                'week' => \Carbon\Carbon::parse(
-                    $validated['schedules'][0]['WorkDate']
-                )->startOfWeek()->toDateString()
-            ]
-        )
-        ->with(
-            'success',
-            'Weekly schedule saved successfully.'
-        );
-}
-// Appointments
-public function appointments(Request $request)
-{
-    // Lấy bác sĩ đang đăng nhập
-    $doctor = Doctor::findOrFail(
-        session('doctor_id')
-    );
-
-    // Xác định kiểu xem: ngày / tuần / tháng
-    $view = $request->get(
-        'view',
-        'week'
-    );
-
-    // Nếu view không hợp lệ thì quay về tuần
-    if (!in_array(
-        $view,
-        ['day', 'week', 'month'],
-        true
-    )) {
-        $view = 'week';
-    }
-
-    // Lấy ngày đang xem
-    $date = $request->get(
-        'date',
-        now()->toDateString()
-    );
-
-    // Kiểm tra ngày, nếu sai thì dùng ngày hiện tại
-    try {
-        $selectedDate = \Carbon\Carbon::parse(
-            $date
-        );
-    } catch (\Exception $e) {
-        $selectedDate = now();
-        $date = $selectedDate->toDateString();
-    }
-
-    // Lấy trạng thái đang lọc
-    $status = $request->get(
-        'status',
-        'All'
-    );
-
-    // Các trạng thái được phép lọc
-    $allowedStatuses = [
-        'All',
-        'Pending',
-        'Confirmed',
-        'Cancelled',
-        'Completed',
-    ];
-
-    // Nếu trạng thái không hợp lệ thì lấy tất cả
-    if (!in_array(
-        $status,
-        $allowedStatuses,
-        true
-    )) {
-        $status = 'All';
-    }
-
-    // Lấy từ khóa tìm kiếm bệnh nhân
-    $search = trim(
-        $request->get(
-            'search',
-            ''
-        )
-    );
-
-    // Xác định khoảng thời gian cần lấy
-    if ($view === 'day') {
-
-        // Xem trong một ngày
-        $startDate = $selectedDate
-            ->copy()
-            ->startOfDay();
-
-        $endDate = $selectedDate
-            ->copy()
-            ->endOfDay();
-
-    } elseif ($view === 'month') {
-
-        // Xem trong một tháng
-        $startDate = $selectedDate
-            ->copy()
-            ->startOfMonth();
-
-        $endDate = $selectedDate
-            ->copy()
-            ->endOfMonth();
-
-    } else {
-
-        // Xem trong một tuần
-        $startDate = $selectedDate
-            ->copy()
-            ->startOfWeek();
-
-        $endDate = $selectedDate
-            ->copy()
-            ->endOfWeek();
-    }
-
-    // Đổi khoảng ngày về dạng Y-m-d để query DB
-    $startDateString = $startDate
-        ->toDateString();
-
-    $endDateString = $endDate
-        ->toDateString();
-
-    // Query gốc: chỉ lấy lịch của bác sĩ
-    // trong khoảng thời gian đang xem
-    $baseQuery = Appointment::query()
-        ->where(
-            'DoctorId',
-            $doctor->DoctorId
-        )
-        ->whereBetween(
-            'AppointmentDate',
-            [
-                $startDateString,
-                $endDateString
-            ]
-        );
-
-    // Tạo query riêng để lấy danh sách lịch hẹn
-    $appointmentsQuery = clone $baseQuery;
-
-    // Lấy luôn thông tin bệnh nhân
-    $appointmentsQuery->with(
-        'accountUser'
-    );
-
-    // Lọc theo trạng thái
-    if ($status !== 'All') {
-
-        // Gom tất cả kiểu Cancelled vào một nhóm
-        if ($status === 'Cancelled') {
-
-            $appointmentsQuery->whereIn(
-                'Status',
+        return redirect()
+            ->route(
+                'doctor.availability',
                 [
-                    'Cancelled',
-                    'cancelled_by_doctor',
-                    'cancelled_by_patient',
+                    'week' => \Carbon\Carbon::parse(
+                        $validated['schedules'][0]['WorkDate']
+                    )->startOfWeek()->toDateString()
+                ]
+            )
+            ->with(
+                'success',
+                'Weekly schedule saved successfully.'
+            );
+    }
+    // Appointments
+    public function appointments(Request $request)
+    {
+        // Lấy bác sĩ đang đăng nhập
+        $doctor = Doctor::findOrFail(
+            session('doctor_id')
+        );
+
+        // Xác định kiểu xem: ngày / tuần / tháng
+        $view = $request->get(
+            'view',
+            'week'
+        );
+
+        // Nếu view không hợp lệ thì quay về tuần
+        if (!in_array(
+            $view,
+            ['day', 'week', 'month'],
+            true
+        )) {
+            $view = 'week';
+        }
+
+        // Lấy ngày đang xem
+        $date = $request->get(
+            'date',
+            now()->toDateString()
+        );
+
+        // Kiểm tra ngày, nếu sai thì dùng ngày hiện tại
+        try {
+            $selectedDate = \Carbon\Carbon::parse(
+                $date
+            );
+        } catch (\Exception $e) {
+            $selectedDate = now();
+            $date = $selectedDate->toDateString();
+        }
+
+        // Lấy trạng thái đang lọc
+        $status = $request->get(
+            'status',
+            'All'
+        );
+
+        // Các trạng thái được phép lọc
+        $allowedStatuses = [
+            'All',
+            'Pending',
+            'Confirmed',
+            'Cancelled',
+            'Completed',
+        ];
+
+        // Nếu trạng thái không hợp lệ thì lấy tất cả
+        if (!in_array(
+            $status,
+            $allowedStatuses,
+            true
+        )) {
+            $status = 'All';
+        }
+
+        // Lấy từ khóa tìm kiếm bệnh nhân
+        $search = trim(
+            $request->get(
+                'search',
+                ''
+            )
+        );
+
+        // Xác định khoảng thời gian cần lấy
+        if ($view === 'day') {
+
+            // Xem trong một ngày
+            $startDate = $selectedDate
+                ->copy()
+                ->startOfDay();
+
+            $endDate = $selectedDate
+                ->copy()
+                ->endOfDay();
+        } elseif ($view === 'month') {
+
+            // Xem trong một tháng
+            $startDate = $selectedDate
+                ->copy()
+                ->startOfMonth();
+
+            $endDate = $selectedDate
+                ->copy()
+                ->endOfMonth();
+        } else {
+
+            // Xem trong một tuần
+            $startDate = $selectedDate
+                ->copy()
+                ->startOfWeek();
+
+            $endDate = $selectedDate
+                ->copy()
+                ->endOfWeek();
+        }
+
+        // Đổi khoảng ngày về dạng Y-m-d để query DB
+        $startDateString = $startDate
+            ->toDateString();
+
+        $endDateString = $endDate
+            ->toDateString();
+
+        // Query gốc: chỉ lấy lịch của bác sĩ
+        // trong khoảng thời gian đang xem
+        $baseQuery = Appointment::query()
+            ->where(
+                'DoctorId',
+                $doctor->DoctorId
+            )
+            ->whereBetween(
+                'AppointmentDate',
+                [
+                    $startDateString,
+                    $endDateString
                 ]
             );
 
-        } else {
+        // Tạo query riêng để lấy danh sách lịch hẹn
+        $appointmentsQuery = clone $baseQuery;
 
-            // Các trạng thái còn lại lọc trực tiếp
-            $appointmentsQuery->where(
-                'Status',
-                $status
-            );
-        }
-    }
+        // Lấy luôn thông tin bệnh nhân
+        $appointmentsQuery->with(
+            'accountUser'
+        );
 
-    // Tìm kiếm theo tên hoặc email bệnh nhân
-    if ($search !== '') {
+        // Lọc theo trạng thái
+        if ($status !== 'All') {
 
-        $appointmentsQuery->whereHas(
-            'accountUser',
-            function ($q) use ($search) {
+            // Gom tất cả kiểu Cancelled vào một nhóm
+            if ($status === 'Cancelled') {
 
-                $q->where(
-                    'FullName',
-                    'LIKE',
-                    '%' . $search . '%'
-                )
-                ->orWhere(
-                    'Email',
-                    'LIKE',
-                    '%' . $search . '%'
+                $appointmentsQuery->whereIn(
+                    'Status',
+                    [
+                        'Cancelled',
+                        'cancelled_by_doctor',
+                        'cancelled_by_patient',
+                    ]
+                );
+            } else {
+
+                // Các trạng thái còn lại lọc trực tiếp
+                $appointmentsQuery->where(
+                    'Status',
+                    $status
                 );
             }
-        );
-    }
+        }
 
-    // Lấy danh sách lịch hẹn và sắp xếp theo ngày, giờ
-    $appointments = $appointmentsQuery
-        ->orderBy(
-            'AppointmentDate'
-        )
-        ->orderBy(
-            'StartTime'
-        )
-        ->get();
+        // Tìm kiếm theo tên hoặc email bệnh nhân
+        if ($search !== '') {
 
-    // Tạo query riêng để đếm số lượng theo trạng thái
-    // Không áp dụng status filter hiện tại
-    $statusCountsQuery = clone $baseQuery;
+            $appointmentsQuery->whereHas(
+                'accountUser',
+                function ($q) use ($search) {
 
-    // Chỉ lấy Status để tính số lượng
-    $allAppointments =
-        $statusCountsQuery
+                    $q->where(
+                        'FullName',
+                        'LIKE',
+                        '%' . $search . '%'
+                    )
+                        ->orWhere(
+                            'Email',
+                            'LIKE',
+                            '%' . $search . '%'
+                        );
+                }
+            );
+        }
+
+        // Lấy danh sách lịch hẹn và sắp xếp theo ngày, giờ
+        $appointments = $appointmentsQuery
+            ->orderBy(
+                'AppointmentDate'
+            )
+            ->orderBy(
+                'StartTime'
+            )
+            ->get();
+
+        // Tạo query riêng để đếm số lượng theo trạng thái
+        // Không áp dụng status filter hiện tại
+        $statusCountsQuery = clone $baseQuery;
+
+        // Chỉ lấy Status để tính số lượng
+        $allAppointments =
+            $statusCountsQuery
             ->select([
                 'Status'
             ])
             ->get();
 
-    // Đếm số lịch theo từng trạng thái
-    $statusCounts = [
-        'All' => $allAppointments->count(),
+        // Đếm số lịch theo từng trạng thái
+        $statusCounts = [
+            'All' => $allAppointments->count(),
 
-        'Pending' => $allAppointments
-            ->where(
-                'Status',
-                'Pending'
+            'Pending' => $allAppointments
+                ->where(
+                    'Status',
+                    'Pending'
+                )
+                ->count(),
+
+            'Confirmed' => $allAppointments
+                ->where(
+                    'Status',
+                    'Confirmed'
+                )
+                ->count(),
+
+            'Cancelled' => $allAppointments
+                ->filter(
+                    function ($appointment) {
+
+                        return in_array(
+                            $appointment->Status,
+                            [
+                                'Cancelled',
+                                'cancelled_by_doctor',
+                                'cancelled_by_patient',
+                            ],
+                            true
+                        );
+                    }
+                )
+                ->count(),
+
+            'Completed' => $allAppointments
+                ->where(
+                    'Status',
+                    'Completed'
+                )
+                ->count(),
+        ];
+
+        // Gửi dữ liệu sang giao diện Appointments
+        return view(
+            'doctor.appointments.index',
+            compact(
+                'doctor',
+                'appointments',
+                'view',
+                'date',
+                'status',
+                'search',
+                'statusCounts'
             )
-            ->count(),
-
-        'Confirmed' => $allAppointments
-            ->where(
-                'Status',
-                'Confirmed'
-            )
-            ->count(),
-
-        'Cancelled' => $allAppointments
-            ->filter(
-                function ($appointment) {
-
-                    return in_array(
-                        $appointment->Status,
-                        [
-                            'Cancelled',
-                            'cancelled_by_doctor',
-                            'cancelled_by_patient',
-                        ],
-                        true
-                    );
-                }
-            )
-            ->count(),
-
-        'Completed' => $allAppointments
-            ->where(
-                'Status',
-                'Completed'
-            )
-            ->count(),
-    ];
-
-    // Gửi dữ liệu sang giao diện Appointments
-    return view(
-        'doctor.appointments.index',
-        compact(
-            'doctor',
-            'appointments',
-            'view',
-            'date',
-            'status',
-            'search',
-            'statusCounts'
-        )
-    );
-}
-
-// Confirm Appointment
-public function confirmAppointment($id)
-{
-    // Lấy bác sĩ đang đăng nhập
-    $doctor = Doctor::findOrFail(
-        session('doctor_id')
-    );
-
-    // Lấy lịch hẹn thuộc bác sĩ này
-    $appointment = Appointment::where(
-        'AppointmentId',
-        $id
-    )
-        ->where(
-            'DoctorId',
-            $doctor->DoctorId
-        )
-        ->firstOrFail();
-
-    // Chỉ lịch Pending mới được xác nhận
-    if ($appointment->Status !== 'Pending') {
-        return back()->with(
-            'error',
-            'This appointment cannot be confirmed.'
         );
     }
 
-    // Chuyển trạng thái sang Confirmed
-    $appointment->Status = 'Confirmed';
+    // Confirm Appointment
+    public function confirmAppointment($id)
+    {
+        // Lấy bác sĩ đang đăng nhập
+        $doctor = Doctor::findOrFail(
+            session('doctor_id')
+        );
 
-    // Lưu thay đổi
-    $appointment->save();
-
-    // Quay lại trang và báo thành công
-    return back()->with(
-        'success',
-        'Appointment confirmed successfully.'
-    );
-}
-
-// Cancel Appointment
-public function cancelAppointment(Request $request, $id)
-{
-    // Lấy bác sĩ đang đăng nhập
-    $doctor = Doctor::findOrFail(
-        session('doctor_id')
-    );
-
-    // Kiểm tra lý do hủy
-    $validated = $request->validate([
-        'CancellationReason' => [
-            'required',
-            'string',
-            'max:255',
-        ],
-    ]);
-
-    // Lấy lịch hẹn thuộc bác sĩ này
-    $appointment = Appointment::where(
-        'AppointmentId',
-        $id
-    )
-        ->where(
-            'DoctorId',
-            $doctor->DoctorId
+        // Lấy lịch hẹn thuộc bác sĩ này
+        $appointment = Appointment::where(
+            'AppointmentId',
+            $id
         )
-        ->firstOrFail();
+            ->where(
+                'DoctorId',
+                $doctor->DoctorId
+            )
+            ->firstOrFail();
 
-    // Chỉ lịch Pending mới được hủy
-    if ($appointment->Status !== 'Pending') {
+        // Chỉ lịch Pending mới được xác nhận
+        if ($appointment->Status !== 'Pending') {
+            return back()->with(
+                'error',
+                'This appointment cannot be confirmed.'
+            );
+        }
+
+        // Chuyển trạng thái sang Confirmed
+        $appointment->Status = 'Confirmed';
+
+        // Lưu thay đổi
+        $appointment->save();
+
+        // Quay lại trang và báo thành công
         return back()->with(
-            'error',
-            'This appointment cannot be cancelled.'
+            'success',
+            'Appointment confirmed successfully.'
         );
     }
 
-    // Chuyển trạng thái sang Cancelled
-    $appointment->Status = 'Cancelled';
-
-    // Lưu lý do hủy
-    $appointment->CancellationReason =
-        trim(
-            $validated['CancellationReason']
+    // Cancel Appointment
+    public function cancelAppointment(Request $request, $id)
+    {
+        // Lấy bác sĩ đang đăng nhập
+        $doctor = Doctor::findOrFail(
+            session('doctor_id')
         );
 
-    // Lưu thay đổi
-    $appointment->save();
+        // Kiểm tra lý do hủy
+        $validated = $request->validate([
+            'CancellationReason' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+        ]);
 
-    // Quay lại trang và báo thành công
-    return back()->with(
-        'success',
-        'Appointment cancelled successfully.'
-    );
-}
-
-// Complete Appointment
-public function completeAppointment($id)
-{
-    // Lấy bác sĩ đang đăng nhập
-    $doctor = Doctor::findOrFail(
-        session('doctor_id')
-    );
-
-    // Lấy lịch hẹn thuộc bác sĩ này
-    $appointment = Appointment::where(
-        'AppointmentId',
-        $id
-    )
-        ->where(
-            'DoctorId',
-            $doctor->DoctorId
+        // Lấy lịch hẹn thuộc bác sĩ này
+        $appointment = Appointment::where(
+            'AppointmentId',
+            $id
         )
-        ->firstOrFail();
+            ->where(
+                'DoctorId',
+                $doctor->DoctorId
+            )
+            ->firstOrFail();
 
-    // Chỉ lịch Confirmed mới được đánh dấu đã khám
-    if ($appointment->Status !== 'Confirmed') {
+        // Chỉ lịch Pending mới được hủy
+        if ($appointment->Status !== 'Pending') {
+            return back()->with(
+                'error',
+                'This appointment cannot be cancelled.'
+            );
+        }
+
+        // Chuyển trạng thái sang Cancelled
+        $appointment->Status = 'Cancelled';
+
+        // Lưu lý do hủy
+        $appointment->CancellationReason =
+            trim(
+                $validated['CancellationReason']
+            );
+
+        // Lưu thay đổi
+        $appointment->save();
+
+        // Quay lại trang và báo thành công
         return back()->with(
-            'error',
-            'This appointment cannot be marked as completed.'
+            'success',
+            'Appointment cancelled successfully.'
         );
     }
 
-    // Chuyển trạng thái sang Completed
-    $appointment->Status = 'Completed';
+    // Complete Appointment
+    public function completeAppointment($id)
+    {
+        // Lấy bác sĩ đang đăng nhập
+        $doctor = Doctor::findOrFail(
+            session('doctor_id')
+        );
 
-    // Lưu thay đổi
-    $appointment->save();
+        // Lấy lịch hẹn thuộc bác sĩ này
+        $appointment = Appointment::where(
+            'AppointmentId',
+            $id
+        )
+            ->where(
+                'DoctorId',
+                $doctor->DoctorId
+            )
+            ->firstOrFail();
 
-    // Quay lại trang và báo thành công
-    return back()->with(
-        'success',
-        'Appointment marked as completed.'
-    );
-}
+        // Chỉ lịch Confirmed mới được đánh dấu đã khám
+        if ($appointment->Status !== 'Confirmed') {
+            return back()->with(
+                'error',
+                'This appointment cannot be marked as completed.'
+            );
+        }
+
+        // Chuyển trạng thái sang Completed
+        $appointment->Status = 'Completed';
+
+        // Lưu thay đổi
+        $appointment->save();
+
+        // Quay lại trang và báo thành công
+        return back()->with(
+            'success',
+            'Appointment marked as completed.'
+        );
+    }
+    public function markNotificationsRead()
+    {
+        session([
+            'doctor_notifications_read_at' =>
+            now()->toDateTimeString()
+        ]);
+
+        return response()->json([
+            'success' => true
+        ]);
+    }
+    public function showNews($id)
+    {
+        // Lấy đúng bài viết theo NewsId
+        $news = News::findOrFail($id);
+
+        // Hiển thị trang chi tiết
+        return view(
+            'doctor.news.show',
+            compact('news')
+        );
+    }
 }
