@@ -28,6 +28,7 @@
 
 <body id="top">
 
+
     @include('components.layouts.partials.header')
 
     <!-- Banner Tiêu đề -->
@@ -106,6 +107,11 @@
                             <p>Dr. {{ $doctor->FullName ?? $doctor->Name }} is a highly dedicated specialist in {{ $doctor->specialization->SpecializationName ?? 'healthcare' }} with extensive clinical experience and a deep commitment to providing high-quality patient care.</p>
                             @endif
                         </div>
+
+
+
+
+
 
                         <!-- Nút Make Appointment -->
                         <a href="{{ url('/appoinment?doctor_id=' . ($doctor->DoctorId ?? $doctor->id)) }}" class="btn btn-main-2 btn-round-full mt-4">

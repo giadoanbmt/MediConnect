@@ -42,12 +42,6 @@ Route::controller(PatientController::class)->group(function () {
     Route::get('/doctor-profile/{id}', 'doctorProfile')->name('public.doctorProfile');
     Route::get('/blog-sidebar', 'blogSidebar')->name('public.blog-sidebar');
     Route::get('/blog-single/{id}', 'blogSingle')->name('public.blog-single');
-
-    // Route động cho các trang Chuyên khoa
-    Route::get('/specializations/Cardiology', 'specializationCardiology')->name('specializations.Cardiology');
-    Route::get('/specializations/Dermatology', 'specializationDermatology')->name('specializations.Dermatology');
-    Route::get('/specializations/Orthopedics', 'specializationOrthopedics')->name('specializations.Orthopedics');
-    Route::get('/specializations/Pediatrics', 'specializationPediatrics')->name('specializations.Pediatrics');
 });
 
 /*
@@ -77,7 +71,6 @@ Route::post('/logout', [AuthController::class, 'logout'])
 | Patient Routes (Role = 2)
 |--------------------------------------------------------------------------
 */
-
 
 Route::middleware('role:patient')->group(function () {
     Route::controller(PatientController::class)->group(function () {

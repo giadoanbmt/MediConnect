@@ -45,8 +45,8 @@
                         <div class="py-2 d-flex align-items-center border-bottom mb-2">
                             @if($pop->ThumbnailUrl)
                             <div class="post-thumb mr-3 flex-shrink-0">
-                                <a href="{{ url('/blog/' . $pop->NewsId) }}">
-                                    <img src="{{ str_starts_with($pop->ThumbnailUrl, 'http') ? $pop->ThumbnailUrl : asset('storage/' . $pop->ThumbnailUrl) }}"
+                                <a href="{{ url('/blog-single/' . $pop->NewsId) }}">
+                                    <img src="{{ $item->ThumbnailUrl ? asset($item->ThumbnailUrl) : asset('images/thumbnails/news-placeholder.png') }}"
                                         alt="{{ $pop->Title }}" class="img-fluid" style="width: 70px; height: 70px; object-fit: cover; border-radius: 5px;">
                                 </a>
                             </div>
