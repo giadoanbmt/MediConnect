@@ -65,7 +65,7 @@
     }
 
     .spec-arrow:hover {
-        background: #007bff;
+        background: #E91E4D;
         border-color: #007bff;
         color: #fff;
     }
@@ -165,9 +165,9 @@
                 <div class="form-group mb-0">
                     <select name="city_id" id="city_id" class="form-control form-control-sm custom-select" style="border-radius: 20px; height: 31px;">
                         <option value="">All Cities</option>
-                        @foreach($cities->unique('CityName') as $city)
+                        @foreach($cities as $city)
                         <option value="{{ $city->CityId }}" {{ request('city_id') == $city->CityId ? 'selected' : '' }}>
-                            {{ $city->CityName }}
+                            {{ $city->CityName }} - {{ $city->DistrictName }}
                         </option>
                         @endforeach
                     </select>

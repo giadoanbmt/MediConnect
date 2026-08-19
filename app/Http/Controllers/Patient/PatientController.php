@@ -9,7 +9,8 @@ use App\Models\Doctor;
 use App\Models\Specialization;
 use App\Models\City;
 use App\Models\News;
-
+use App\Models\DoctorSchedule;
+use Carbon\Carbon;
 
 class PatientController extends Controller
 {
@@ -39,18 +40,17 @@ class PatientController extends Controller
 
     public function specializationSingle($id)
     {
-        // 1. Tìm chuyên khoa theo ID (tương thích với cả SpecializationId hoặc id)
+        // Tìm chuyên khoa theo ID (tương thích với cả SpecializationId hoặc id)
         $specialization = Specialization::where('SpecializationId', $id)
             ->orWhere('SpecializationId', $id)
             ->firstOrFail();
 
-        // 2. Lấy danh sách các chuyên khoa khác hiển thị ở Sidebar (trừ trang hiện tại)
+        // Lấy danh sách các chuyên khoa khác hiển thị ở Sidebar (trừ trang hiện tại)
         $primaryKey = $specialization->SpecializationId ? 'SpecializationId' : 'id';
         $otherSpecializations = Specialization::where($primaryKey, '!=', $specialization->$primaryKey)
             ->take(5)
             ->get();
 
-        // 3. Trả về view chi tiết
         return view('patient.specialization-single', compact('specialization', 'otherSpecializations'));
     }
 
@@ -178,5 +178,24 @@ class PatientController extends Controller
         $cities = City::all();
 
         return view('patient.doctor', compact('doctors', 'specializations', 'cities'));
+    }
+
+    // Hiển thị Profile chi tiết của 1 Bác sĩ
+    public function doctorProfile($id)
+    {
+        $doctor = Doctor::with([
+            'specialization',
+            'city',
+            'schedules' => function ($query) {
+                $query->where('WorkDate', '>=', Carbon::today())
+                    ->orderBy('WorkDate', 'asc')
+                    ->orderBy('StartTime', 'asc');
+            }
+        ])
+            ->where('DoctorId', $id)
+            ->firstOrFail();
+
+        // Trả về view chi tiết kèm biến $doctor
+        return view('patient.doctorProfile', compact('doctor'));
     }
 }

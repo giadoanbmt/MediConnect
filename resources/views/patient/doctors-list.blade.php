@@ -9,7 +9,9 @@
                     @php
                     $avatar = ($doctor->AvatarUrl && file_exists(public_path($doctor->AvatarUrl)))
                     ? asset($doctor->AvatarUrl)
-                    : asset('Novena/images/team/1.jpg');
+                    : (($doctor->Gender == 'Male')
+                    ? asset('images/avatars/default_doctor_male.png')
+                    : asset('images/avatars/default_doctor_female.png'));
                     @endphp
                     <img src="{{ $avatar }}" alt="{{ $doctor->FullName }}" class="img-fluid w-100" style="height: 250px; object-fit: cover;">
                 </a>
@@ -24,7 +26,7 @@
                 {{ $doctor->specialization->SpecializationName ?? 'Update soon' }}
             </p>
             <p class="mb-0 text-muted small">
-                <i class="icofont-location-pin"></i> {{ $doctor->city->CityName ?? 'Update soon' }}
+                <i class="icofont-location-pin"></i> {{ $doctor->city->CityName ?? 'Update soon' }} - {{$doctor->city->DistrictName ?? 'Update soon'}}
             </p>
         </div>
     </div>

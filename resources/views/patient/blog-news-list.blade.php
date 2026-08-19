@@ -4,7 +4,7 @@
         <div class="blog-item">
             @if($item->ThumbnailUrl)
             <div class="blog-thumb overflow-hidden" style="border-radius: 5px;">
-                <img src="{{ str_starts_with($item->ThumbnailUrl, 'http') ? $item->ThumbnailUrl : asset('storage/' . $item->ThumbnailUrl) }}"
+                <img src="{{ $item->ThumbnailUrl ? asset($item->ThumbnailUrl) : asset('images/thumbnails/news-placeholder.png') }}"
                     alt="{{ $item->Title }}"
                     class="img-fluid w-100"
                     style="height: 380px; object-fit: cover;">
