@@ -150,30 +150,33 @@ class PatientController extends Controller
     // Hiển thị danh sách doctor
     public function Doctor(Request $request)
     {
-        // Lấy danh sách cho các bộ lọc
+        $query = Doctor::with(['specialization', 'city']);
+
+        // Tìm kiếm theo tên
+        if ($request->filled('keyword')) {
+            $query->where('FullName', 'like', '%' . $request->keyword . '%');
+        }
+
+        // Lọc theo Thành phố
+        if ($request->filled('city_id')) {
+            $query->where('CityId', $request->city_id);
+        }
+
+        // Lọc theo Chuyên khoa
+        if ($request->filled('specialization_id')) {
+            $query->where('SpecializationId', $request->specialization_id);
+        }
+
+        $doctors = $query->get();
+
+        // Nếu là request AJAX thì chỉ trả về danh sách thẻ bác sĩ
+        if ($request->ajax()) {
+            return view('patient.doctors-list', compact('doctors'))->render();
+        }
+
         $specializations = Specialization::all();
-        $cities = City::all()->unique('CityName');
+        $cities = City::all();
 
-        // Lấy từ khóa tìm kiếm
-        $keyword = $request->input('keyword');
-
-        // Truy vấn danh sách Doctor (Eager loading quan hệ + Tìm kiếm)
-        $doctors = Doctor::with(['specialization', 'city'])
-            ->when($keyword, function ($query, $keyword) {
-                return $query->where('FullName', 'like', "%{$keyword}%");
-            })
-            ->paginate(9)
-            ->withQueryString();
-
-        //  Trả dữ liệu sang View
         return view('patient.doctor', compact('doctors', 'specializations', 'cities'));
-    }
-
-    // Hiển thị Profile chi tiết của 1 Bác sĩ
-    public function doctorProfile($id)
-    {
-        $doctor = Doctor::with('specialization')->findOrFail($id);
-
-        return view('patient.doctorProfile  ', compact('doctor'));
     }
 }
