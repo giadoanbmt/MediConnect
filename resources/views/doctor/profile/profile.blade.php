@@ -305,49 +305,55 @@
     @endif
 
     @php
-    $gender = strtolower(
-        trim((string) ($doctor->Gender ?? ''))
-    );
-
-    $avatarPath = trim(
-        (string) ($doctor->AvatarUrl ?? '')
-    );
-
-    $avatarUrl = null;
-
-    if ($avatarPath !== '') {
-        $dbAvatarPath = ltrim(
-            $avatarPath,
-            '/'
+        $gender = strtolower(
+            trim((string) ($doctor->Gender ?? ''))
         );
 
-        if (file_exists(
-            public_path($dbAvatarPath)
-        )) {
-            $avatarUrl = asset(
-                $dbAvatarPath
+        $avatarPath = trim(
+            (string) ($doctor->AvatarUrl ?? '')
+        );
+
+        $avatarUrl = null;
+
+        if ($avatarPath !== '') {
+
+            $dbAvatarPath = ltrim(
+                $avatarPath,
+                '/'
             );
+
+            if (file_exists(
+                public_path($dbAvatarPath)
+            )) {
+
+                $avatarUrl = asset(
+                    $dbAvatarPath
+                );
+            }
         }
-    }
 
-    if (!$avatarUrl) {
-        if ($gender === 'female') {
-            $avatarUrl = asset(
-                'images/avatars/default_doctor_female.png'
-            );
-        } else {
-            $avatarUrl = asset(
-                'images/avatars/default_doctor_male.png'
-            );
+        if (!$avatarUrl) {
+
+            if ($gender === 'female') {
+
+                $avatarUrl = asset(
+                    'images/avatars/default_doctor_female.png'
+                );
+
+            } else {
+
+                $avatarUrl = asset(
+                    'images/avatars/default_doctor_male.png'
+                );
+            }
         }
-    }
 
-    $currentCityName = trim(
-        $doctor->city->CityName ?? ''
-    );
+        $currentCityName = trim(
+            $doctor->city->CityName ?? ''
+        );
 
-    $currentDistrictId = $doctor->CityId;
-@endphp
+        $currentDistrictId = $doctor->CityId;
+    @endphp
 
     <div class="doctor-profile-card">
 
@@ -356,9 +362,11 @@
             method="POST"
             enctype="multipart/form-data"
         >
+
             @csrf
             @method('PUT')
 
+            {{-- Avatar --}}
             <div class="profile-avatar-section">
 
                 <div class="avatar-wrapper">
@@ -368,7 +376,7 @@
                         src="{{ $avatarUrl }}"
                         alt="Doctor Avatar"
                         class="avatar-preview"
-                        onerror="this.onerror=null;this.src='{{ asset('images/avatars/default_male.png') }}';"
+                        onerror="this.onerror=null;this.src='{{ asset('images/avatars/default_doctor_male.png') }}';"
                     >
 
                     <label
@@ -405,9 +413,11 @@
 
             </div>
 
+            {{-- Doctor Name / Account --}}
             <div class="row profile-row">
 
                 <div class="col-md-6 mb-3 mb-md-0">
+
                     <div class="profile-field">
 
                         <label>Doctor Name</label>
@@ -421,6 +431,7 @@
                         >
 
                     </div>
+
                 </div>
 
                 <div class="col-md-6">
@@ -446,6 +457,7 @@
 
             </div>
 
+            {{-- Gender / Phone --}}
             <div class="row profile-row">
 
                 <div class="col-md-6 mb-3 mb-md-0">
@@ -501,6 +513,7 @@
 
             </div>
 
+            {{-- Email / Qualifications --}}
             <div class="row profile-row">
 
                 <div class="col-md-6 mb-3 mb-md-0">
@@ -540,8 +553,10 @@
 
             </div>
 
+            {{-- Specialization / City / District / Clinic Room --}}
             <div class="row profile-select-row">
 
+                {{-- Specialization --}}
                 <div class="col-md-3">
 
                     <div class="profile-field">
@@ -550,6 +565,7 @@
 
                         <select
                             name="SpecializationId"
+                            id="SpecializationSelect"
                             class="form-control"
                         >
 
@@ -574,6 +590,7 @@
 
                 </div>
 
+                {{-- City --}}
                 <div class="col-md-3">
 
                     <div class="profile-field">
@@ -610,6 +627,7 @@
 
                 </div>
 
+                {{-- District --}}
                 <div class="col-md-3">
 
                     <div class="profile-field">
@@ -645,6 +663,7 @@
 
                 </div>
 
+                {{-- Clinic Room --}}
                 <div class="col-md-3">
 
                     <div class="profile-field">
@@ -653,6 +672,7 @@
 
                         <select
                             name="RoomId"
+                            id="RoomSelect"
                             class="form-control"
                         >
 
@@ -664,6 +684,7 @@
 
                                 <option
                                     value="{{ $room->RoomId }}"
+                                    data-room-name="{{ strtolower(trim($room->RoomName)) }}"
                                     {{ old('RoomId', $doctor->RoomId) == $room->RoomId ? 'selected' : '' }}
                                 >
                                     {{ $room->RoomName }}
@@ -671,7 +692,6 @@
                                     @if($room->RoomNumber)
                                         - Room {{ $room->RoomNumber }}
                                     @endif
-
                                 </option>
 
                             @endforeach
@@ -684,6 +704,7 @@
 
             </div>
 
+            {{-- Address --}}
             <div class="profile-row">
 
                 <div class="profile-field">
@@ -700,6 +721,7 @@
 
             </div>
 
+            {{-- Actions --}}
             <div class="profile-actions">
 
                 <button
@@ -727,15 +749,34 @@
 </div>
 
 <script>
-    const avatarInput = document.getElementById('AvatarUrl');
-    const avatarPreview = document.getElementById('avatarPreview');
-    const genderInput = document.getElementById('Gender');
 
-    const defaultMale = "{{ asset('images/avatars/default_male.png') }}";
-    const defaultFemale = "{{ asset('images/avatars/default_female.png') }}";
+    /*
+    |--------------------------------------------------------------------------
+    | Avatar
+    |--------------------------------------------------------------------------
+    */
+
+    const avatarInput =
+        document.getElementById('AvatarUrl');
+
+    const avatarPreview =
+        document.getElementById('avatarPreview');
+
+    const genderInput =
+        document.getElementById('Gender');
+
+    const defaultMale =
+        "{{ asset('images/avatars/default_male.png') }}";
+
+    const defaultFemale =
+        "{{ asset('images/avatars/default_female.png') }}";
 
     const avatarPath = @json(
-        strtolower(trim((string) ($doctor->AvatarUrl ?? '')))
+        strtolower(
+            trim(
+                (string) ($doctor->AvatarUrl ?? '')
+            )
+        )
     );
 
     const hasRealAvatar =
@@ -743,100 +784,386 @@
         !avatarPath.includes('default_male.png') &&
         !avatarPath.includes('default_female.png');
 
+
     if (avatarInput) {
-        avatarInput.addEventListener('change', function () {
 
-            const file = this.files[0];
+        avatarInput.addEventListener(
+            'change',
+            function () {
 
-            if (!file) {
-                return;
+                const file = this.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+                if (
+                    file.size >
+                    2 * 1024 * 1024
+                ) {
+
+                    alert(
+                        'Avatar must be smaller than 2MB.'
+                    );
+
+                    this.value = '';
+
+                    return;
+                }
+
+                const reader =
+                    new FileReader();
+
+                reader.onload =
+                    function (event) {
+
+                        avatarPreview.src =
+                            event.target.result;
+
+                    };
+
+                reader.readAsDataURL(file);
+
             }
-
-            if (file.size > 2 * 1024 * 1024) {
-                alert('Avatar must be smaller than 2MB.');
-                this.value = '';
-                return;
-            }
-
-            const reader = new FileReader();
-
-            reader.onload = function (event) {
-                avatarPreview.src = event.target.result;
-            };
-
-            reader.readAsDataURL(file);
-        });
+        );
     }
+
 
     if (genderInput) {
-        genderInput.addEventListener('change', function () {
 
-            if (hasRealAvatar) {
-                return;
+        genderInput.addEventListener(
+            'change',
+            function () {
+
+                if (hasRealAvatar) {
+                    return;
+                }
+
+                if (
+                    avatarInput &&
+                    avatarInput.files &&
+                    avatarInput.files.length > 0
+                ) {
+                    return;
+                }
+
+                if (
+                    this.value.toLowerCase() ===
+                    'female'
+                ) {
+
+                    avatarPreview.src =
+                        defaultFemale;
+
+                } else {
+
+                    avatarPreview.src =
+                        defaultMale;
+                }
+
             }
-
-            if (
-                avatarInput &&
-                avatarInput.files &&
-                avatarInput.files.length > 0
-            ) {
-                return;
-            }
-
-            if (this.value.toLowerCase() === 'female') {
-                avatarPreview.src = defaultFemale;
-            } else {
-                avatarPreview.src = defaultMale;
-            }
-
-        });
+        );
     }
 
-    const citySelect = document.getElementById('CitySelect');
-    const districtSelect = document.getElementById('DistrictSelect');
+
+    /*
+    |--------------------------------------------------------------------------
+    | City / District
+    |--------------------------------------------------------------------------
+    */
+
+    const citySelect =
+        document.getElementById(
+            'CitySelect'
+        );
+
+    const districtSelect =
+        document.getElementById(
+            'DistrictSelect'
+        );
+
 
     function filterDistricts() {
 
-        if (!citySelect || !districtSelect) {
+        if (
+            !citySelect ||
+            !districtSelect
+        ) {
             return;
         }
 
-        const selectedCity = citySelect.value.trim();
+        const selectedCity =
+            citySelect.value.trim();
 
-        const options = districtSelect.querySelectorAll(
-            'option[data-city]'
+        const options =
+            districtSelect.querySelectorAll(
+                'option[data-city]'
+            );
+
+        options.forEach(
+            function (option) {
+
+                const optionCity =
+                    option.dataset.city.trim();
+
+                option.hidden =
+                    selectedCity !== '' &&
+                    optionCity !== selectedCity;
+
+            }
         );
 
-        options.forEach(function (option) {
-
-            const optionCity = option.dataset.city.trim();
-
-            option.hidden =
-                selectedCity !== '' &&
-                optionCity !== selectedCity;
-
-        });
 
         const selectedOption =
-            districtSelect.options[districtSelect.selectedIndex];
+            districtSelect.options[
+                districtSelect.selectedIndex
+            ];
+
 
         if (
             selectedOption &&
             selectedOption.dataset.city &&
-            selectedOption.dataset.city.trim() !== selectedCity
+            selectedOption.dataset.city.trim()
+                !== selectedCity
         ) {
+
             districtSelect.value = '';
+
         }
     }
 
+
     if (citySelect) {
+
         citySelect.addEventListener(
             'change',
             filterDistricts
         );
+
     }
 
     filterDistricts();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Specialization / Clinic Room
+    |--------------------------------------------------------------------------
+    */
+
+    const specializationSelect =
+        document.getElementById(
+            'SpecializationSelect'
+        );
+
+    const roomSelect =
+        document.getElementById(
+            'RoomSelect'
+        );
+
+
+    function filterRoomsBySpecialization() {
+
+        if (
+            !specializationSelect ||
+            !roomSelect
+        ) {
+            return;
+        }
+
+
+        const selectedOption =
+            specializationSelect.options[
+                specializationSelect.selectedIndex
+            ];
+
+
+        const specialization =
+            selectedOption
+                ? selectedOption.text
+                    .trim()
+                    .toLowerCase()
+                : '';
+
+
+        const roomOptions =
+            roomSelect.querySelectorAll(
+                'option[data-room-name]'
+            );
+
+
+        roomOptions.forEach(
+            function (option) {
+
+                const roomName =
+                    option.dataset.roomName
+                        .trim()
+                        .toLowerCase();
+
+                let showRoom = false;
+
+
+                /*
+                 * Cardiology
+                 */
+                if (
+                    specialization ===
+                    'cardiology'
+                ) {
+
+                    showRoom =
+                        roomName.includes(
+                            'cardiology'
+                        ) ||
+                        roomName.includes(
+                            'cardiac'
+                        );
+                }
+
+
+                /*
+                 * Neurology
+                 */
+                else if (
+                    specialization ===
+                    'neurology'
+                ) {
+
+                    showRoom =
+                        roomName.includes(
+                            'neurology'
+                        ) ||
+                        roomName.includes(
+                            'neuro'
+                        );
+                }
+
+
+                /*
+                 * Gastroenterology
+                 */
+                else if (
+                    specialization ===
+                    'gastroenterology'
+                ) {
+
+                    showRoom =
+                        roomName.includes(
+                            'gastroenterology'
+                        );
+                }
+
+
+                /*
+                 * Nephrology
+                 */
+                else if (
+                    specialization ===
+                    'nephrology'
+                ) {
+
+                    showRoom =
+                        roomName.includes(
+                            'nephrology'
+                        ) ||
+                        roomName.includes(
+                            'kidney'
+                        );
+                }
+
+
+                /*
+                 * Orthopedics
+                 */
+                else if (
+                    specialization ===
+                    'orthopedics'
+                ) {
+
+                    showRoom =
+                        roomName.includes(
+                            'orthopedic'
+                        ) ||
+                        roomName.includes(
+                            'joint'
+                        ) ||
+                        roomName.includes(
+                            'trauma'
+                        );
+                }
+
+
+                /*
+                 * Critical Care
+                 */
+                else if (
+                    specialization ===
+                    'critical care'
+                ) {
+
+                    showRoom =
+                        roomName.includes(
+                            'critical'
+                        ) ||
+                        roomName.includes(
+                            'icu'
+                        );
+                }
+
+                else if (
+                    specialization !== ''
+                ) {
+
+                    showRoom =
+                        roomName.includes(
+                            specialization
+                        );
+
+                }
+
+                else {
+
+                    showRoom = false;
+
+                }
+
+
+                option.hidden =
+                    !showRoom;
+
+            }
+        );
+
+        const currentRoom =
+            roomSelect.options[
+                roomSelect.selectedIndex
+            ];
+
+
+        if (
+            currentRoom &&
+            currentRoom.dataset.roomName &&
+            currentRoom.hidden
+        ) {
+
+            roomSelect.value = '';
+
+        }
+
+    }
+
+
+    if (specializationSelect) {
+
+        specializationSelect.addEventListener(
+            'change',
+            filterRoomsBySpecialization
+        );
+
+    }
+
+    filterRoomsBySpecialization();
+
 </script>
 
 @endsection

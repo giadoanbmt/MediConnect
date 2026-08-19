@@ -586,6 +586,16 @@
                         {{ \Illuminate\Support\Str::limit(strip_tags($featured->Content), 180) }}
                     </p>
 
+                    <a
+                        href="{{ route('doctor.news.show', $featured->NewsId) }}"
+                        class="edit-btn"
+                        style="width: fit-content; margin-top: 12px;"
+                        title="Read More"
+                    >
+                        <i class="fas fa-book-open"></i>
+                        Read More
+                    </a>
+
                 </div>
 
             </div>
@@ -656,6 +666,14 @@
                 <div class="card-actions">
 
                     <a
+                        href="{{ route('doctor.news.show', $item->NewsId) }}"
+                        class="card-action"
+                        title="Read More"
+                    >
+                        <i class="fas fa-book-open"></i>
+                    </a>
+
+                    <a
                         href="{{ route('doctor.news.edit', $item->NewsId) }}"
                         class="card-action"
                         title="Edit"
@@ -698,35 +716,75 @@
 
                 <div class="pagination">
 
-                    <button type="button" class="page-btn">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
+    {{-- Previous --}}
+    @if($news->onFirstPage())
 
-                    <button type="button" class="page-btn active">
-                        1
-                    </button>
+        <button
+            type="button"
+            class="page-btn"
+            disabled
+        >
+            <i class="fas fa-chevron-left"></i>
+        </button>
 
-                    <button type="button" class="page-btn">
-                        2
-                    </button>
+    @else
 
-                    <button type="button" class="page-btn">
-                        3
-                    </button>
+        <a
+            href="{{ $news->previousPageUrl() }}"
+            class="page-btn"
+        >
+            <i class="fas fa-chevron-left"></i>
+        </a>
 
-                    <button type="button" class="page-btn">
-                        ...
-                    </button>
+    @endif
 
-                    <button type="button" class="page-btn">
-                        5
-                    </button>
 
-                    <button type="button" class="page-btn">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+    {{-- Page numbers --}}
+    @foreach($news->getUrlRange(1, $news->lastPage()) as $page => $url)
 
-                </div>
+        @if($page == $news->currentPage())
+
+            <span class="page-btn active">
+                {{ $page }}
+            </span>
+
+        @else
+
+            <a
+                href="{{ $url }}"
+                class="page-btn"
+            >
+                {{ $page }}
+            </a>
+
+        @endif
+
+    @endforeach
+
+
+    {{-- Next --}}
+    @if($news->hasMorePages())
+
+        <a
+            href="{{ $news->nextPageUrl() }}"
+            class="page-btn"
+        >
+            <i class="fas fa-chevron-right"></i>
+        </a>
+
+    @else
+
+        <button
+            type="button"
+            class="page-btn"
+            disabled
+        >
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+    @endif
+
+</div>
 
             </div>
 

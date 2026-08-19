@@ -100,6 +100,7 @@ Route::middleware('role:patient')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['role:doctor'])->prefix('doctor')->name('doctor.')->group(function () {
+
     // Dashboard
     Route::get('/dashboard', [DoctorController::class, 'dashboard'])
         ->name('dashboard');
@@ -114,7 +115,6 @@ Route::middleware(['role:doctor'])->prefix('doctor')->name('doctor.')->group(fun
     Route::put('/profile', [DoctorController::class, 'updateProfile'])
         ->name('profile.update');
 
-
     // Quản lý News của Bác sĩ
     Route::get('/news', [DoctorController::class, 'newsIndex'])
         ->name('news.index');
@@ -128,6 +128,8 @@ Route::middleware(['role:doctor'])->prefix('doctor')->name('doctor.')->group(fun
     Route::delete('/news/{id}', [DoctorController::class, 'deleteNews'])
         ->name('news.delete');
 
+    Route::get('/news/{id}', [DoctorController::class, 'showNews'])
+        ->name('news.show');
 
     // Store / Update News
     Route::post('/news', [DoctorController::class, 'storeNews'])
@@ -136,14 +138,12 @@ Route::middleware(['role:doctor'])->prefix('doctor')->name('doctor.')->group(fun
     Route::put('/news/{id}', [DoctorController::class, 'updateNews'])
         ->name('news.update');
 
-
     // Quản lý lịch làm việc / khung giờ khám
     Route::get('/availability', [DoctorController::class, 'availability'])
         ->name('availability');
 
     Route::post('/availability', [DoctorController::class, 'saveAvailability'])
         ->name('availability.save');
-
 
     // Quản lý lịch hẹn của Bác sĩ
     Route::get('/appointments', [DoctorController::class, 'appointments'])
