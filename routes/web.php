@@ -83,7 +83,10 @@ Route::middleware('role:patient')->group(function () {
     Route::get('/doctors', [DoctorController::class, 'index'])->name('patient.doctors.index');
     Route::get('/doctors/{id}', [DoctorController::class, 'show'])->name('patient.doctors.show');
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('patient.appointments.index');
-    Route::post('/appointments/{id}/book', [AppointmentController::class, 'book'])->name('patient.appointments.book');
+    Route::get('/appointment/book', [AppointmentController::class, 'create'])->name('patient.appointments.book');
+    Route::post('/appointment/book', [AppointmentController::class, 'store'])->name('patient.appointments.store');
+    Route::get('/appointments/get-doctors', [AppointmentController::class, 'getDoctorsBySpecialization'])->name('appointments.get-doctors');
+    Route::get('/appointments/get-slots', [AppointmentController::class, 'getSlots'])->name('appointments.get-slots');
     Route::put('/appointments/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('patient.appointments.reschedule');
     Route::delete('/appointments/{id}/cancel', [AppointmentController::class, 'cancel'])->name('patient.appointments.cancel');
 });

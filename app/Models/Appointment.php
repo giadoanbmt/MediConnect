@@ -42,4 +42,9 @@ class Appointment extends Model
     {
         return $this->belongsTo(ClinicRoom::class, 'RoomId', 'RoomId');
     }
+
+    public function specialization()
+    {
+        return $this->belongsTo(Specialization::class, 'SpecializationId', 'SpecializationId');
+    }
 }
