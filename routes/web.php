@@ -37,10 +37,11 @@ Route::controller(PatientController::class)->group(function () {
     Route::get('/about', 'about')->name('public.about');
     Route::get('/service', 'service')->name('public.service');
     Route::get('/specialization', 'specialization')->name('public.specialization');
+    Route::get('/specialization-single/{id}', 'specializationSingle')->name('public.specialization-single');
     Route::get('/doctor', 'Doctor')->name('public.doctor');
     Route::get('/doctor-profile/{id}', 'doctorProfile')->name('public.doctorProfile');
     Route::get('/blog-sidebar', 'blogSidebar')->name('public.blog-sidebar');
-    Route::get('/blog-single', 'blogSingle')->name('public.blog-single');
+    Route::get('/blog-single/{id}', 'blogSingle')->name('public.blog-single');
 
     // Route động cho các trang Chuyên khoa
     Route::get('/specializations/Cardiology', 'specializationCardiology')->name('specializations.Cardiology');
@@ -76,6 +77,8 @@ Route::post('/logout', [AuthController::class, 'logout'])
 | Patient Routes (Role = 2)
 |--------------------------------------------------------------------------
 */
+
+
 Route::middleware('role:patient')->group(function () {
     Route::controller(PatientController::class)->group(function () {
         Route::get('/appointment', 'appointment')->name('patient.appointment');

@@ -1,338 +1,146 @@
-<!DOCTYPE html>
+@extends('components.layouts.partials.frontend')
+@section('title', 'Home - MediConnect')
 
-<html lang="en">
-<head>
-
-  <!-- Basic Page Needs
-  ================================================== -->
-  <meta charset="utf-8">
-  <title>Novena- Health Care &amp; Medical template</title>
-
-  <!-- Mobile Specific Metas
-  ================================================== -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="description" content="Health Care Medical Html5 Template">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="author" content="Themefisher">
-  <meta name="generator" content="Themefisher Novena HTML Template v1.0">
-
-  <!-- Favicon -->
-  <link rel="shortcut icon" type="image/x-icon" href="{{ asset('Novena/images/favicon.png') }}" />
-
-  <!-- 
-  Essential stylesheets
-  =====================================-->
-  <link rel="stylesheet" href="{{ asset('Novena/plugins/bootstrap/bootstrap.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('Novena/plugins/icofont/icofont.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('Novena/plugins/slick-carousel/slick/slick.css') }}">
-  <link rel="stylesheet" href="{{ asset('Novena/plugins/slick-carousel/slick/slick-theme.css') }}">
-
-  <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="{{ asset('Novena/css/style.css') }}">
-
-</head>
-
-<body id="top">
-
-@include('components.layouts.partials.header')
-
+@section('content')
 <section class="page-title bg-1">
-  <div class="overlay"></div>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="block text-center">
-          <span class="text-white">Our blog</span>
-          <h1 class="text-capitalize mb-5 text-lg">Blog articles</h1>
-
-          <!-- <ul class="list-inline breadcumb-nav">
-            <li class="list-inline-item"><a href="{{ url('/') }}" class="text-white">Home</a></li>
-            <li class="list-inline-item"><span class="text-white">/</span></li>
-            <li class="list-inline-item"><a href="#" class="text-white-50">Our blog</a></li>
-          </ul> -->
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="block text-center">
+                    <span class="text-white">Our blog</span>
+                    <h1 class="text-capitalize mb-5 text-lg">Blog articles</h1>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </section>
 
 <section class="section blog-wrap">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8">
-        <div class="row">
-    <div class="col-lg-12 col-md-12 mb-5">
-        <div class="blog-item">
-            <div class="blog-thumb">
-                <img src="{{ asset('Novena/images/blog/blog-1.jpg') }}" alt="" class="img-fluid ">
-            </div>
-
-            <div class="blog-item-content">
-                <div class="blog-item-meta mb-3 mt-4">
-                    <span class="text-muted text-capitalize mr-3"><i class="icofont-comment mr-2"></i>5 Comments</span>
-                    <span class="text-black text-capitalize mr-3"><i class="icofont-calendar mr-1"></i> 28th January</span>
-                </div> 
-
-                <h2 class="mt-3 mb-3"><a href="{{ url('/blog-single') }}">Choose quality service over cheap service all type of things</a></h2>
-
-                <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis aliquid architecto facere commodi cupiditate omnis voluptatibus inventore atque velit cum rem id assumenda quam recusandae ipsam ea porro, dicta ad.</p>
-
-                <a href="{{ url('/blog-single') }}" target="_blank" class="btn btn-main btn-icon btn-round-full">Read More <i class="icofont-simple-right ml-2  "></i></a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-12 col-md-12 mb-5">
-        <div class="blog-item">
-            <div class="blog-thumb">
-                <img src="{{ asset('Novena/images/blog/blog-2.jpg') }}" alt="" class="img-fluid">
-            </div>
-
-            <div class="blog-item-content">
-                <div class="blog-item-meta mb-3 mt-4">
-                    <span class="text-muted text-capitalize mr-3"><i class="icofont-comment mr-2"></i>5 Comments</span>
-                    <span class="text-black text-capitalize mr-3"><i class="icofont-calendar mr-1"></i> 28th January</span>
-                </div> 
-
-                <h2 class="mt-3 mb-3"><a href="{{ url('/blog-single') }}">All test cost 25% in always in our laboratory</a></h2>
-                
-                <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis aliquid architecto facere commodi cupiditate omnis voluptatibus inventore atque velit cum rem id assumenda quam recusandae ipsam ea porro, dicta ad.</p>
-
-                <a href="{{ url('/blog-single') }}" target="_blank" class="btn btn-main btn-icon btn-round-full">Read More <i class="icofont-simple-right ml-2  "></i></a>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="col-lg-12 col-md-12 mb-5">
-        <div class="blog-item">
-            <div class="blog-thumb">
-                <img src="{{ asset('Novena/images/blog/blog-4.jpg') }}" alt="" class="img-fluid">
-            </div>
-
-            <div class="blog-item-content">
-                <div class="blog-item-meta mb-3 mt-4">
-                    <span class="text-muted text-capitalize mr-3"><i class="icofont-comment mr-2"></i>5 Comments</span>
-                    <span class="text-black text-capitalize mr-3"><i class="icofont-calendar mr-1"></i> 28th January</span>
-                </div> 
-                <h2 class="mt-3 mb-3"><a href="{{ url('/blog-single') }}">Get Free consulation from our special surgeon and doctors</a></h2>
-
-                <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis aliquid architecto facere commodi cupiditate omnis voluptatibus inventore atque velit cum rem id assumenda quam recusandae ipsam ea porro, dicta ad.</p>
-
-                <a href="{{ url('/blog-single') }}" target="_blank" class="btn btn-main btn-icon btn-round-full">Read More <i class="icofont-simple-right ml-2  "></i></a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-12 col-md-12">
-        <nav class="pagination py-2 d-inline-block">
-            <div class="nav-links">
-                <span aria-current="page" class="page-numbers current">1</span>
-                <a class="page-numbers" href="#!">2</a>
-                <a class="page-numbers" href="#!">3</a>
-                <a class="page-numbers" href="#!"><i class="icofont-thin-double-right"></i></a>
-            </div>
-        </nav>
-    </div>
-
-<!-- Side bar -->
-</div>
-      </div>
-      <div class="col-lg-4">
-        <div class="sidebar-wrap pl-lg-4 mt-5 mt-lg-0">
-    <div class="sidebar-widget search  mb-3 ">
-        <h5>Search Here</h5>
-        <form action="#" class="search-form">
-            <input type="text" class="form-control" placeholder="search">
-            <i class="ti-search"></i>
-        </form>
-    </div>
-
-
-    <div class="sidebar-widget latest-post mb-3">
-        <h5>Popular Posts</h5>
-
-        <!-- Popular post sẽ chọn 3 bài viết vs lượt xem cao nhất -->
-
-    <div class="sidebar-widget category mb-3">
-        <h5 class="mb-4">Categories</h5>
-
-        <ul class="list-unstyled">
-          <li class="align-items-center">
-            <a href="#">Medicine</a>
-
-          </li>
-          <li class="align-items-center">
-            <a href="#">Equipments</a>
-
-          </li>
-          <li class="align-items-center">
-            <a href="#">Heart</a>
-            
-          </li>
-          <li class="align-items-center">
-            <a href="#">Free counselling</a>
-            
-          </li>
-          <li class="align-items-center">
-            <a href="#">Lab test</a>
-           
-          </li>
-        </ul>
-    </div>
-
-
-
-
-    <div class="sidebar-widget schedule-widget mb-3">
-        <h5 class="mb-4">Time Schedule</h5>
-
-        <ul class="list-unstyled">
-          <li class="d-flex justify-content-between align-items-center">
-            <span>Monday - Friday</span>
-            <span>9:00 - 17:00</span>
-          </li>
-          <li class="d-flex justify-content-between align-items-center">
-            <span>Saturday</span>
-            <span>9:00 - 16:00</span>
-          </li>
-          <li class="d-flex justify-content-between align-items-center">
-            <span>Sunday</span>
-            <span>Closed</span>
-          </li>
-        </ul>
-
-        <div class="sidebar-contatct-info mt-4">
-            <p class="mb-0">Need Urgent Help?</p>
-            <h3>+23-4565-65768</h3>
-        </div>
-    </div>
-
-</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- footer Start -->
-<footer class="footer section gray-bg">
     <div class="container">
         <div class="row">
-            <div class="col-lg-4 mr-auto col-sm-6">
-                <div class="widget mb-5 mb-lg-0">
-                    <div class="logo mb-4">
-                        <img src="{{ asset('Novena/images/logo.png') }}" alt="" class="img-fluid">
-                    </div>
-                    <p>Tempora dolorem voluptatum nam vero assumenda voluptate, facilis ad eos obcaecati tenetur veritatis eveniet distinctio possimus.</p>
-
-                    <ul class="list-inline footer-socials mt-4">
-                        <li class="list-inline-item">
-                            <a href="https://www.facebook.com/themefisher"><i class="icofont-facebook"></i></a>
-                        </li>
-                        <li class="list-inline-item">
-                            <a href="https://twitter.com/themefisher"><i class="icofont-twitter"></i></a>
-                        </li>
-                        <li class="list-inline-item">
-                            <a href="https://www.pinterest.com/themefisher/"><i class="icofont-linkedin"></i></a>
-                        </li>
-                    </ul>
-                </div>
+            <!-- KHUNG CHỨA BÀI VIẾT TỰ ĐỘNG CẬP NHẬT QUA AJAX -->
+            <div class="col-lg-8" id="blog-news-list-container">
+                @include('patient.blog-news-list')
             </div>
 
-            <div class="col-lg-2 col-md-6 col-sm-6">
-                <div class="widget mb-5 mb-lg-0">
-                    <h4 class="text-capitalize mb-3">Specialization</h4>
-                    <div class="divider mb-4"></div>
+            <!-- SIDEBAR -->
+            <div class="col-lg-4">
+                <div class="sidebar-wrap pl-lg-4 mt-5 mt-lg-0">
 
-                    <ul class="list-unstyled footer-menu lh-35">
-                        <li><a href="#!">Surgery </a></li>
-                        <li><a href="#!">Wome's Health</a></li>
-                        <li><a href="#!">Radiology</a></li>
-                        <li><a href="#!">Cardioc</a></li>
-                        <li><a href="#!">Medicine</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-lg-2 col-md-6 col-sm-6">
-                <div class="widget mb-5 mb-lg-0">
-                    <h4 class="text-capitalize mb-3">Support</h4>
-                    <div class="divider mb-4"></div>
-
-                    <ul class="list-unstyled footer-menu lh-35">
-                        <li><a href="#!">Terms & Conditions</a></li>
-                        <li><a href="#!">Privacy Policy</a></li>
-                        <li><a href="#!">Company Support </a></li>
-                        <li><a href="#!">FAQuestions</a></li>
-                        <li><a href="#!">Company Licence</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 col-sm-6">
-                <div class="widget widget-contact mb-5 mb-lg-0">
-                    <h4 class="text-capitalize mb-3">Get in Touch</h4>
-                    <div class="divider mb-4"></div>
-
-                    <div class="footer-contact-block mb-4">
-                        <div class="icon d-flex align-items-center">
-                            <i class="icofont-email mr-3"></i>
-                            <span class="h6 mb-0">Support Available for 24/7</span>
-                        </div>
-                        <h4 class="mt-2"><a href="mailto:support@email.com">Support@email.com</a></h4>
-                    </div>
-
-                    <div class="footer-contact-block">
-                        <div class="icon d-flex align-items-center">
-                            <i class="icofont-support mr-3"></i>
-                            <span class="h6 mb-0">Mon to Fri : 08:30 - 18:00</span>
-                        </div>
-                        <h4 class="mt-2"><a href="tel:+23-345-67890">+23-456-6588</a></h4>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-btm py-4 mt-5">
-            <div class="row align-items-center justify-content-between">
-                <div class="col-lg-6">
-                    <div class="copyright">
-                        Copyright &copy; 2021, Designed &amp; Developed by <a href="https://themefisher.com/">Themefisher</a>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="subscribe-form text-lg-right mt-5 mt-lg-0">
-                        <form action="#" class="subscribe">
-                            <input type="text" class="form-control" placeholder="Your Email address" required>
-                            <button type="submit" class="btn btn-main-2 btn-round-full">Subscribe</button>
+                    <!-- Ô TÌM KIẾM TỰ ĐỘNG -->
+                    <div class="sidebar-widget search mb-4">
+                        <h5>Search Here</h5>
+                        <form id="search-form" onsubmit="return false;" class="sidebar-widget search  mb-3">
+                            <input type="text" id="search-keyword" name="keyword" class="form-control pr-5" placeholder="Search..." value="{{ request('keyword') }}" autocomplete="off">
+                            <i class="ti-search"></i>
                         </form>
                     </div>
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="col-lg-4">
-                    <a class="backtop scroll-top-to" href="#top">
-                        <i class="icofont-long-arrow-up"></i>
-                    </a>
+                    <!-- Bài viết mới nhất -->
+                    <div class="sidebar-widget latest-post mb-4">
+                        <h5 class="mb-4">New Posts</h5>
+                        @if(isset($popularNews) && count($popularNews) > 0)
+                        @foreach($popularNews as $pop)
+                        <div class="py-2 d-flex align-items-center border-bottom mb-2">
+                            @if($pop->ThumbnailUrl)
+                            <div class="post-thumb mr-3 flex-shrink-0">
+                                <a href="{{ url('/blog/' . $pop->NewsId) }}">
+                                    <img src="{{ str_starts_with($pop->ThumbnailUrl, 'http') ? $pop->ThumbnailUrl : asset('storage/' . $pop->ThumbnailUrl) }}"
+                                        alt="{{ $pop->Title }}" class="img-fluid" style="width: 70px; height: 70px; object-fit: cover; border-radius: 5px;">
+                                </a>
+                            </div>
+                            @endif
+                            <div class="post-content overflow-hidden">
+                                <span class="text-sm text-muted d-block mb-1">{{ \Carbon\Carbon::parse($pop->PublishedAt ?? $pop->created_at)->format('d M, Y') }}</span>
+                                <h6 class="mb-0 text-truncate"><a href="{{ url('/blog/' . $pop->NewsId) }}">{{ $pop->Title }}</a></h6>
+                            </div>
+                        </div>
+                        @endforeach
+                        @endif
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="sidebar-widget category mb-4">
+                        <h5 class="mb-4">Categories</h5>
+                        <ul class="list-unstyled mb-0">
+                            @forelse($categories as $cat)
+                            <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                <a href="{{ url('/blog?category=' . urlencode($cat->Category)) }}">
+                                    {{ $cat->Category }}
+                                </a>
+                                <span class="badge bg-light text-dark">{{ $cat->news_count }}</span>
+                            </li>
+                            @empty
+                            <li class="text-muted">There are no categories yet.</li>
+                            @endforelse
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-</footer>
-   
+</section>
 
-    <!-- 
-    Essential Scripts
-    =====================================-->
-    <script src="{{ asset('Novena/plugins/jquery/jquery.js') }}"></script>
-    <script src="{{ asset('Novena/plugins/bootstrap/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('Novena/plugins/slick-carousel/slick/slick.min.js') }}"></script>
-    <script src="{{ asset('Novena/plugins/shuffle/shuffle.min.js') }}"></script>
+<!-- SCRIPT AJAX XỬ LÝ LIVE SEARCH & CHUYỂN TRANG -->
+<script src="{{ asset('Novena/plugins/jquery/jquery.js') }}"></script>
 
- 
-    
-    <script src="{{ asset('Novena/js/script.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        let searchTimer;
+        const currentUrl = "{{ request()->url() }}";
 
-  </body>
-  </html>
+        function fetchNewsData(targetUrl) {
+            $('#blog-news-list-container').css('opacity', '0.4');
+
+            $.ajax({
+                url: targetUrl,
+                type: "GET",
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    // Kiểm tra nếu Server trả về JSON
+                    if (typeof response === 'object' && response.html) {
+                        $('#blog-news-list-container').html(response.html);
+                    }
+                    // Nếu Server lỡ trả về nguyên chuỗi HTML View
+                    else if (typeof response === 'string') {
+                        let freshContent = $(response).find('#blog-news-list-container').html();
+                        if (freshContent) {
+                            $('#blog-news-list-container').html(freshContent);
+                        }
+                    }
+                    $('#blog-news-list-container').css('opacity', '1');
+                },
+                error: function(xhr, status, error) {
+                    console.error("Lỗi AJAX:", error, xhr.responseText);
+                    $('#blog-news-list-container').css('opacity', '1');
+                }
+            });
+        }
+
+        // Bắt sự kiện gõ phím vào ô tìm kiếm
+        $('#search-keyword').on('input', function() {
+            clearTimeout(searchTimer);
+            let keyword = $(this).val();
+            let url = currentUrl + "?keyword=" + encodeURIComponent(keyword);
+
+            searchTimer = setTimeout(function() {
+                fetchNewsData(url);
+            }, 300);
+        });
+
+        // Bắt sự kiện click chuyển trang
+        $(document).on('click', '#blog-news-list-container .pagination a', function(e) {
+            e.preventDefault();
+            let pageUrl = $(this).attr('href');
+            if (pageUrl) {
+                fetchNewsData(pageUrl);
+            }
+        });
+    });
+</script>
+
+@endsection

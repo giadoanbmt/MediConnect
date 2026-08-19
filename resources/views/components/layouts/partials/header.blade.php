@@ -77,14 +77,23 @@
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.home') ? 'active' : '' }}" href="{{ route('public.home') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.about') ? 'active' : '' }}" href="{{ route('public.about') }}">About</a></li>
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.service') ? 'active' : '' }}" href="{{ route('public.service') }}">Services</a></li>
+                    @php
+                    $navSpecializations = \App\Models\Specialization::all();
+                    @endphp
+
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/specialization') }}" id="dropdown02" data-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href="{{ route('public.specialization') }}" id="dropdown02" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">Specialization <i class="icofont-thin-down"></i></a>
                         <ul class="dropdown-menu" aria-labelledby="dropdown02">
-                            <li><a class="dropdown-item" href="{{ route('specializations.Pediatrics') }}">Pediatrics</a></li>
-                            <li><a class="dropdown-item" href="{{ route('specializations.Cardiology') }}">Cardiology</a></li>
-                            <li><a class="dropdown-item" href="{{ route('specializations.Orthopedics') }}">Orthopedics</a></li>
-                            <li><a class="dropdown-item" href="{{ route('specializations.Dermatology') }}">Dermatology</a></li>
+                            @forelse($navSpecializations as $spec)
+                            <li>
+                                <a class="dropdown-item" href="{{ url('/specialization-single/' . ($spec->SpecializationId ?? $spec->id)) }}">
+                                    {{ $spec->SpecializationName ?? $spec->name }}
+                                </a>
+                            </li>
+                            @empty
+                            <li><a class="dropdown-item text-muted" href="#">No specialization</a></li>
+                            @endforelse
                         </ul>
                     </li>
                     <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="{{ route('public.doctor') }}" id="doctorMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Doctors <i class="icofont-thin-down"></i></a>

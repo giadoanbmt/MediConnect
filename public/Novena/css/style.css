@@ -1580,3 +1580,51 @@ a:focus {
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(237, 27, 77, 0.25);
 }
+
+/* Tùy chỉnh danh sách phân trang */
+.pagination {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+}
+
+.pagination .page-item {
+    margin: 0;
+}
+
+/* Biến nút thành hình tròn */
+.pagination .page-link {
+    width: 42px;
+    height: 42px;
+    border-radius: 50% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f2f2f2; /* Màu xám nhạt */
+    color: #333333;
+    border: none !important;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-shadow: none !important;
+}
+
+/* Nút Hover */
+.pagination .page-link:hover {
+    background-color: #223a66; /* Màu xanh đậm Novena */
+    color: #ffffff;
+}
+
+/* Trang đang chọn (Active) */
+.pagination .page-item.active .page-link {
+    background-color: #223a66 !important;
+    color: #ffffff !important;
+}
+
+/* Bỏ nút Previous / Next chữ dài nếu bị thừa */
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+    border-radius: 50% !important;
+}
