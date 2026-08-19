@@ -553,7 +553,7 @@
 
             </div>
 
-            {{-- Specialization / City / District / Clinic Room --}}
+            {{-- Specialization / Clinic Room / City / District --}}
             <div class="row profile-select-row">
 
                 {{-- Specialization --}}
@@ -580,6 +580,45 @@
                                     {{ old('SpecializationId', $doctor->SpecializationId) == $specialization->SpecializationId ? 'selected' : '' }}
                                 >
                                     {{ $specialization->SpecializationName }}
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                {{-- Clinic Room --}}
+                <div class="col-md-3">
+
+                    <div class="profile-field">
+
+                        <label>Clinic Room</label>
+
+                        <select
+                            name="RoomId"
+                            id="RoomSelect"
+                            class="form-control"
+                        >
+
+                            <option value="">
+                                -- Select Clinic Room --
+                            </option>
+
+                            @foreach($rooms as $room)
+
+                                <option
+                                    value="{{ $room->RoomId }}"
+                                    data-room-name="{{ strtolower(trim($room->RoomName)) }}"
+                                    {{ old('RoomId', $doctor->RoomId) == $room->RoomId ? 'selected' : '' }}
+                                >
+                                    {{ $room->RoomName }}
+
+                                    @if($room->RoomNumber)
+                                        - Room {{ $room->RoomNumber }}
+                                    @endif
                                 </option>
 
                             @endforeach
@@ -653,45 +692,6 @@
                                     {{ old('CityId', $currentDistrictId) == $location->CityId ? 'selected' : '' }}
                                 >
                                     {{ $location->DistrictName }}
-                                </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-                {{-- Clinic Room --}}
-                <div class="col-md-3">
-
-                    <div class="profile-field">
-
-                        <label>Clinic Room</label>
-
-                        <select
-                            name="RoomId"
-                            id="RoomSelect"
-                            class="form-control"
-                        >
-
-                            <option value="">
-                                -- Select Clinic Room --
-                            </option>
-
-                            @foreach($rooms as $room)
-
-                                <option
-                                    value="{{ $room->RoomId }}"
-                                    data-room-name="{{ strtolower(trim($room->RoomName)) }}"
-                                    {{ old('RoomId', $doctor->RoomId) == $room->RoomId ? 'selected' : '' }}
-                                >
-                                    {{ $room->RoomName }}
-
-                                    @if($room->RoomNumber)
-                                        - Room {{ $room->RoomNumber }}
-                                    @endif
                                 </option>
 
                             @endforeach
@@ -1133,6 +1133,7 @@
 
             }
         );
+
 
         const currentRoom =
             roomSelect.options[
