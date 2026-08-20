@@ -43,8 +43,8 @@
                                 aria-labelledby="topUserMenu"
                                 style="right: 0; left: auto; min-width: 190px;">
 
-                                <a class="dropdown-item py-2" href="#">
-                                    <i class="icofont-ui-user mr-2 text-primary"></i>Edit profile <small class="text-muted">(coming soon)</small>
+                                <a class="dropdown-item py-2" href="{{ route('patient.profile') }}">
+                                    <i class="icofont-ui-user mr-2 text-primary"></i>Edit profile
                                 </a>
                                 <a class="dropdown-item py-2" href="#">
                                     <i class="icofont-calendar mr-2 text-info"></i>My appointments <small class="text-muted">(coming soon)</small>

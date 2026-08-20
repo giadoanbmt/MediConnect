@@ -77,6 +77,10 @@ Route::middleware('role:patient')->group(function () {
         Route::get('/appointment', 'appointment')->name('patient.appointment');
         Route::get('/confirmation', 'confirmation')->name('patient.confirmation');
         Route::get('/contact', 'contact')->name('patient.contact');
+
+        // Quản lý Profile Bệnh nhân
+        Route::get('/profile', 'profile')->name('patient.profile');
+        Route::put('/profile', 'updateProfile')->name('patient.profile.update');
     });
     Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
     Route::get('/doctors', [DoctorController::class, 'index'])->name('patient.doctors.index');

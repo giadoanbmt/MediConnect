@@ -9,7 +9,9 @@ use App\Models\Doctor;
 use App\Models\Specialization;
 use App\Models\City;
 use App\Models\News;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class PatientController extends Controller
 {
@@ -194,5 +196,60 @@ class PatientController extends Controller
 
 
         return view('patient.doctorProfile', compact('doctor'));
+    }
+
+
+    // Hiển thị trang Profile Bệnh nhân
+    public function profile(): View
+    {
+        $user = Auth::user();
+        return view('patient.profile', compact('user'));
+    }
+
+    // Cập nhật thông tin Profile Bệnh nhân
+    public function updateProfile(Request $request)
+    {
+        /** @var \App\Models\AccountUser $user */
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'FullName' => 'required|string|max:100',
+            'Email'    => ['required', 'email', 'max:100', Rule::unique('AccountUser', 'Email')->ignore($user->UserId, 'UserId')],
+            'Gender'   => 'nullable|string|in:Male,Female,Other',
+            'Address'  => 'nullable|string|max:255',
+            'Avatar'   => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'Password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        // Xử lý Upload Avatar
+        if ($request->hasFile('Avatar')) {
+            // Xóa ảnh cũ trong thư mục public/uploads/avatars/
+            if ($user->AvatarUrl) {
+                $oldFilePath = public_path($user->AvatarUrl);
+                if (file_exists($oldFilePath)) {
+                    @unlink($oldFilePath);
+                }
+            }
+
+            // Đặt tên ảnh: Date + avtPatient + UserId
+            $file = $request->file('Avatar');
+            $extension = $file->getClientOriginalExtension();
+            $filename = date('Ymd') . '_avtPatient_' . $user->UserId . '.' . $extension;
+
+            // Di chuyển ảnh vào public/uploads/avatars
+            $file->move(public_path('uploads/avatars'), $filename);
+            $validated['AvatarUrl'] = 'uploads/avatars/' . $filename;
+        }
+
+        // Cập nhật mật khẩu nếu có thay đổi
+        if (!empty($validated['Password'])) {
+            $validated['Password'] = Hash::make($validated['Password']);
+        } else {
+            unset($validated['Password']);
+        }
+
+        $user->update($validated);
+
+        return redirect()->back()->with('success', 'Profile updated successfully!');
     }
 }
