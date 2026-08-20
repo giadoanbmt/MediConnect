@@ -39,12 +39,15 @@ class EnsureRoleAccess
         if ($isAuthUser) {
             $userRole = (int) Auth::user()->Role;
 
-            if (in_array('admin', $roles) && $userRole === 1) {
-                return $next($request);
-            }
+            $isAdminAllowed = in_array('admin', $roles) && $userRole === 1;
+            $isPatientAllowed = in_array('patient', $roles) && $userRole === 2;
 
-            if (in_array('patient', $roles) && $userRole === 2) {
-                return $next($request);
+            if ($isAdminAllowed || $isPatientAllowed) {
+                $response = $next($request);
+                $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+                $response->headers->set('Pragma', 'no-cache');
+                $response->headers->set('Expires', '0');
+                return $response;
             }
         }
 
