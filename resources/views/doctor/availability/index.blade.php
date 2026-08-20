@@ -181,7 +181,6 @@
         border: 1px solid var(--border-color);
         border-radius: 8px;
         background: var(--input-bg);
-        cursor: pointer;
         transition: all .2s ease;
     }
 
@@ -192,7 +191,6 @@
     .shift-card:hover {
         border-color: var(--primary-color);
         background: var(--hover-bg);
-        transform: translateY(-1px);
     }
 
     .shift-card.active {
@@ -204,18 +202,8 @@
         border-color: var(--border-color);
     }
 
-    .shift-card.selecting {
-        border-color: var(--primary-color);
-    }
-
     .shift-card.past-week {
         cursor: default;
-    }
-
-    .shift-card.past-week:hover {
-        border-color: var(--border-color);
-        background: var(--input-bg);
-        transform: none;
     }
 
     .shift-icon {
@@ -232,19 +220,39 @@
     }
 
     .shift-title {
-        margin-bottom: 4px;
+        margin-bottom: 8px;
         color: var(--text-color);
         font-size: 14px;
         font-weight: 700;
     }
 
-    .shift-time {
+    .shift-time-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .shift-time-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--border-color);
         color: var(--muted-color);
         font-size: 12px;
     }
 
+    .shift-time-item:last-child {
+        border-bottom: none;
+    }
+
+    .shift-time-item i {
+        color: var(--primary-color);
+        font-size: 9px;
+    }
+
     .shift-status {
-        margin-top: 9px;
+        margin-top: 10px;
         font-size: 12px;
         font-weight: 600;
     }
@@ -262,14 +270,9 @@
     }
 
     .shift-options {
-        display: none;
-        margin-top: 12px;
-        padding-top: 10px;
+        margin-top: 10px;
+        padding-top: 8px;
         border-top: 1px solid var(--border-color);
-    }
-
-    .shift-card.selecting .shift-options {
-        display: block;
     }
 
     .shift-option {
@@ -369,6 +372,7 @@
     }
 
     @media (max-width: 1100px) {
+
         .availability-card {
             padding: 20px;
         }
@@ -388,9 +392,11 @@
         .shift-card {
             padding: 11px 9px;
         }
+
     }
 
     @media (max-width: 767px) {
+
         .availability-header h2 {
             font-size: 26px;
         }
@@ -433,6 +439,7 @@
         .week-navigation-button {
             flex: 1;
         }
+
     }
 </style>
 
@@ -480,7 +487,46 @@
 
     @php
 
+        $morningSlots = [
+
+            [
+                'start' => '08:00',
+                'end' => '09:00'
+            ],
+
+            [
+                'start' => '09:30',
+                'end' => '10:30'
+            ],
+
+            [
+                'start' => '11:00',
+                'end' => '12:00'
+            ],
+
+        ];
+
+        $afternoonSlots = [
+
+            [
+                'start' => '13:00',
+                'end' => '14:00'
+            ],
+
+            [
+                'start' => '14:30',
+                'end' => '15:30'
+            ],
+
+            [
+                'start' => '16:00',
+                'end' => '17:00'
+            ],
+
+        ];
+
         $days = [
+
             'Monday',
             'Tuesday',
             'Wednesday',
@@ -488,44 +534,57 @@
             'Friday',
             'Saturday',
             'Sunday'
+
         ];
 
-        $startOfWeek = $startOfWeek->copy();
+        $startOfWeek =
+            $startOfWeek->copy();
 
-        $endOfWeek = $startOfWeek
-            ->copy()
-            ->endOfWeek();
+        $endOfWeek =
+            $startOfWeek
+                ->copy()
+                ->endOfWeek();
 
-        $currentWeek = now()
-            ->startOfWeek()
-            ->toDateString();
+        $currentWeek =
+            now()
+                ->startOfWeek()
+                ->toDateString();
 
         $isPastWeek =
-            $startOfWeek->toDateString() < $currentWeek;
+            $startOfWeek->toDateString()
+            < $currentWeek;
 
-        $previousWeek = $startOfWeek
-            ->copy()
-            ->subWeek()
-            ->toDateString();
+        $previousWeek =
+            $startOfWeek
+                ->copy()
+                ->subWeek()
+                ->toDateString();
 
-        $nextWeek = $startOfWeek
-            ->copy()
-            ->addWeek()
-            ->toDateString();
+        $nextWeek =
+            $startOfWeek
+                ->copy()
+                ->addWeek()
+                ->toDateString();
 
-        $scheduleMap = $schedules->keyBy(function ($schedule) {
+        $scheduleMap =
+            $schedules->keyBy(
+                function ($schedule) {
 
-            $date = \Carbon\Carbon::parse(
-                $schedule->WorkDate
-            )->format('Y-m-d');
+                    $date =
+                        \Carbon\Carbon::parse(
+                            $schedule->WorkDate
+                        )->format('Y-m-d');
 
-            $time = \Carbon\Carbon::parse(
-                $schedule->StartTime
-            )->format('H:i');
+                    $time =
+                        \Carbon\Carbon::parse(
+                            $schedule->StartTime
+                        )->format('H:i');
 
-            return $date . '_' . $time;
+                    return
+                        $date . '_' . $time;
 
-        });
+                }
+            );
 
     @endphp
 
@@ -548,17 +607,25 @@
                 class="week-navigation-button"
                 onclick="changeWeek('{{ $previousWeek }}')"
             >
+
                 <i class="fas fa-chevron-left mr-1"></i>
+
                 Previous Week
+
             </button>
 
             <div class="week-navigation-center">
 
                 {{ $startOfWeek->format('d/m/Y') }}
+
                 -
+
                 {{ $endOfWeek->format('d/m/Y') }}
 
-                @if($startOfWeek->toDateString() === $currentWeek)
+                @if(
+                    $startOfWeek->toDateString()
+                    === $currentWeek
+                )
 
                     <span>
                         (Current Week)
@@ -585,8 +652,11 @@
                 class="week-navigation-button"
                 onclick="changeWeek('{{ $nextWeek }}')"
             >
+
                 Next Week
+
                 <i class="fas fa-chevron-right ml-1"></i>
+
             </button>
 
         </div>
@@ -613,9 +683,10 @@
 
                         @php
 
-                            $date = $startOfWeek
-                                ->copy()
-                                ->addDays($index);
+                            $date =
+                                $startOfWeek
+                                    ->copy()
+                                    ->addDays($index);
 
                         @endphp
 
@@ -641,43 +712,116 @@
 
                         @php
 
-                            $date = $startOfWeek
-                                ->copy()
-                                ->addDays($index);
+                            $date =
+                                $startOfWeek
+                                    ->copy()
+                                    ->addDays($index);
 
-                            $morning = $scheduleMap->get(
-                                $date->format('Y-m-d') . '_08:00'
-                            );
+                            $morningSchedules = [];
 
-                            $afternoon = $scheduleMap->get(
-                                $date->format('Y-m-d') . '_13:00'
-                            );
+                            foreach(
+                                $morningSlots
+                                as $slotIndex => $slot
+                            ) {
+
+                                $key =
+                                    $date->format('Y-m-d')
+                                    . '_'
+                                    . $slot['start'];
+
+                                $morningSchedules[$slotIndex] =
+                                    $scheduleMap->get($key);
+
+                            }
+
+                            $afternoonSchedules = [];
+
+                            foreach(
+                                $afternoonSlots
+                                as $slotIndex => $slot
+                            ) {
+
+                                $key =
+                                    $date->format('Y-m-d')
+                                    . '_'
+                                    . $slot['start'];
+
+                                $afternoonSchedules[$slotIndex] =
+                                    $scheduleMap->get($key);
+
+                            }
+
+                            $morningStatuses =
+                                collect($morningSchedules)
+                                    ->map(
+                                        fn($schedule) =>
+                                            $schedule?->Status
+                                    );
+
+                            $afternoonStatuses =
+                                collect($afternoonSchedules)
+                                    ->map(
+                                        fn($schedule) =>
+                                            $schedule?->Status
+                                    );
+
+                            $morningIsOff =
+                                $morningStatuses->count() === 3
+                                &&
+                                $morningStatuses
+                                    ->every(
+                                        fn($status) =>
+                                            $status === 'Off'
+                                    );
+
+                            $afternoonIsOff =
+                                $afternoonStatuses->count() === 3
+                                &&
+                                $afternoonStatuses
+                                    ->every(
+                                        fn($status) =>
+                                            $status === 'Off'
+                                    );
+
+                            $morningIsAvailable =
+                                $morningStatuses
+                                    ->contains('Available');
+
+                            $afternoonIsAvailable =
+                                $afternoonStatuses
+                                    ->contains('Available');
 
                             $morningStatus =
-                                $morning
-                                    ? $morning->Status
-                                    : null;
+                                $morningIsOff
+                                    ? 'Off'
+                                    : (
+                                        $morningIsAvailable
+                                            ? 'Available'
+                                            : ''
+                                    );
 
                             $afternoonStatus =
-                                $afternoon
-                                    ? $afternoon->Status
-                                    : null;
+                                $afternoonIsOff
+                                    ? 'Off'
+                                    : (
+                                        $afternoonIsAvailable
+                                            ? 'Available'
+                                            : ''
+                                    );
 
                             $morningNote =
-                                $morning
-                                    ? $morning->Note
-                                    : '';
+                                collect($morningSchedules)
+                                    ->pluck('Note')
+                                    ->filter()
+                                    ->first()
+                                    ?? '';
 
                             $afternoonNote =
-                                $afternoon
-                                    ? $afternoon->Note
-                                    : '';
-
-                            $morningIndex =
-                                $index * 2;
-
-                            $afternoonIndex =
-                                ($index * 2) + 1;
+                                collect($afternoonSchedules)
+                                    ->pluck('Note')
+                                    ->filter()
+                                    ->first()
+                                    ?? '';
 
                         @endphp
 
@@ -685,63 +829,71 @@
 
                             <div
                                 class="shift-card
+                                morning-card
                                 {{ $morningStatus === 'Available' ? 'active' : '' }}
                                 {{ $morningStatus === 'Off' ? 'off show-reason' : '' }}
                                 {{ $isPastWeek ? 'past-week' : '' }}"
-                                data-status="{{ $morningStatus ?? '' }}"
-                                onclick="toggleShift(this)"
+                                data-shift="morning"
+                                data-status="{{ $morningStatus }}"
                             >
 
-                                <input
-                                    type="hidden"
-                                    name="schedules[{{ $morningIndex }}][WorkDate]"
-                                    value="{{ $date->toDateString() }}"
-                                >
-
-                                <input
-                                    type="hidden"
-                                    name="schedules[{{ $morningIndex }}][StartTime]"
-                                    value="08:00"
-                                >
-
-                                <input
-                                    type="hidden"
-                                    name="schedules[{{ $morningIndex }}][EndTime]"
-                                    value="12:00"
-                                >
-
-                                <input
-                                    type="hidden"
-                                    name="schedules[{{ $morningIndex }}][Status]"
-                                    value="{{ $morningStatus ?? '' }}"
-                                    class="status-input"
-                                >
-
                                 <div class="shift-icon">
+
                                     <i class="fas fa-sun"></i>
+
                                 </div>
 
                                 <div class="shift-title">
+
                                     Morning
+
                                 </div>
 
-                                <div class="shift-time">
-                                    08:00 - 12:00
-                                </div>
+                                <ul class="shift-time-list">
+
+                                    @foreach(
+                                        $morningSlots
+                                        as $slot
+                                    )
+
+                                        <li class="shift-time-item">
+
+                                            <i class="fas fa-circle"></i>
+
+                                            <span>
+
+                                                {{ $slot['start'] }}
+                                                -
+                                                {{ $slot['end'] }}
+
+                                            </span>
+
+                                        </li>
+
+                                    @endforeach
+
+                                </ul>
 
                                 <div
                                     class="shift-status
+                                    morning-status-text
                                     {{ $morningStatus === 'Available' ? 'available' : '' }}
                                     {{ $morningStatus === 'Off' ? 'off' : '' }}
-                                    {{ !$morningStatus ? 'pending' : '' }}"
+                                    {{ $morningStatus === '' ? 'pending' : '' }}"
                                 >
 
                                     @if($morningStatus === 'Available')
+
                                         Available
+
                                     @elseif($morningStatus === 'Off')
+
                                         Day Off
+
                                     @else
+
                                         Select status
+
                                     @endif
 
                                 </div>
@@ -755,12 +907,15 @@
                                             class="shift-option"
                                             onclick="setShiftStatus(
                                                 event,
-                                                this.closest('.shift-card'),
+                                                this.closest('.morning-card'),
                                                 'Available'
                                             )"
                                         >
+
                                             <i class="fas fa-check"></i>
+
                                             Available
+
                                         </button>
 
                                         <button
@@ -768,12 +923,15 @@
                                             class="shift-option day-off"
                                             onclick="setShiftStatus(
                                                 event,
-                                                this.closest('.shift-card'),
+                                                this.closest('.morning-card'),
                                                 'Off'
                                             )"
                                         >
+
                                             <i class="fas fa-ban"></i>
-                                            Day Off
+
+                                            Off
+
                                         </button>
 
                                     </div>
@@ -781,81 +939,147 @@
                                     <div class="reason-box">
 
                                         <label class="reason-label">
+
                                             Reason for day off
+
                                         </label>
 
                                         <textarea
-                                            name="schedules[{{ $morningIndex }}][Note]"
                                             class="reason-input"
                                             placeholder="Enter reason..."
-                                            onclick="event.stopPropagation()"
-                                        >{{ old("schedules.$morningIndex.Note", $morningNote) }}</textarea>
+                                        >{{ $morningNote }}</textarea>
 
                                     </div>
 
                                 @endif
+
+                                @foreach(
+                                    $morningSlots
+                                    as $slotIndex => $slot
+                                )
+
+                                    @php
+
+                                        $schedule =
+                                            $morningSchedules[
+                                                $slotIndex
+                                            ];
+
+                                        $scheduleIndex =
+                                            ($index * 6)
+                                            + $slotIndex;
+
+                                    @endphp
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][ScheduleId]"
+                                        value="{{ $schedule?->ScheduleId ?? '' }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][WorkDate]"
+                                        value="{{ $date->toDateString() }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][StartTime]"
+                                        value="{{ $slot['start'] }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][EndTime]"
+                                        value="{{ $slot['end'] }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][Status]"
+                                        value="{{ $morningStatus }}"
+                                        class="morning-status-input"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][Note]"
+                                        value="{{ $morningNote }}"
+                                        class="morning-note-input"
+                                    >
+
+                                @endforeach
 
                             </div>
 
                             <div
                                 class="shift-card
+                                afternoon-card
                                 {{ $afternoonStatus === 'Available' ? 'active' : '' }}
                                 {{ $afternoonStatus === 'Off' ? 'off show-reason' : '' }}
                                 {{ $isPastWeek ? 'past-week' : '' }}"
-                                data-status="{{ $afternoonStatus ?? '' }}"
-                                onclick="toggleShift(this)"
+                                data-shift="afternoon"
+                                data-status="{{ $afternoonStatus }}"
                             >
 
-                                <input
-                                    type="hidden"
-                                    name="schedules[{{ $afternoonIndex }}][WorkDate]"
-                                    value="{{ $date->toDateString() }}"
-                                >
-
-                                <input
-                                    type="hidden"
-                                    name="schedules[{{ $afternoonIndex }}][StartTime]"
-                                    value="13:00"
-                                >
-
-                                <input
-                                    type="hidden"
-                                    name="schedules[{{ $afternoonIndex }}][EndTime]"
-                                    value="17:00"
-                                >
-
-                                <input
-                                    type="hidden"
-                                    name="schedules[{{ $afternoonIndex }}][Status]"
-                                    value="{{ $afternoonStatus ?? '' }}"
-                                    class="status-input"
-                                >
-
                                 <div class="shift-icon">
+
                                     <i class="fas fa-cloud-sun"></i>
+
                                 </div>
 
                                 <div class="shift-title">
+
                                     Afternoon
+
                                 </div>
 
-                                <div class="shift-time">
-                                    13:00 - 17:00
-                                </div>
+                                <ul class="shift-time-list">
+
+                                    @foreach(
+                                        $afternoonSlots
+                                        as $slot
+                                    )
+
+                                        <li class="shift-time-item">
+
+                                            <i class="fas fa-circle"></i>
+
+                                            <span>
+
+                                                {{ $slot['start'] }}
+                                                -
+                                                {{ $slot['end'] }}
+
+                                            </span>
+
+                                        </li>
+
+                                    @endforeach
+
+                                </ul>
 
                                 <div
                                     class="shift-status
+                                    afternoon-status-text
                                     {{ $afternoonStatus === 'Available' ? 'available' : '' }}
                                     {{ $afternoonStatus === 'Off' ? 'off' : '' }}
-                                    {{ !$afternoonStatus ? 'pending' : '' }}"
+                                    {{ $afternoonStatus === '' ? 'pending' : '' }}"
                                 >
 
                                     @if($afternoonStatus === 'Available')
+
                                         Available
+
                                     @elseif($afternoonStatus === 'Off')
+
                                         Day Off
+
                                     @else
+
                                         Select status
+
                                     @endif
 
                                 </div>
@@ -869,12 +1093,15 @@
                                             class="shift-option"
                                             onclick="setShiftStatus(
                                                 event,
-                                                this.closest('.shift-card'),
+                                                this.closest('.afternoon-card'),
                                                 'Available'
                                             )"
                                         >
+
                                             <i class="fas fa-check"></i>
+
                                             Available
+
                                         </button>
 
                                         <button
@@ -882,12 +1109,15 @@
                                             class="shift-option day-off"
                                             onclick="setShiftStatus(
                                                 event,
-                                                this.closest('.shift-card'),
+                                                this.closest('.afternoon-card'),
                                                 'Off'
                                             )"
                                         >
+
                                             <i class="fas fa-ban"></i>
-                                            Day Off
+
+                                            Off
+
                                         </button>
 
                                     </div>
@@ -895,19 +1125,78 @@
                                     <div class="reason-box">
 
                                         <label class="reason-label">
+
                                             Reason for day off
+
                                         </label>
 
                                         <textarea
-                                            name="schedules[{{ $afternoonIndex }}][Note]"
                                             class="reason-input"
                                             placeholder="Enter reason..."
-                                            onclick="event.stopPropagation()"
-                                        >{{ old("schedules.$afternoonIndex.Note", $afternoonNote) }}</textarea>
+                                        >{{ $afternoonNote }}</textarea>
 
                                     </div>
 
                                 @endif
+
+                                @foreach(
+                                    $afternoonSlots
+                                    as $slotIndex => $slot
+                                )
+
+                                    @php
+
+                                        $schedule =
+                                            $afternoonSchedules[
+                                                $slotIndex
+                                            ];
+
+                                        $scheduleIndex =
+                                            ($index * 6)
+                                            + 3
+                                            + $slotIndex;
+
+                                    @endphp
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][ScheduleId]"
+                                        value="{{ $schedule?->ScheduleId ?? '' }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][WorkDate]"
+                                        value="{{ $date->toDateString() }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][StartTime]"
+                                        value="{{ $slot['start'] }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][EndTime]"
+                                        value="{{ $slot['end'] }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][Status]"
+                                        value="{{ $afternoonStatus }}"
+                                        class="afternoon-status-input"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="schedules[{{ $scheduleIndex }}][Note]"
+                                        value="{{ $afternoonNote }}"
+                                        class="afternoon-note-input"
+                                    >
+
+                                @endforeach
 
                             </div>
 
@@ -927,8 +1216,11 @@
                         type="submit"
                         class="btn btn-save"
                     >
+
                         <i class="fas fa-save mr-2"></i>
+
                         Save Schedule
+
                     </button>
 
                 </div>
@@ -942,11 +1234,13 @@
 </div>
 
 <script>
+
     function changeWeek(week)
     {
-        const url = new URL(
-            window.location.href
-        );
+        const url =
+            new URL(
+                window.location.href
+            );
 
         url.searchParams.set(
             'week',
@@ -957,141 +1251,214 @@
             url.toString();
     }
 
-    function toggleShift(element)
-    {
-        if (
-            element.classList.contains(
-                'past-week'
-            )
-        ) {
-            return;
-        }
-
-        document
-            .querySelectorAll(
-                '.shift-card.selecting'
-            )
-            .forEach(function (card) {
-
-                if (card !== element) {
-                    card.classList.remove(
-                        'selecting'
-                    );
-                }
-
-            });
-
-        element.classList.toggle(
-            'selecting'
-        );
-    }
-
     function setShiftStatus(
         event,
-        element,
+        card,
         status
     )
     {
         event.stopPropagation();
 
-        if (
-            element.classList.contains(
-                'past-week'
-            )
-        ) {
+        if (!card) {
             return;
         }
 
-        const statusInput =
-            element.querySelector(
-                '.status-input'
+        const shift =
+            card.dataset.shift;
+
+        card.dataset.status =
+            status;
+
+        const statusInputs =
+            card.querySelectorAll(
+                '.'
+                + shift
+                + '-status-input'
             );
 
-        const statusElement =
-            element.querySelector(
-                '.shift-status'
+        const noteInputs =
+            card.querySelectorAll(
+                '.'
+                + shift
+                + '-note-input'
+            );
+
+        const statusText =
+            card.querySelector(
+                '.'
+                + shift
+                + '-status-text'
+            );
+
+        const reasonBox =
+            card.querySelector(
+                '.reason-box'
             );
 
         const reasonInput =
-            element.querySelector(
+            card.querySelector(
                 '.reason-input'
             );
 
-        element.dataset.status =
-            status;
+        statusInputs.forEach(
+            function(input) {
 
-        statusInput.value =
-            status;
+                input.value =
+                    status;
+
+            }
+        );
+
+        if (
+            status === 'Off'
+        ) {
+
+            if (reasonBox) {
+
+                reasonBox.style.display =
+                    'block';
+
+            }
+
+            if (statusText) {
+
+                statusText.classList.remove(
+                    'available'
+                );
+
+                statusText.classList.remove(
+                    'pending'
+                );
+
+                statusText.classList.add(
+                    'off'
+                );
+
+                statusText.textContent =
+                    'Day Off';
+
+            }
+
+            card.classList.remove(
+                'active'
+            );
+
+            card.classList.add(
+                'off'
+            );
+
+            card.classList.add(
+                'show-reason'
+            );
+
+        }
 
         if (
             status === 'Available'
         ) {
 
-            element.classList.add(
-                'active'
-            );
-
-            element.classList.remove(
-                'off'
-            );
-
-            element.classList.remove(
-                'show-reason'
-            );
-
-            statusElement.classList.remove(
-                'off'
-            );
-
-            statusElement.classList.remove(
-                'pending'
-            );
-
-            statusElement.classList.add(
-                'available'
-            );
-
-            statusElement.textContent =
-                'Available';
-
             if (reasonInput) {
-                reasonInput.value = '';
+
+                reasonInput.value =
+                    '';
+
             }
 
-        } else {
+            noteInputs.forEach(
+                function(input) {
 
-            element.classList.remove(
-                'active'
+                    input.value =
+                        '';
+
+                }
             );
 
-            element.classList.add(
+            if (reasonBox) {
+
+                reasonBox.style.display =
+                    'none';
+
+            }
+
+            if (statusText) {
+
+                statusText.classList.remove(
+                    'off'
+                );
+
+                statusText.classList.remove(
+                    'pending'
+                );
+
+                statusText.classList.add(
+                    'available'
+                );
+
+                statusText.textContent =
+                    'Available';
+
+            }
+
+            card.classList.remove(
                 'off'
             );
 
-            element.classList.add(
+            card.classList.remove(
                 'show-reason'
             );
 
-            statusElement.classList.remove(
-                'available'
+            card.classList.add(
+                'active'
             );
 
-            statusElement.classList.remove(
-                'pending'
-            );
-
-            statusElement.classList.add(
-                'off'
-            );
-
-            statusElement.textContent =
-                'Day Off';
         }
 
-        element.classList.remove(
-            'selecting'
-        );
     }
+
+    document
+        .querySelectorAll(
+            '.reason-input'
+        )
+        .forEach(
+            function(textarea) {
+
+                textarea.addEventListener(
+                    'input',
+                    function() {
+
+                        const card =
+                            textarea.closest(
+                                '.shift-card'
+                            );
+
+                        if (!card) {
+                            return;
+                        }
+
+                        const shift =
+                            card.dataset.shift;
+
+                        const noteInputs =
+                            card.querySelectorAll(
+                                '.'
+                                + shift
+                                + '-note-input'
+                            );
+
+                        noteInputs.forEach(
+                            function(input) {
+
+                                input.value =
+                                    textarea.value;
+
+                            }
+                        );
+
+                    }
+                );
+
+            }
+        );
 
     const availabilityForm =
         document.getElementById(
@@ -1102,66 +1469,90 @@
 
         availabilityForm.addEventListener(
             'submit',
-            function (event) {
+            function(event) {
 
-                const shifts =
+                let valid =
+                    true;
+
+                const cards =
                     document.querySelectorAll(
-                        '#availabilityForm .shift-card:not(.past-week)'
+                        '#availabilityForm .shift-card'
                     );
 
-                let valid = true;
+                cards.forEach(
+                    function(card) {
 
-                shifts.forEach(
-                    function (shift) {
+                        if (
+                            card.classList.contains(
+                                'past-week'
+                            )
+                        ) {
+                            return;
+                        }
 
                         const status =
-                            shift.querySelector(
-                                '.status-input'
-                            ).value;
+                            card.dataset.status;
 
                         const reason =
-                            shift.querySelector(
+                            card.querySelector(
                                 '.reason-input'
                             );
 
-                        shift.style.borderColor =
-                            '';
+                        if (
+                            !status
+                        ) {
 
-                        if (!status) {
+                            valid =
+                                false;
 
-                            valid = false;
-
-                            shift.style.borderColor =
+                            card.style.borderColor =
                                 '#dc3545';
+
                         }
 
                         if (
-                            status === 'Off' &&
-                            (
-                                !reason ||
-                                reason.value.trim() === ''
-                            )
+                            status === 'Off'
                         ) {
 
-                            valid = false;
+                            if (
+                                !reason ||
+                                reason.value.trim() === ''
+                            ) {
 
-                            shift.classList.add(
-                                'show-reason'
-                            );
+                                valid =
+                                    false;
 
-                            shift.style.borderColor =
-                                '#dc3545';
+                                card.classList.add(
+                                    'show-reason'
+                                );
+
+                                if (reason) {
+
+                                    reason.focus();
+
+                                }
+
+                                card.style.borderColor =
+                                    '#dc3545';
+
+                            }
+
                         }
 
                     }
                 );
 
                 if (!valid) {
+
                     event.preventDefault();
+
                 }
+
             }
         );
+
     }
+
 </script>
 
 @endsection
