@@ -104,7 +104,7 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'Vui lòng đăng nhập!');
+            return redirect()->route('login')->with('error', 'Please log in to use this feature!');
         }
 
         $request->validate([
@@ -116,19 +116,20 @@ class AppointmentController extends Controller
 
         $scheduleId = $request->input('AppointmentId');
 
-        // 1. Lấy thông tin khung giờ từ DoctorSchedule
+        // Lấy thông tin khung giờ từ DoctorSchedule
         $schedule = DB::table('DoctorSchedule')
             ->where('ScheduleId', $scheduleId)
             ->where('Status', 'Available')
+            ->where('IsBooked', '0')
             ->first();
 
         if (!$schedule) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Khung giờ khám này hiện không còn trống. Vui lòng chọn giờ khác!');
+                ->with('error', 'This appointment time slot is no longer available. Please choose another time!');
         }
 
-        // 2. Chèn trực tiếp các cột có trong bảng Appointment
+        //  Thêm dữ liệu vào bảng Appointment
         DB::table('Appointment')->insert([
             'DoctorId'        => $request->input('DoctorId'),
             'UserId'          => Auth::id(),
@@ -141,15 +142,14 @@ class AppointmentController extends Controller
             'UpdatedAt'       => now(),
         ]);
 
-        // 3. Đổi trạng thái khung giờ trong DoctorSchedule
+        //  Đổi trạng thái khung giờ trong DoctorSchedule
         DB::table('DoctorSchedule')
             ->where('ScheduleId', $scheduleId)
             ->update([
-                'Status' => 'Off',
-                'Note' => 'Booked'
+                'IsBooked' => '1'
             ]);
 
-        return redirect()->back()->with('success', 'Đặt lịch khám thành công! Chúng tôi sẽ liên hệ sớm.');
+        return redirect()->back()->with('success', 'Appointment booked successfully! We will contact you soon.');
     }
 
 

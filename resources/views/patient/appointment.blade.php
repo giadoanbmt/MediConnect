@@ -119,7 +119,7 @@
 
                         <!-- Ghi chú -->
                         <div class="form-group-2 mb-4">
-                            <textarea name="Reason" id="Reason" class="form-control" rows="6" placeholder="Your Message / Reason for visit">{{ old('Notes') }}</textarea>
+                            <textarea name="Reason" id="Reason" class="form-control" rows="6" placeholder="Your Message / Reason for visit">{{ old('Reason') }}</textarea>
                         </div>
 
                         <!-- Nút Submit -->
