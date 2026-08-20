@@ -175,3 +175,6 @@ CREATE TABLE ContactQuery (
     CONSTRAINT FK_ContactQuery_Admin FOREIGN KEY (RespondedBy) 
         REFERENCES AccountUser(UserId) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE DoctorSchedule 
+ADD COLUMN IsBooked BOOLEAN DEFAULT 0 COMMENT '0: Free/Unbooked, 1: Booked' AFTER Status;

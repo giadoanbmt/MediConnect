@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DoctorSchedule extends Model
 {
-    protected $table = 'DoctorSchedule';
+    use HasFactory;
 
+    protected $table = 'DoctorSchedule';
     protected $primaryKey = 'ScheduleId';
 
-    public $timestamps = false;
+    // Khai báo tên cột Timestamps viết hoa theo Database
+    const CREATED_AT = 'CreatedAt';
+    const UPDATED_AT = 'UpdatedAt';
 
     protected $fillable = [
         'DoctorId',
@@ -19,21 +23,21 @@ class DoctorSchedule extends Model
         'EndTime',
         'MaxPatients',
         'Status',
+        'IsBooked',
         'Note',
-        'CreatedAt',
-        'UpdatedAt',
     ];
 
     protected $casts = [
-        'WorkDate' => 'date',
+        'WorkDate'    => 'date',
+        'IsBooked'    => 'boolean',
+        'MaxPatients' => 'integer',
     ];
 
+    /**
+     * Mối quan hệ với Model Doctor
+     */
     public function doctor()
     {
-        return $this->belongsTo(
-            Doctor::class,
-            'DoctorId',
-            'DoctorId'
-        );
+        return $this->belongsTo(Doctor::class, 'DoctorId', 'DoctorId');
     }
 }
