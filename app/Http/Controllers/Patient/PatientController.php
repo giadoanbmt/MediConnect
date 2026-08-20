@@ -9,8 +9,7 @@ use App\Models\Doctor;
 use App\Models\Specialization;
 use App\Models\City;
 use App\Models\News;
-use App\Models\DoctorSchedule;
-use Carbon\Carbon;
+
 
 class PatientController extends Controller
 {
@@ -187,15 +186,13 @@ class PatientController extends Controller
             'specialization',
             'city',
             'schedules' => function ($query) {
-                $query->where('WorkDate', '>=', Carbon::today())
-                    ->orderBy('WorkDate', 'asc')
-                    ->orderBy('StartTime', 'asc');
+                $query->orderBy('StartTime', 'asc');
             }
         ])
             ->where('DoctorId', $id)
             ->firstOrFail();
 
-        // Trả về view chi tiết kèm biến $doctor
+
         return view('patient.doctorProfile', compact('doctor'));
     }
 }

@@ -76,7 +76,6 @@
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.home') ? 'active' : '' }}" href="{{ route('public.home') }}">Home</a></li>
                     <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.about') ? 'active' : '' }}" href="{{ route('public.about') }}">About</a></li>
-                    <li class="nav-item"><a class="nav-link {{ request()->routeIs('public.service') ? 'active' : '' }}" href="{{ route('public.service') }}">Services</a></li>
                     @php
                     $navSpecializations = \App\Models\Specialization::all();
                     @endphp
@@ -99,7 +98,7 @@
                     <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="{{ route('public.doctor') }}" id="doctorMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Doctors <i class="icofont-thin-down"></i></a>
                         <div class="dropdown-menu" aria-labelledby="doctorMenu">
                             <a class="dropdown-item" href="{{ route('public.doctor') }}">Find a doctor</a>
-                            @auth <a class="dropdown-item" href="{{ route('patient.appointment') }}">Book an appointment</a> @endauth
+                            @auth <a class="dropdown-item" href="{{ route('patient.appointments.book') }}">Book an appointment</a> @endauth
                         </div>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('public.blog-sidebar') }}">News</a></li>
