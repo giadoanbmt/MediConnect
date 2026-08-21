@@ -568,130 +568,129 @@ class DoctorController extends Controller
     }
 
     public function saveAvailability(Request $request)
-{
-    $doctor = Doctor::findOrFail(
-        session('doctor_id')
-    );
-
-    $validated = $request->validate([
-        'schedules' => [
-            'required',
-            'array',
-            'size:42',
-        ],
-
-        'schedules.*.WorkDate' => [
-            'required',
-            'date',
-        ],
-
-        'schedules.*.StartTime' => [
-            'required',
-            'date_format:H:i',
-        ],
-
-        'schedules.*.EndTime' => [
-            'required',
-            'date_format:H:i',
-        ],
-
-        'schedules.*.Status' => [
-            'required',
-            'in:Available,Off',
-        ],
-
-        'schedules.*.Note' => [
-            'nullable',
-            'string',
-            'max:255',
-        ],
-    ]);
-
-    foreach ($validated['schedules'] as $index => $schedule) {
-
-        if (
-            $schedule['Status'] === 'Off' &&
-            (
-                empty($schedule['Note']) ||
-                trim($schedule['Note']) === ''
-            )
-        ) {
-            return back()
-                ->withErrors([
-                    "schedules.$index.Note" =>
-                    'A reason is required when a shift is marked as Day Off.'
-                ])
-                ->withInput();
-        }
-    }
-
-    foreach ($validated['schedules'] as $schedule) {
-
-        $doctorSchedule = DoctorSchedule::where(
-            'DoctorId',
-            $doctor->DoctorId
-        )
-            ->where(
-                'WorkDate',
-                $schedule['WorkDate']
-            )
-            ->where(
-                'StartTime',
-                $schedule['StartTime']
-            )
-            ->first();
-
-        if (!$doctorSchedule) {
-
-            $doctorSchedule = new DoctorSchedule();
-
-            $doctorSchedule->DoctorId =
-                $doctor->DoctorId;
-
-            $doctorSchedule->WorkDate =
-                $schedule['WorkDate'];
-
-            $doctorSchedule->StartTime =
-                $schedule['StartTime'];
-        }
-
-        $doctorSchedule->EndTime =
-            $schedule['EndTime'];
-
-        $doctorSchedule->Status =
-            $schedule['Status'];
-
-        if ($schedule['Status'] === 'Off') {
-
-            $doctorSchedule->IsBooked = 1;
-
-            $doctorSchedule->Note =
-                trim($schedule['Note']);
-
-        } else {
-
-            $doctorSchedule->IsBooked = 0;
-
-            $doctorSchedule->Note = null;
-        }
-
-        $doctorSchedule->save();
-    }
-
-    return redirect()
-        ->route(
-            'doctor.availability',
-            [
-                'week' => \Carbon\Carbon::parse(
-                    $validated['schedules'][0]['WorkDate']
-                )->startOfWeek()->toDateString()
-            ]
-        )
-        ->with(
-            'success',
-            'Weekly schedule saved successfully.'
+    {
+        $doctor = Doctor::findOrFail(
+            session('doctor_id')
         );
-}
+
+        $validated = $request->validate([
+            'schedules' => [
+                'required',
+                'array',
+                'size:42',
+            ],
+
+            'schedules.*.WorkDate' => [
+                'required',
+                'date',
+            ],
+
+            'schedules.*.StartTime' => [
+                'required',
+                'date_format:H:i',
+            ],
+
+            'schedules.*.EndTime' => [
+                'required',
+                'date_format:H:i',
+            ],
+
+            'schedules.*.Status' => [
+                'required',
+                'in:Available,Off',
+            ],
+
+            'schedules.*.Note' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+        ]);
+
+        foreach ($validated['schedules'] as $index => $schedule) {
+
+            if (
+                $schedule['Status'] === 'Off' &&
+                (
+                    empty($schedule['Note']) ||
+                    trim($schedule['Note']) === ''
+                )
+            ) {
+                return back()
+                    ->withErrors([
+                        "schedules.$index.Note" =>
+                        'A reason is required when a shift is marked as Day Off.'
+                    ])
+                    ->withInput();
+            }
+        }
+
+        foreach ($validated['schedules'] as $schedule) {
+
+            $doctorSchedule = DoctorSchedule::where(
+                'DoctorId',
+                $doctor->DoctorId
+            )
+                ->where(
+                    'WorkDate',
+                    $schedule['WorkDate']
+                )
+                ->where(
+                    'StartTime',
+                    $schedule['StartTime']
+                )
+                ->first();
+
+            if (!$doctorSchedule) {
+
+                $doctorSchedule = new DoctorSchedule();
+
+                $doctorSchedule->DoctorId =
+                    $doctor->DoctorId;
+
+                $doctorSchedule->WorkDate =
+                    $schedule['WorkDate'];
+
+                $doctorSchedule->StartTime =
+                    $schedule['StartTime'];
+            }
+
+            $doctorSchedule->EndTime =
+                $schedule['EndTime'];
+
+            $doctorSchedule->Status =
+                $schedule['Status'];
+
+            if ($schedule['Status'] === 'Off') {
+
+                $doctorSchedule->IsBooked = 1;
+
+                $doctorSchedule->Note =
+                    trim($schedule['Note']);
+            } else {
+
+                $doctorSchedule->IsBooked = 0;
+
+                $doctorSchedule->Note = null;
+            }
+
+            $doctorSchedule->save();
+        }
+
+        return redirect()
+            ->route(
+                'doctor.availability',
+                [
+                    'week' => \Carbon\Carbon::parse(
+                        $validated['schedules'][0]['WorkDate']
+                    )->startOfWeek()->toDateString()
+                ]
+            )
+            ->with(
+                'success',
+                'Weekly schedule saved successfully.'
+            );
+    }
 
     // Appointments
     public function appointments(Request $request)
@@ -874,12 +873,8 @@ class DoctorController extends Controller
 
         // Lấy danh sách lịch hẹn và sắp xếp theo ngày, giờ
         $appointments = $appointmentsQuery
-            ->orderBy(
-                'AppointmentDate'
-            )
-            ->orderBy(
-                'StartTime'
-            )
+            ->orderBy('AppointmentDate', 'asc')
+            ->orderBy('CreatedAt', 'asc')
             ->get();
 
         // Tạo query riêng để đếm số lượng theo trạng thái

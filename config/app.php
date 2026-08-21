@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // 'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -78,11 +78,20 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    // 'locale' => env('APP_LOCALE', 'en'),
+
+    // 'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+
+    // 'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+
+    // Chuyển vùng thành giờ VN
+    'timezone' => env('APP_TIMEZONE', 'Asia/Ho_Chi_Minh'),
+
+    'locale' => env('APP_LOCALE', 'vi'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
-    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+    'faker_locale' => env('APP_FAKER_LOCALE', 'vi_VN'),
 
     /*
     |--------------------------------------------------------------------------
