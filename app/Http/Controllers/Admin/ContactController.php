@@ -17,7 +17,7 @@ class ContactController extends Controller
     {
         $status = $request->get('status', 'All');
 
-        $query = ContactQuery::orderBy('SubmittedAt', 'asc');
+        $query = ContactQuery::orderBy('SubmittedAt', 'desc');
 
         if ($status !== 'All') {
             $query->where('Status', $status);

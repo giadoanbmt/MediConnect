@@ -9,12 +9,12 @@ use Illuminate\Support\Facades\DB;
 class AppointmentController extends Controller
 {
     /**
-     * Hiển thị danh sách lịch hẹn dành cho Admin (Lọc theo trạng thái, không có Action)
+     * Hiển thị danh sách lịch hẹn dành cho Admin (Lọc theo trạng thái & Tìm kiếm)
      */
     public function index(Request $request)
     {
-        // Mặc định hiển thị tất cả (All) nếu không truyền status
         $status = $request->get('status', 'All');
+        $keyword = trim($request->get('keyword', ''));
 
         // Truy vấn danh sách lịch hẹn kết hợp Bệnh nhân, Bác sĩ & Phòng khám
         $query = DB::table('Appointment')
@@ -27,33 +27,60 @@ class AppointmentController extends Controller
                 'Patient.Email as PatientEmail',
                 'Doctor.FullName as DoctorName',
                 'ClinicRoom.RoomNumber'
-            )
-            ->orderBy('Appointment.AppointmentDate', 'desc')
-            ->orderBy('Appointment.StartTime', 'desc');
+            );
 
-        // Lọc theo từng trạng thái cụ thể
+        // Lọc theo trạng thái
         if ($status !== 'All') {
             if ($status === 'Approved') {
                 $query->whereIn('Appointment.Status', ['Approved', 'Accept', 'Accepted']);
             } elseif ($status === 'Rejected' || $status === 'Cancelled') {
-                // Kiểm tra cả 'Cancelled' và 'Rejected' trong DB
                 $query->whereIn('Appointment.Status', ['Cancelled', 'cancelled', 'Rejected', 'Reject']);
             } else {
                 $query->where('Appointment.Status', $status);
             }
         }
 
+        // Tìm kiếm theo từ khóa (Bệnh nhân, Bác sĩ, Số phòng, Lý do)
+        if (!empty($keyword)) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('Patient.FullName', 'like', "%{$keyword}%")
+                    ->orWhere('Patient.Email', 'like', "%{$keyword}%")
+                    ->orWhere('Doctor.FullName', 'like', "%{$keyword}%")
+                    ->orWhere('ClinicRoom.RoomNumber', 'like', "%{$keyword}%")
+                    ->orWhere('Appointment.Reason', 'like', "%{$keyword}%");
+            });
+        }
+
+        // Sắp xếp danh sách mới tạo/mới đăng ký lên đầu tiên
+        $query->orderBy('Appointment.CreatedAt', 'desc')
+            ->orderBy('Appointment.AppointmentId', 'desc');
+
         $appointments = $query->paginate(10)->withQueryString();
 
-        // Thống kê số lượng chuẩn cho các Tab Lọc
+        // Thống kê số lượng (có áp dụng tìm kiếm nếu có từ khóa)
+        $baseCount = DB::table('Appointment')
+            ->leftJoin('AccountUser as Patient', 'Appointment.UserId', '=', 'Patient.UserId')
+            ->leftJoin('Doctor', 'Appointment.DoctorId', '=', 'Doctor.DoctorId')
+            ->leftJoin('ClinicRoom', 'Appointment.RoomId', '=', 'ClinicRoom.RoomId');
+
+        if (!empty($keyword)) {
+            $baseCount->where(function ($q) use ($keyword) {
+                $q->where('Patient.FullName', 'like', "%{$keyword}%")
+                    ->orWhere('Patient.Email', 'like', "%{$keyword}%")
+                    ->orWhere('Doctor.FullName', 'like', "%{$keyword}%")
+                    ->orWhere('ClinicRoom.RoomNumber', 'like', "%{$keyword}%")
+                    ->orWhere('Appointment.Reason', 'like', "%{$keyword}%");
+            });
+        }
+
         $counts = [
-            'All'       => DB::table('Appointment')->count(),
-            'Pending'   => DB::table('Appointment')->where('Status', 'Pending')->count(),
-            'Approved'  => DB::table('Appointment')->whereIn('Status', ['Approved', 'Accept', 'Accepted'])->count(),
-            'Rejected'  => DB::table('Appointment')->whereIn('Status', ['Cancelled', 'cancelled', 'Rejected', 'Reject'])->count(),
-            'Completed' => DB::table('Appointment')->where('Status', 'Completed')->count(),
+            'All'       => (clone $baseCount)->count(),
+            'Pending'   => (clone $baseCount)->where('Appointment.Status', 'Pending')->count(),
+            'Approved'  => (clone $baseCount)->whereIn('Appointment.Status', ['Approved', 'Accept', 'Accepted'])->count(),
+            'Rejected'  => (clone $baseCount)->whereIn('Appointment.Status', ['Cancelled', 'cancelled', 'Rejected', 'Reject'])->count(),
+            'Completed' => (clone $baseCount)->where('Appointment.Status', 'Completed')->count(),
         ];
 
-        return view('admin.appointments.index', compact('appointments', 'status', 'counts'));
+        return view('admin.appointments.index', compact('appointments', 'status', 'keyword', 'counts'));
     }
 }

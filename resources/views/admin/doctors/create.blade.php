@@ -38,19 +38,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Doctor Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="name" value="{{ old('name') }}" placeholder="Enter doctor's name..." required
+                        <input type="text" name="name" value="{{ request('name', old('name')) }}" placeholder="Enter doctor's name..." required
                             class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Username <span class="text-red-500">*</span></label>
-                        <input type="text" name="username" value="{{ old('username') }}" placeholder="Enter doctor's username..." required
+                        <input type="text" name="username" value="{{ request('username', old('username')) }}" placeholder="Enter doctor's username..." required
                             class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Email Address <span class="text-red-500">*</span></label>
-                        <input type="email" name="email" value="{{ old('email') }}" placeholder="Enter doctor's email..." required
+                        <input type="email" name="email" value="{{ request('email', old('email')) }}" placeholder="Enter doctor's email..." required
                             class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                     </div>
 
@@ -71,43 +71,45 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Phone Number <span class="text-red-500">*</span></label>
-                        <input type="text" name="phone_number" value="{{ old('phone_number') }}" placeholder="Enter doctor's phone number..." required
+                        <input type="text" name="phone_number" value="{{ request('phone_number', old('phone_number')) }}" placeholder="Enter doctor's phone number..." required
                             class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                     </div>
 
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Gender</label>
+                        @php $genderVal = request('gender', old('gender')); @endphp
                         <select name="gender" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800">
                             <option value="">-- Select Gender --</option>
-                            <option value="Male" {{ old('gender') == 'Male' ? 'selected' : '' }}>Male</option>
-                            <option value="Female" {{ old('gender') == 'Female' ? 'selected' : '' }}>Female</option>
+                            <option value="Male" {{ $genderVal == 'Male' ? 'selected' : '' }}>Male</option>
+                            <option value="Female" {{ $genderVal == 'Female' ? 'selected' : '' }}>Female</option>
                         </select>
                     </div>
 
-                    <!-- Chọn Specialization -->
+                    <!-- Chọn Specialization (Reload Form qua Controller) -->
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Specialization</label>
-                        @php $selectedSpec = old('specialization_id', $doctor->SpecializationId ?? ''); @endphp
-                        <select id="specialization_select" name="specialization_id" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800">
+                        @php $currentSpec = request('specialization_id', $selectedSpecId ?? old('specialization_id')); @endphp
+                        <select id="specialization_select" name="specialization_id"
+                            data-action="{{ route('admin.doctors.create') }}"
+                            onchange="this.form.method='GET'; this.form.action=this.dataset.action; this.form.submit();"
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800">
                             <option value="">-- Select Specialization --</option>
                             @foreach($specializations as $spec)
-                            <option value="{{ $spec->SpecializationId }}" {{ $selectedSpec == $spec->SpecializationId ? 'selected' : '' }}>
+                            <option value="{{ $spec->SpecializationId }}" {{ $currentSpec == $spec->SpecializationId ? 'selected' : '' }}>
                                 {{ $spec->SpecializationName }}
                             </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Chọn Clinic Room (Lọc theo Specialization) -->
+                    <!-- Chọn Clinic Room (Controller đã lọc theo Specialization) -->
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Clinic Room</label>
-                        @php $selectedRoom = old('room_id', $doctor->RoomId ?? ''); @endphp
+                        @php $currentRoom = request('room_id', old('room_id')); @endphp
                         <select id="room_select" name="room_id" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800">
                             <option value="">-- Select Clinic Room --</option>
                             @foreach($rooms as $room)
-                            <option value="{{ $room->RoomId }}"
-                                data-specialization="{{ $room->SpecializationId ?? '' }}"
-                                {{ $selectedRoom == $room->RoomId ? 'selected' : '' }}>
+                            <option value="{{ $room->RoomId }}" {{ $currentRoom == $room->RoomId ? 'selected' : '' }}>
                                 {{ $room->RoomName }} @if($room->RoomNumber) ({{ $room->RoomNumber }}) @endif
                             </option>
                             @endforeach
@@ -116,29 +118,36 @@
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Qualifications</label>
-                        <input type="text" name="qualifications" value="{{ old('qualifications') }}" placeholder="PhD, Specialist Level II..."
+                        <input type="text" name="qualifications" value="{{ request('qualifications', old('qualifications')) }}" placeholder="PhD, Specialist Level II..."
                             class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                     </div>
 
-                    <!-- Thành phố / Tỉnh -->
+                    <!-- Thành phố / Tỉnh (Reload Form qua Controller) -->
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">City / Province</label>
-                        <select id="city_filter" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800">
+                        @php $currentCityName = request('city_name', $selectedCity ?? old('city_name')); @endphp
+                        <select id="city_filter" name="city_name"
+                            data-action="{{ route('admin.doctors.create') }}"
+                            onchange="this.form.method='GET'; this.form.action=this.dataset.action; this.form.submit();"
+                            class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800">
                             <option value="">-- Select City --</option>
-                            @foreach($cities->pluck('CityName')->unique() as $cityName)
-                            <option value="{{ $cityName }}">{{ $cityName }}</option>
+                            @foreach($cities as $city)
+                            <option value="{{ $city->CityName }}" {{ $currentCityName == $city->CityName ? 'selected' : '' }}>
+                                {{ $city->CityName }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Quận / Huyện -->
+                    <!-- Quận / Huyện (Controller đã lọc theo City) -->
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-2">District</label>
+                        @php $currentCityId = request('city_id', old('city_id')); @endphp
                         <select id="district_select" name="city_id" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white text-slate-800">
                             <option value="">-- Select District --</option>
-                            @foreach($cities as $city)
-                            <option value="{{ $city->CityId }}" data-city="{{ $city->CityName }}" {{ old('city_id') == $city->CityId ? 'selected' : '' }}>
-                                {{ $city->DistrictName }}
+                            @foreach($districts as $district)
+                            <option value="{{ $district->CityId }}" {{ $currentCityId == $district->CityId ? 'selected' : '' }}>
+                                {{ $district->DistrictName }}
                             </option>
                             @endforeach
                         </select>
@@ -146,7 +155,7 @@
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Detailed Address</label>
-                        <input type="text" name="address" value="{{ old('address') }}" placeholder="Enter street address, building..."
+                        <input type="text" name="address" value="{{ request('address', old('address')) }}" placeholder="Enter street address, building..."
                             class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800">
                     </div>
                 </div>
@@ -161,8 +170,4 @@
         </form>
     </div>
 </div>
-
-<!-- Gọi script từ partials -->
-@include('admin.doctors.partials.location-script')
-@include('admin.doctors.partials.room-script')
 @endsection

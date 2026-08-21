@@ -173,7 +173,6 @@ Route::middleware(['role:doctor'])->prefix('doctor')->name('doctor.')->group(fun
 |--------------------------------------------------------------------------
 */
 Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
-
     // 1. Dashboard Admin
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
@@ -200,6 +199,8 @@ Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(functi
         Route::get('/{id}/edit', 'edit')->name('edit')->whereNumber('id');
         Route::put('/{id}', 'update')->name('update')->whereNumber('id');
         Route::delete('/{id}', 'destroy')->name('destroy')->whereNumber('id');
+        Route::get('/get-rooms/{specializationId}', 'getRoomsBySpecialization')->name('get-rooms');
+        Route::get('/get-districts/{cityName}', 'getDistrictsByCity')->name('get-districts');
     });
 
     // 5. Quản lý Tin tức (News)

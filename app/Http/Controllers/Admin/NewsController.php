@@ -10,10 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class NewsController extends Controller
 {
-    // 1. Xem danh sách bài viết dạng Card Grid
-    public function index()
+    // 1. Xem danh sách bài viết - Thêm tìm kiếm & Phân trang lưu query string
+    public function index(Request $request)
     {
-        $newsList = DB::table('News')
+        $keyword = trim($request->get('keyword', ''));
+
+        $query = DB::table('News')
             ->leftJoin('AccountUser', 'News.UserId', '=', 'AccountUser.UserId')
             ->leftJoin('Doctor', 'News.DoctorId', '=', 'Doctor.DoctorId')
             ->whereNull('News.DeletedAt')
@@ -24,11 +26,24 @@ class NewsController extends Controller
                     WHEN News.AuthorType = 'Doctor' THEN Doctor.FullName 
                     ELSE 'Admin' 
                 END as AuthorName")
-            )
-            ->orderBy('NewsId', 'desc')
-            ->paginate(6); // Hiển thị 6 bài/trang theo dạng Grid 3 cột
+            );
 
-        return view('admin.news.index', compact('newsList'));
+        // Lọc bài viết theo từ khóa
+        if (!empty($keyword)) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('News.Title', 'like', "%{$keyword}%")
+                    ->orWhere('News.Category', 'like', "%{$keyword}%")
+                    ->orWhere('News.Content', 'like', "%{$keyword}%")
+                    ->orWhere('AccountUser.FullName', 'like', "%{$keyword}%")
+                    ->orWhere('Doctor.FullName', 'like', "%{$keyword}%");
+            });
+        }
+
+        $newsList = $query->orderBy('News.NewsId', 'desc')
+            ->paginate(6)
+            ->withQueryString();
+
+        return view('admin.news.index', compact('newsList', 'keyword'));
     }
 
     // 2. Trang xem chi tiết bài viết
@@ -78,7 +93,6 @@ class NewsController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
 
-            // Cấu trúc: time() + tên chung + uniqid() để tránh trùng tuyệt đối khi up cùng lúc
             $fileName = time() . '_news_thumbnail_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             $destinationPath = public_path('uploads/thumbnails');
@@ -147,7 +161,6 @@ class NewsController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
 
-            // Cấu trúc: time() + tên chung + uniqid()
             $fileName = time() . '_news_thumbnail_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
             $destinationPath = public_path('uploads/thumbnails');
@@ -155,7 +168,6 @@ class NewsController extends Controller
                 File::makeDirectory($destinationPath, 0755, true);
             }
 
-            // Xóa file ảnh cũ nếu tồn tại trong thư mục uploads/thumbnails
             if ($news->ThumbnailUrl && File::exists(public_path($news->ThumbnailUrl))) {
                 File::delete(public_path($news->ThumbnailUrl));
             }

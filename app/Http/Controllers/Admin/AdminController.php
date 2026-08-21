@@ -22,7 +22,6 @@ class AdminController extends Controller
 
         $totalAppointments = DB::table('Appointment')->count();
 
-        // Đã sửa tên bảng từ Content -> News
         $totalArticles = DB::table('News')
             ->whereNull('DeletedAt')
             ->count();

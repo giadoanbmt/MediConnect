@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Hash;
 
 class DoctorController extends Controller
 {
-    // 1. Danh sách Bác sĩ - Sắp xếp tăng dần (ASC) & Lấy DistrictName, CityName
-    public function index()
+    // 1. Danh sách Bác sĩ - Sắp xếp mới nhất & Tìm kiếm
+    public function index(Request $request)
     {
-        $doctors = DB::table('Doctor')
+        $keyword = trim($request->get('keyword', ''));
+
+        $query = DB::table('Doctor')
             ->leftJoin('Specialization', 'Doctor.SpecializationId', '=', 'Specialization.SpecializationId')
             ->leftJoin('ClinicRoom', 'Doctor.RoomId', '=', 'ClinicRoom.RoomId')
             ->leftJoin('City', 'Doctor.CityId', '=', 'City.CityId')
@@ -24,26 +26,72 @@ class DoctorController extends Controller
                 'ClinicRoom.RoomNumber',
                 'City.CityName',
                 'City.DistrictName'
-            )
-            ->orderBy('Doctor.DoctorId', 'asc') // Sắp xếp tăng dần theo ID
-            ->paginate(15);
+            );
 
-        return view('admin.doctors.index', compact('doctors'));
+        if (!empty($keyword)) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('Doctor.FullName', 'like', "%{$keyword}%")
+                    ->orWhere('Doctor.Username', 'like', "%{$keyword}%")
+                    ->orWhere('Doctor.Email', 'like', "%{$keyword}%")
+                    ->orWhere('Doctor.PhoneNumber', 'like', "%{$keyword}%")
+                    ->orWhere('Specialization.SpecializationName', 'like', "%{$keyword}%")
+                    ->orWhere('ClinicRoom.RoomName', 'like', "%{$keyword}%")
+                    ->orWhere('City.CityName', 'like', "%{$keyword}%")
+                    ->orWhere('City.DistrictName', 'like', "%{$keyword}%");
+            });
+        }
+
+        $doctors = $query->orderBy('Doctor.CreatedAt', 'desc')
+            ->orderBy('Doctor.DoctorId', 'desc')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('admin.doctors.index', compact('doctors', 'keyword'));
     }
 
-    // 2. Form tạo Bác sĩ
-    public function create()
+    // 2. Form tạo Bác sĩ (Lọc trực tiếp từ Request)
+    public function create(Request $request)
     {
-        // Sắp xếp địa điểm theo Quận/Huyện rồi đến Thành phố
+        $selectedSpecId = $request->get('specialization_id');
+        $selectedCity   = $request->get('city_name');
+
+        // Lấy danh sách Tên Thành phố duy nhất
         $cities = DB::table('City')
-            ->orderBy('DistrictName', 'asc')
+            ->select('CityName')
+            ->distinct()
             ->orderBy('CityName', 'asc')
             ->get();
 
-        $specializations = DB::table('Specialization')->orderBy('SpecializationName', 'asc')->get();
-        $rooms = DB::table('ClinicRoom')->where('IsActive', 1)->orderBy('RoomNumber', 'asc')->get();
+        // Lọc danh sách Quận/Huyện dựa trên Thành phố được chọn
+        $districts = DB::table('City')
+            ->when($selectedCity, function ($query) use ($selectedCity) {
+                return $query->where('CityName', $selectedCity);
+            })
+            ->orderBy('DistrictName', 'asc')
+            ->get();
 
-        return view('admin.doctors.create', compact('cities', 'specializations', 'rooms'));
+        // Lấy danh sách Chuyên khoa
+        $specializations = DB::table('Specialization')
+            ->orderBy('SpecializationName', 'asc')
+            ->get();
+
+        // Lọc danh sách Phòng khám dựa trên Chuyên khoa được chọn
+        $rooms = DB::table('ClinicRoom')
+            ->where('IsActive', 1)
+            ->when($selectedSpecId, function ($query) use ($selectedSpecId) {
+                return $query->where('SpecializationId', $selectedSpecId);
+            })
+            ->orderBy('RoomNumber', 'asc')
+            ->get();
+
+        return view('admin.doctors.create', compact(
+            'cities',
+            'districts',
+            'specializations',
+            'rooms',
+            'selectedSpecId',
+            'selectedCity'
+        ));
     }
 
     // 3. Xử lý lưu Bác sĩ
@@ -82,27 +130,37 @@ class DoctorController extends Controller
         return redirect()->route('admin.doctors.index')->with('success', 'Add doctor successfully!');
     }
 
-    // 4. Form sửa Bác sĩ
-    public function edit($id)
+    // 4. Form sửa Bác sĩ (Khôi phục dữ liệu đã chọn hoặc lọc mới từ Request)
+    public function edit(Request $request, $id)
     {
+        // Thêm leftJoin với bảng City để lấy thuộc tính CityName cho $doctor
         $doctor = DB::table('Doctor')
-            ->where('DoctorId', $id)
-            ->whereNull('DeletedAt')
+            ->leftJoin('City', 'Doctor.CityId', '=', 'City.CityId')
+            ->where('Doctor.DoctorId', $id)
+            ->whereNull('Doctor.DeletedAt')
+            ->select('Doctor.*', 'City.CityName')
             ->first();
 
         if (!$doctor) {
             return redirect()->route('admin.doctors.index')->with('error', 'Doctor not found!');
         }
 
-        $cities = DB::table('City')
-            ->orderBy('DistrictName', 'asc')
-            ->orderBy('CityName', 'asc')
+        $specializations = DB::table('Specialization')->get();
+        $cities = DB::table('City')->select('CityName')->distinct()->get();
+
+        // Lọc phòng khám theo chuyên khoa
+        $selectedSpecId = $request->get('specialization_id', $doctor->SpecializationId);
+        $rooms = DB::table('ClinicRoom')
+            ->when($selectedSpecId, fn($q) => $q->where('SpecializationId', $selectedSpecId))
             ->get();
 
-        $specializations = DB::table('Specialization')->orderBy('SpecializationName', 'asc')->get();
-        $rooms = DB::table('ClinicRoom')->where('IsActive', 1)->orderBy('RoomNumber', 'asc')->get();
+        // Lọc quận/huyện theo thành phố ($doctor->CityName đã khả dụng)
+        $selectedCityName = $request->get('city_name', $doctor->CityName);
+        $districts = DB::table('City')
+            ->when($selectedCityName, fn($q) => $q->where('CityName', $selectedCityName))
+            ->get();
 
-        return view('admin.doctors.edit', compact('doctor', 'cities', 'specializations', 'rooms'));
+        return view('admin.doctors.edit', compact('doctor', 'specializations', 'rooms', 'cities', 'districts'));
     }
 
     // 5. Cập nhật Bác sĩ

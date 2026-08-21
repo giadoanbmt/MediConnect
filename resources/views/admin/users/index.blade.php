@@ -2,15 +2,41 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto space-y-6">
-    <!-- Header Title & Button -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- Header Title, Search Form & Button -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Patient Management</h1>
             <p class="text-slate-500 text-sm">List of registered Patients in the system</p>
         </div>
-        <a href="{{ route('admin.users.create') }}" class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow transition">
-            <i class="fa-solid fa-user-plus mr-2"></i> Create New Patient
-        </a>
+
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <!-- Form Tìm Kiếm -->
+            <form action="{{ route('admin.users.index') }}" method="GET" class="flex items-center gap-2">
+                <div class="relative w-full sm:w-64">
+                    <input type="text"
+                        name="keyword"
+                        value="{{ $keyword }}"
+                        placeholder="Search name, username, email..."
+                        class="w-full pl-9 pr-8 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+
+                    @if(!empty($keyword))
+                    <a href="{{ route('admin.users.index') }}"
+                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                    @endif
+                </div>
+
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition shadow-sm">
+                    Search
+                </button>
+            </form>
+
+            <a href="{{ route('admin.users.create') }}" class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition whitespace-nowrap">
+                <i class="fa-solid fa-user-plus mr-2"></i> Create New Patient
+            </a>
+        </div>
     </div>
 
     <!-- Alert Thông báo -->
@@ -100,7 +126,11 @@
                     <tr>
                         <td colspan="8" class="px-6 py-8 text-center text-slate-400">
                             <i class="fa-solid fa-user-slash text-2xl mb-2 block"></i>
+                            @if(!empty($keyword))
+                            No patients found matching "{{ $keyword }}".
+                            @else
                             There are no patient accounts in the system.
+                            @endif
                         </td>
                     </tr>
                     @endforelse

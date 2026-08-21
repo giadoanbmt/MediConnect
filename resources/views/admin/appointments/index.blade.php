@@ -5,36 +5,62 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Appointment Management</h1>
-            <p class="text-slate-500 text-sm">View appointment list filtered by status</p>
+            <p class="text-slate-500 text-sm">View appointment list filtered by status and search keywords</p>
         </div>
+
+        <!-- Form Tìm Kiếm -->
+        <form action="{{ route('admin.appointments.index') }}" method="GET" class="flex items-center gap-2">
+            <input type="hidden" name="status" value="{{ $status }}">
+
+            <div class="relative w-full sm:w-72">
+                <input type="text"
+                    name="keyword"
+                    value="{{ $keyword }}"
+                    placeholder="Search patient, doctor, room..."
+                    class="w-full pl-9 pr-8 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+
+                @if(!empty($keyword))
+                <a href="{{ route('admin.appointments.index', ['status' => $status]) }}"
+                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </a>
+                @endif
+            </div>
+
+            <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition shadow-sm">
+                Search
+            </button>
+        </form>
     </div>
 
+    <!-- Tabs Lọc Trạng Thái (Giữ từ khóa tìm kiếm khi bấm chuyển Tab) -->
     <div class="flex border-b border-slate-200 space-x-2 overflow-x-auto">
-        <a href="{{ route('admin.appointments.index', ['status' => 'All']) }}"
+        <a href="{{ route('admin.appointments.index', array_filter(['status' => 'All', 'keyword' => $keyword])) }}"
             class="px-4 py-2.5 text-sm font-medium border-b-2 transition flex items-center space-x-2 whitespace-nowrap {{ $status === 'All' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-800' }}">
             <span>All</span>
             <span class="px-2 py-0.5 text-xs rounded-full bg-slate-100 text-slate-700 font-bold">{{ $counts['All'] }}</span>
         </a>
 
-        <a href="{{ route('admin.appointments.index', ['status' => 'Pending']) }}"
+        <a href="{{ route('admin.appointments.index', array_filter(['status' => 'Pending', 'keyword' => $keyword])) }}"
             class="px-4 py-2.5 text-sm font-medium border-b-2 transition flex items-center space-x-2 whitespace-nowrap {{ $status === 'Pending' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-800' }}">
             <span>Pending</span>
             <span class="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-800 font-bold">{{ $counts['Pending'] }}</span>
         </a>
 
-        <a href="{{ route('admin.appointments.index', ['status' => 'Approved']) }}"
+        <a href="{{ route('admin.appointments.index', array_filter(['status' => 'Approved', 'keyword' => $keyword])) }}"
             class="px-4 py-2.5 text-sm font-medium border-b-2 transition flex items-center space-x-2 whitespace-nowrap {{ $status === 'Approved' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-800' }}">
             <span>Approved</span>
             <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-100 text-emerald-800 font-bold">{{ $counts['Approved'] }}</span>
         </a>
 
-        <a href="{{ route('admin.appointments.index', ['status' => 'Rejected']) }}"
+        <a href="{{ route('admin.appointments.index', array_filter(['status' => 'Rejected', 'keyword' => $keyword])) }}"
             class="px-4 py-2.5 text-sm font-medium border-b-2 transition flex items-center space-x-2 whitespace-nowrap {{ in_array($status, ['Rejected', 'Cancelled']) ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-800' }}">
             <span>Cancelled / Rejected</span>
             <span class="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-800 font-bold">{{ $counts['Rejected'] }}</span>
         </a>
 
-        <a href="{{ route('admin.appointments.index', ['status' => 'Completed']) }}"
+        <a href="{{ route('admin.appointments.index', array_filter(['status' => 'Completed', 'keyword' => $keyword])) }}"
             class="px-4 py-2.5 text-sm font-medium border-b-2 transition flex items-center space-x-2 whitespace-nowrap {{ $status === 'Completed' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-800' }}">
             <span>Completed</span>
             <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-800 font-bold">{{ $counts['Completed'] }}</span>

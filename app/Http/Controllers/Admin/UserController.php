@@ -11,15 +11,31 @@ use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
     /**
-     * Hiển thị danh sách Bệnh nhân (Role = 2)
+     * Hiển thị danh sách Bệnh nhân (Role = 2) kết hợp Tìm kiếm & Sắp xếp mới nhất
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = AccountUser::where('Role', 2)
-            ->orderBy('CreatedAt', 'asc')
-            ->paginate(15);
+        $keyword = trim($request->get('keyword', ''));
 
-        return view('admin.users.index', compact('users'));
+        $query = AccountUser::where('Role', 2);
+
+        // Lọc danh sách theo từ khóa tìm kiếm (Họ tên, Username, Email, Địa chỉ)
+        if (!empty($keyword)) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('FullName', 'like', "%{$keyword}%")
+                    ->orWhere('Username', 'like', "%{$keyword}%")
+                    ->orWhere('Email', 'like', "%{$keyword}%")
+                    ->orWhere('Address', 'like', "%{$keyword}%");
+            });
+        }
+
+        // Sắp xếp bệnh nhân mới tạo lên đầu
+        $users = $query->orderBy('CreatedAt', 'desc')
+            ->orderBy('UserId', 'desc')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('admin.users.index', compact('users', 'keyword'));
     }
 
     /**

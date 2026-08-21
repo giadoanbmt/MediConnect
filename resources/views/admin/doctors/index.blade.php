@@ -2,14 +2,41 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- Header Title, Search Form & Button -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Doctor Management</h1>
             <p class="text-slate-500 text-sm">List of all Doctor accounts and their details</p>
         </div>
-        <a href="{{ route('admin.doctors.create') }}" class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow transition">
-            <i class="fa-solid fa-user-doctor mr-2"></i> Add New Doctor
-        </a>
+
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <!-- Form Tìm Kiếm -->
+            <form action="{{ route('admin.doctors.index') }}" method="GET" class="flex items-center gap-2">
+                <div class="relative w-full sm:w-64">
+                    <input type="text"
+                        name="keyword"
+                        value="{{ $keyword ?? '' }}"
+                        placeholder="Search name, spec, phone..."
+                        class="w-full pl-9 pr-8 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+
+                    @if(!empty($keyword))
+                    <a href="{{ route('admin.doctors.index') }}"
+                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                    @endif
+                </div>
+
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition shadow-sm">
+                    Search
+                </button>
+            </form>
+
+            <a href="{{ route('admin.doctors.create') }}" class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition whitespace-nowrap">
+                <i class="fa-solid fa-user-doctor mr-2"></i> Add New Doctor
+            </a>
+        </div>
     </div>
 
     @if(session('success'))
@@ -101,12 +128,10 @@
                             {{ $doctor->Qualifications ?? 'N/A' }}
                         </td>
 
-                        <!-- Cột DistrictName -->
                         <td class="px-6 py-4 text-slate-600">
                             {{ $doctor->DistrictName ?? 'N/A' }}
                         </td>
 
-                        <!-- Cột CityName -->
                         <td class="px-6 py-4 text-slate-600">
                             {{ $doctor->CityName ?? 'N/A' }}
                         </td>
@@ -134,7 +159,11 @@
                     <tr>
                         <td colspan="13" class="px-6 py-8 text-center text-slate-400">
                             <i class="fa-solid fa-user-doctor text-2xl mb-2 block"></i>
+                            @if(!empty($keyword))
+                            No doctors found matching "{{ $keyword }}".
+                            @else
                             There are no doctor accounts in the system.
+                            @endif
                         </td>
                     </tr>
                     @endforelse
