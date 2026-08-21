@@ -871,10 +871,9 @@ class DoctorController extends Controller
             );
         }
 
-        // Lấy danh sách lịch hẹn và sắp xếp theo ngày, giờ
+        // Lấy danh sách lịch hẹn theo thứ tự mới nhất
         $appointments = $appointmentsQuery
-            ->orderBy('AppointmentDate', 'asc')
-            ->orderBy('CreatedAt', 'asc')
+            ->orderBy('AppointmentId', 'desc')
             ->get();
 
         // Tạo query riêng để đếm số lượng theo trạng thái
