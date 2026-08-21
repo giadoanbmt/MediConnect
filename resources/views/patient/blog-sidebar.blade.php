@@ -61,12 +61,14 @@
                     </div>
 
                     <!-- Categories -->
+                    <!-- Categories -->
                     <div class="sidebar-widget category mb-4">
                         <h5 class="mb-4">Categories</h5>
                         <ul class="list-unstyled mb-0">
                             @forelse($categories as $cat)
                             <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                                <a href="{{ url('/blog?category=' . urlencode($cat->Category)) }}">
+                                <!-- Thêm class="category-link" và dùng route() chuẩn -->
+                                <a href="{{ route('public.blog-sidebar', ['category' => $cat->Category]) }}" class="category-link">
                                     {{ $cat->Category }}
                                 </a>
                                 <span class="badge bg-light text-dark">{{ $cat->news_count }}</span>
@@ -101,12 +103,9 @@
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 success: function(response) {
-                    // Kiểm tra nếu Server trả về JSON
                     if (typeof response === 'object' && response.html) {
                         $('#blog-news-list-container').html(response.html);
-                    }
-                    // Nếu Server lỡ trả về nguyên chuỗi HTML View
-                    else if (typeof response === 'string') {
+                    } else if (typeof response === 'string') {
                         let freshContent = $(response).find('#blog-news-list-container').html();
                         if (freshContent) {
                             $('#blog-news-list-container').html(freshContent);
@@ -121,7 +120,21 @@
             });
         }
 
-        // Bắt sự kiện gõ phím vào ô tìm kiếm
+        // 1. Bắt sự kiện click chọn Category bằng AJAX
+        $(document).on('click', '.category-link', function(e) {
+            e.preventDefault();
+            let targetUrl = $(this).attr('href');
+
+            // Cập nhật lại URL trên thanh địa chỉ trình duyệt không cần load lại trang
+            window.history.pushState(null, '', targetUrl);
+
+            // Reset ô tìm kiếm nếu chuyển danh mục
+            $('#search-keyword').val('');
+
+            fetchNewsData(targetUrl);
+        });
+
+        // 2. Bắt sự kiện gõ phím vào ô tìm kiếm
         $('#search-keyword').on('input', function() {
             clearTimeout(searchTimer);
             let keyword = $(this).val();
@@ -132,11 +145,12 @@
             }, 300);
         });
 
-        // Bắt sự kiện click chuyển trang
+        // 3. Bắt sự kiện click chuyển trang (Pagination)
         $(document).on('click', '#blog-news-list-container .pagination a', function(e) {
             e.preventDefault();
             let pageUrl = $(this).attr('href');
             if (pageUrl) {
+                window.history.pushState(null, '', pageUrl);
                 fetchNewsData(pageUrl);
             }
         });

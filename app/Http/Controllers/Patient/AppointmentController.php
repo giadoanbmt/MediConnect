@@ -116,6 +116,12 @@ class AppointmentController extends Controller
         ]);
 
         $scheduleId = $request->input('AppointmentId');
+        $doctorId = $request->input('DoctorId');
+
+        // Lấy thông tin RoomId từ Doctor
+        $roomId = DB::table('Doctor')
+            ->where('DoctorId', $doctorId)
+            ->value('RoomId');
 
         // Lấy thông tin khung giờ từ DoctorSchedule
         $schedule = DB::table('DoctorSchedule')
@@ -134,6 +140,7 @@ class AppointmentController extends Controller
         DB::table('Appointment')->insert([
             'DoctorId'        => $request->input('DoctorId'),
             'UserId'          => Auth::id(),
+            'RoomId'          => $roomId,
             'AppointmentDate' => $request->input('AppointmentDate'),
             'StartTime'       => $schedule->StartTime,
             'EndTime'         => $schedule->EndTime,
