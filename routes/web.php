@@ -72,26 +72,34 @@ Route::post('/logout', [AuthController::class, 'logout'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('role:patient')->group(function () {
+Route::middleware(['role:patient'])->prefix('patient')->name('patient.')->group(function () {
+
     Route::controller(PatientController::class)->group(function () {
-        Route::get('/appointment', 'appointment')->name('patient.appointment');
-        Route::get('/confirmation', 'confirmation')->name('patient.confirmation');
-        Route::get('/contact', 'contact')->name('patient.contact');
+        Route::get('/appointment', 'appointment')->name('appointment');
+        Route::get('/confirmation', 'confirmation')->name('confirmation');
+        Route::get('/contact', 'contact')->name('contact');
 
         // Quản lý Profile Bệnh nhân
-        Route::get('/profile', 'profile')->name('patient.profile');
-        Route::put('/profile', 'updateProfile')->name('patient.profile.update');
+        Route::get('/profile', 'profile')->name('profile');
+        Route::put('/profile', 'updateProfile')->name('profile.update');
     });
+
     Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-    Route::get('/doctors', [DoctorController::class, 'index'])->name('patient.doctors.index');
-    Route::get('/doctors/{id}', [DoctorController::class, 'show'])->name('patient.doctors.show');
-    Route::get('/appointments', [AppointmentController::class, 'index'])->name('patient.appointments.index');
-    Route::get('/appointment/book', [AppointmentController::class, 'create'])->name('patient.appointments.book');
-    Route::post('/appointment/book', [AppointmentController::class, 'store'])->name('patient.appointments.store');
+    Route::get('/doctors', [DoctorController::class, 'index'])->name('doctors.index');
+    Route::get('/doctors/{id}', [DoctorController::class, 'show'])->name('doctors.show');
+
+    // Quản lý Đặt lịch khám
+    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::get('/appointment/book', [AppointmentController::class, 'create'])->name('appointments.book');
+    Route::post('/appointment/book', [AppointmentController::class, 'store'])->name('appointments.store');
+
+    // AJAX Get data
     Route::get('/appointments/get-doctors', [AppointmentController::class, 'getDoctorsBySpecialization'])->name('appointments.get-doctors');
     Route::get('/appointments/get-slots', [AppointmentController::class, 'getSlots'])->name('appointments.get-slots');
-    Route::put('/appointments/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('patient.appointments.reschedule');
-    Route::delete('/appointments/{id}/cancel', [AppointmentController::class, 'cancel'])->name('patient.appointments.cancel');
+
+    // Đổi lịch & Hủy lịch
+    Route::put('/appointments/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
+    Route::delete('/appointments/{id}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
 });
 
 /*
