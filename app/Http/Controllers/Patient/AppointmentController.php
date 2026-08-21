@@ -85,6 +85,7 @@ class AppointmentController extends Controller
             ->where('DoctorId', $doctorId)
             ->whereDate('WorkDate', $date)
             ->where('Status', 'Available')
+            ->where('IsBooked', '0')
             ->get();
 
         $data = $slots->map(function ($slot) {
@@ -136,7 +137,7 @@ class AppointmentController extends Controller
             'AppointmentDate' => $request->input('AppointmentDate'),
             'StartTime'       => $schedule->StartTime,
             'EndTime'         => $schedule->EndTime,
-            'Reason'          => $request->input('Message'),
+            'Reason'          => $request->input('Reason'),
             'Status'          => 'Pending',
             'CreatedAt'       => now(),
             'UpdatedAt'       => now(),

@@ -144,7 +144,7 @@
             }
         }
 
-        // A. KHI CHỌN CHUYÊN KHOA -> TẢI DANH SÁCH BÁC SĨ THUỘC KHOA
+        // KHI CHỌN CHUYÊN KHOA -> TẢI DANH SÁCH BÁC SĨ THUỘC KHOA
         $('#specializationSelect').on('change', function() {
             var specId = $(this).val();
             var $docSelect = $('#doctorSelect');
@@ -155,7 +155,7 @@
             refreshNiceSelect();
 
             $.ajax({
-                url: "{{ route('appointments.get-doctors') }}",
+                url: "{{ route('patient.appointments.get-doctors') }}",
                 type: "GET",
                 data: {
                     specialization_id: specId
@@ -189,7 +189,7 @@
 
             if (doctorId && date) {
                 $.ajax({
-                    url: "{{ route('appointments.get-slots') }}",
+                    url: "{{ route('patient.appointments.get-slots') }}",
                     type: "GET",
                     data: {
                         doctor_id: doctorId,

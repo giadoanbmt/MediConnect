@@ -46,7 +46,7 @@
                             @if($pop->ThumbnailUrl)
                             <div class="post-thumb mr-3 flex-shrink-0">
                                 <a href="{{ url('/blog-single/' . $pop->NewsId) }}">
-                                    <img src="{{ $item->ThumbnailUrl ? asset($item->ThumbnailUrl) : asset('images/thumbnails/news-placeholder.png') }}"
+                                    <img src="{{ $pop->ThumbnailUrl ? asset($pop->ThumbnailUrl) : asset('images/thumbnails/news-placeholder.png') }}"
                                         alt="{{ $pop->Title }}" class="img-fluid" style="width: 70px; height: 70px; object-fit: cover; border-radius: 5px;">
                                 </a>
                             </div>

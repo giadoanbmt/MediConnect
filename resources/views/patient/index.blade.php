@@ -14,7 +14,7 @@
 
 					<p class="mb-4 pr-5">A repudiandae ipsam labore ipsa voluptatum quidem quae laudantium quisquam aperiam maiores sunt fugit, deserunt rem suscipit placeat.</p>
 					<div class="btn-container ">
-						@if(session('customer_id'))
+						@auth
 						<!-- Đã đăng nhập -> Đặt lịch -->
 						<a href="{{ route('patient.appointments.book') }}" class="btn btn-main-2 btn-icon btn-round-full">
 							Make an appointment<i class="icofont-simple-right ml-2"></i>
@@ -24,7 +24,7 @@
 						<a href="{{ url('/login') }}" class="btn btn-main-2 btn-icon btn-round-full">
 							Make an appointment<i class="icofont-simple-right ml-2"></i>
 						</a>
-						@endif
+						@endauth
 
 					</div>
 				</div>
