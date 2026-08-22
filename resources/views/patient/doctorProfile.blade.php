@@ -1,222 +1,627 @@
 @extends('components.layouts.partials.frontend')
-@section('title', 'Home - MediConnect')
+
+@section('title', 'Doctor Profile - MediConnect')
 
 @section('content')
 
-<!-- Banner Tiêu đề -->
 <section class="page-title bg-1">
     <div class="overlay"></div>
+
     <div class="container">
         <div class="row">
             <div class="col-md-12">
                 <div class="block text-center">
                     <span class="text-white">Doctor Details</span>
-                    <!-- Tên Bác sĩ từ DB -->
-                    <h1 class="text-capitalize mb-5 text-lg">{{ $doctor->FullName ?? $doctor->Name ?? 'Doctor Profile' }}</h1>
+
+                    <h1 class="text-capitalize mb-5 text-lg">
+                        {{ $doctor->FullName }}
+                    </h1>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Thông tin chi tiết Bác sĩ -->
 <section class="section doctor-single">
+
     <div class="container">
+
+        @php
+            $avatar = null;
+
+            if (
+                !empty($doctor->AvatarUrl) &&
+                file_exists(public_path($doctor->AvatarUrl))
+            ) {
+                $avatar = asset($doctor->AvatarUrl);
+            }
+
+            if (!$avatar) {
+                $avatar = strtolower($doctor->Gender ?? '') === 'female'
+                    ? asset('images/avatars/default_doctor_female.png')
+                    : asset('images/avatars/default_doctor_male.png');
+            }
+
+            $specialization = $doctor->specialization;
+            $room = $doctor->room;
+            $city = $doctor->city;
+
+            $startOfWeek = now()->startOfWeek();
+            $endOfWeek = now()->endOfWeek();
+
+            $weeklySchedules = $doctor->schedules
+                ? $doctor->schedules
+                    ->filter(function ($schedule) use ($startOfWeek, $endOfWeek) {
+                        $date = \Carbon\Carbon::parse($schedule->WorkDate);
+
+                        return $date->between(
+                            $startOfWeek,
+                            $endOfWeek
+                        );
+                    })
+                    ->sortBy(function ($schedule) {
+                        return $schedule->WorkDate . ' ' . $schedule->StartTime;
+                    })
+                : collect();
+
+            $schedulesByDate = $weeklySchedules->groupBy(function ($schedule) {
+                return \Carbon\Carbon::parse(
+                    $schedule->WorkDate
+                )->format('Y-m-d');
+            });
+        @endphp
+
         <div class="row">
-            <!-- Cột Trái: Ảnh Avatar & Thông tin Liên hệ -->
-            <div class="col-lg-4 col-md-6">
+
+            {{-- Doctor information --}}
+            <div class="col-lg-4 col-md-5">
+
                 <div class="doctor-img-block">
-                    <!-- Avatar từ DB (có fallback ảnh mặc định) -->
-                    @php
-                    $avatar = ($doctor->AvatarUrl && file_exists(public_path($doctor->AvatarUrl)))
-                    ? asset($doctor->AvatarUrl)
-                    : (($doctor->Gender == 'Male')
-                    ? asset('images/avatars/default_doctor_male.png')
-                    : asset('images/avatars/default_doctor_female.png'));
-                    @endphp
-                    <img src="{{ $avatar }}"
-                        alt="{{ $doctor->FullName ?? $doctor->Name }}"
-                        class="img-fluid w-100 rounded">
+
+                    <img
+                        src="{{ $avatar }}"
+                        alt="{{ $doctor->FullName }}"
+                        class="img-fluid w-100 rounded"
+                    >
 
                     <div class="info-block mt-4">
-                        <h4 class="mb-1">{{ $doctor->FullName ?? $doctor->Name }}</h4>
 
-                        <!-- Chuyên ngành -->
-                        <p class="text-primary font-weight-bold mb-3">
-                            {{ $doctor->specialization->SpecializationName ?? $doctor->SpecializationName ?? 'Specialist' }}
-                        </p>
+                        <h4 class="mb-1">
+                            {{ $doctor->FullName }}
+                        </h4>
 
-                        <!-- Danh sách Thông tin SĐT, Email, Bằng cấp -->
+                        @if($specialization)
+                            <p class="text-primary font-weight-bold mb-3">
+                                {{ $specialization->SpecializationName }}
+                            </p>
+                        @endif
+
                         <ul class="list-unstyled text-left border-top pt-3">
-                            <li class="mb-2">
-                                <i class="icofont-ui-call mr-2 text-primary"></i>
-                                <strong>Phone:</strong> {{ $doctor->Phone ?? $doctor->PhoneNumber ?? 'Update soon' }}
-                            </li>
-                            <li class="mb-2">
-                                <i class="icofont-ui-email mr-2 text-primary"></i>
-                                <strong>Email:</strong> {{ $doctor->Email ?? 'Update soon' }}
-                            </li>
-                            <li class="mb-2">
-                                <i class="icofont-badge mr-2 text-primary"></i>
-                                <strong>Degree:</strong> {{ $doctor->Degree ?? $doctor->Qualification ?? 'Medical Doctor' }}
-                            </li>
+
+                            @if($doctor->PhoneNumber)
+                                <li class="mb-3">
+                                    <i class="icofont-ui-call mr-2 text-primary"></i>
+                                    <strong>Phone:</strong>
+                                    {{ $doctor->PhoneNumber }}
+                                </li>
+                            @endif
+
+                            @if($doctor->Email)
+                                <li class="mb-3">
+                                    <i class="icofont-ui-email mr-2 text-primary"></i>
+                                    <strong>Email:</strong>
+                                    {{ $doctor->Email }}
+                                </li>
+                            @endif
+
+                            @if($doctor->Qualifications)
+                                <li class="mb-3">
+                                    <i class="icofont-graduation-cap mr-2 text-primary"></i>
+                                    <strong>Qualification:</strong>
+                                    {{ $doctor->Qualifications }}
+                                </li>
+                            @endif
+
+                            @if($room)
+                                <li class="mb-3">
+                                    <i class="icofont-hospital mr-2 text-primary"></i>
+                                    <strong>Clinic:</strong>
+                                    {{ $room->RoomName }}
+
+                                    @if($room->RoomNumber)
+                                        - Room {{ $room->RoomNumber }}
+                                    @endif
+                                </li>
+                            @endif
+
+                            @if($room && $room->LocationFloor)
+                                <li class="mb-3">
+                                    <i class="icofont-building mr-2 text-primary"></i>
+                                    <strong>Floor:</strong>
+                                    {{ $room->LocationFloor }}
+                                </li>
+                            @endif
+
+                            @if($city)
+                                <li class="mb-3">
+                                    <i class="icofont-location-pin mr-2 text-primary"></i>
+                                    <strong>Location:</strong>
+
+                                    @if($city->DistrictName)
+                                        {{ $city->DistrictName }},
+                                    @endif
+
+                                    {{ $city->CityName }}
+                                </li>
+                            @endif
+
+                            @if($doctor->Address)
+                                <li class="mb-3">
+                                    <i class="icofont-map-pins mr-2 text-primary"></i>
+                                    <strong>Address:</strong>
+                                    {{ $doctor->Address }}
+                                </li>
+                            @endif
+
                         </ul>
 
-                        <ul class="list-inline mt-4 doctor-social-links">
-                            <li class="list-inline-item"><a href="#!"><i class="icofont-facebook"></i></a></li>
-                            <li class="list-inline-item"><a href="#!"><i class="icofont-twitter"></i></a></li>
-                            <li class="list-inline-item"><a href="#!"><i class="icofont-skype"></i></a></li>
-                            <li class="list-inline-item"><a href="#!"><i class="icofont-linkedin"></i></a></li>
-                        </ul>
                     </div>
+
                 </div>
+
             </div>
 
-            <!-- Cột Phải: Đoạn Giới thiệu (Bio) & Nút Đặt lịch -->
-            <div class="col-lg-8 col-md-6">
+            {{-- Doctor details --}}
+            <div class="col-lg-8 col-md-7">
+
                 <div class="doctor-details mt-4 mt-lg-0">
-                    <h2 class="text-md">Introducing to myself</h2>
-                    <div class="divider my-4"></div>
 
-                    <!-- Nội dung Bio / Giới thiệu lấy từ DB -->
-                    <div class="doctor-bio text-secondary">
-                        @if(!empty($doctor->Bio) || !empty($doctor->Description))
-                        {!! nl2br(e($doctor->Bio ?? $doctor->Description)) !!}
-                        @else
-                        <p>Dr. {{ $doctor->FullName ?? $doctor->Name }} is a highly dedicated specialist in {{ $doctor->specialization->SpecializationName ?? 'healthcare' }} with extensive clinical experience and a deep commitment to providing high-quality patient care.</p>
-                        @endif
-                    </div>
+                   
+                    {{-- Weekly Doctor Schedule --}}
+                    <div
+                        class="schedule-light-container p-3 p-md-4 rounded-lg my-4"
+                        style="
+                            background-color: #f0f7ff;
+                            border: 1px solid #cce3fd;
+                            box-shadow: 0 4px 15px rgba(0,123,255,.06);
+                        "
+                    >
 
-                    <!-- ================= BẢNG LỊCH LÀM VIỆC (DOCTOR SCHEDULE) ================= -->
-                    <div class="schedule-light-container p-3 p-md-4 rounded-lg my-4" style="background-color: #f0f7ff; border: 1px solid #cce3fd; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.06);">
-
-                        <!-- Tiêu đề -->
                         <div class="d-flex align-items-center mb-3">
-                            <i class="icofont-wall-clock text-primary mr-2" style="font-size: 20px;"></i>
-                            <h5 class="mb-0 text-primary font-weight-bold" style="color: #1e3a8a !important; font-size: 17px;">Weekly Doctor Schedule</h5>
+
+                            <i
+                                class="icofont-wall-clock text-primary mr-2"
+                                style="font-size: 20px;"
+                            ></i>
+
+                            <h5
+                                class="mb-0 font-weight-bold"
+                                style="
+                                    color: #1e3a8a;
+                                    font-size: 17px;
+                                "
+                            >
+                                Weekly Doctor Schedule
+                            </h5>
+
                         </div>
 
-                        <!-- Khung 7 cột -->
-                        <div class="d-flex w-100" style="gap: 6px;">
-                            @php
-                            $daysOfWeek = [
-                            'Monday' => 'Mon',
-                            'Tuesday' => 'Tue',
-                            'Wednesday' => 'Wed',
-                            'Thursday' => 'Thu',
-                            'Friday' => 'Fri',
-                            'Saturday' => 'Sat',
-                            'Sunday' => 'Sun'
-                            ];
 
-                            $schedulesByDay = $doctor->schedules ? $doctor->schedules->groupBy(function($item) {
-                            return $item->DayOfWeek ?? \Carbon\Carbon::parse($item->WorkDate)->format('l');
-                            }) : collect();
-                            @endphp
+                        {{-- 7 days --}}
+                        <div
+                            class="weekly-doctor-schedule"
+                            style="
+                                display: grid;
+                                grid-template-columns: repeat(7, minmax(0, 1fr));
+                                gap: 6px;
+                            "
+                        >
 
-                            @foreach($daysOfWeek as $fullDay => $shortDay)
-                            @php
-                            $daySchedules = $schedulesByDay->get($fullDay, collect());
+                            @for($dayIndex = 0; $dayIndex < 7; $dayIndex++)
 
-                            $morning = $daySchedules->first(function($s) {
-                            return strtolower($s->Shift ?? '') === 'morning' || (\Carbon\Carbon::parse($s->StartTime)->format('H') < 12);
-                                });
+                                @php
+                                    $date = $startOfWeek
+                                        ->copy()
+                                        ->addDays($dayIndex);
 
-                                $afternoon=$daySchedules->first(function($s) {
-                                return strtolower($s->Shift ?? '') === 'afternoon' || (\Carbon\Carbon::parse($s->StartTime)->format('H') >= 12);
-                                });
+                                    $dateKey = $date->format('Y-m-d');
+
+                                    $daySchedules = $schedulesByDate->get(
+                                        $dateKey,
+                                        collect()
+                                    );
+
+                                    $morningSchedules = $daySchedules->filter(function ($schedule) {
+                                        return \Carbon\Carbon::parse(
+                                            $schedule->StartTime
+                                        )->format('H:i') < '12:00';
+                                    });
+
+                                    $afternoonSchedules = $daySchedules->filter(function ($schedule) {
+                                        return \Carbon\Carbon::parse(
+                                            $schedule->StartTime
+                                        )->format('H:i') >= '12:00';
+                                    });
                                 @endphp
 
-                                <div class="day-column text-center" style="flex: 1; min-width: 0;">
-                                    <!-- Tên Thứ  -->
-                                    <div class="font-weight-bold py-2 mb-2 rounded text-truncate"
-                                        style="background-color: #e0f2fe; color: #0369a1; font-size: 13px;"
-                                        title="{{ $fullDay }}">
-                                        <span class="d-none d-xl-inline">{{ $fullDay }}</span>
-                                        <span class="d-inline d-xl-none">{{ $shortDay }}</span>
+
+                                {{-- DAY --}}
+                                <div style="min-width: 0;">
+
+                                    {{-- Day header --}}
+                                    <div
+                                        class="font-weight-bold py-2 mb-2 rounded text-center"
+                                        style="
+                                            background-color: #e0f2fe;
+                                            color: #0369a1;
+                                            font-size: 12px;
+                                        "
+                                    >
+
+                                        {{ $date->format('l') }}
+
+                                        <div
+                                            class="font-weight-normal mt-1"
+                                            style="
+                                                font-size: 10px;
+                                                color: #64748b;
+                                            "
+                                        >
+                                            {{ $date->format('d/m/Y') }}
+                                        </div>
+
                                     </div>
 
-                                    <!-- CA SÁNG (MORNING) -->
-                                    <div class="card-shift p-2 mb-2 rounded bg-white border shadow-sm" style="border-color: #bae6fd !important;">
-                                        <div class="d-flex align-items-center justify-content-center mb-1">
-                                            <i class="icofont-sun text-warning mr-1" style="font-size: 14px;"></i>
-                                            <span class="font-weight-bold text-dark" style="font-size: 12px;">Morning</span>
-                                        </div>
-                                        <div class="text-muted mb-2" style="font-size: 10px; line-height: 1.2;">08:00 - 12:00</div>
 
-                                        @if($morning && !$morning->IsOff && !$morning->IsDayOff)
-                                        <span class="badge badge-light-success text-success font-weight-bold px-1 py-1.5 rounded d-block text-truncate" style="background-color: #dcfce7; font-size: 11px;">
-                                            Available
-                                        </span>
-                                        @else
-                                        <div class="text-secondary font-weight-bold mb-1" style="font-size: 11px;">Off</div>
-                                        <div class="reason-box p-1 rounded text-muted text-truncate" style="background-color: #f8fafc; border: 1px solid #e2e8f0; font-size: 10px; min-height: 28px;" title="{{ $morning->Reason ?? $morning->DayOffReason ?? 'Day off' }}">
-                                            {{ $morning->Reason ?? $morning->DayOffReason ?? 'Off' }}
+                                    {{-- MORNING --}}
+                                    <div
+                                        class="p-2 mb-2 rounded bg-white border shadow-sm"
+                                        style="
+                                            border-color: #bae6fd !important;
+                                        "
+                                    >
+
+                                        <div
+                                            class="d-flex align-items-center mb-2"
+                                        >
+
+                                            <i
+                                                class="icofont-sun text-warning mr-1"
+                                                style="font-size: 13px;"
+                                            ></i>
+
+                                            <span
+                                                class="font-weight-bold text-dark"
+                                                style="font-size: 12px;"
+                                            >
+                                                Morning
+                                            </span>
+
                                         </div>
-                                        @endif
+
+
+                                        @forelse($morningSchedules as $schedule)
+
+                                            @php
+                                                $status = $schedule->Status;
+
+                                                $startTime = \Carbon\Carbon::parse(
+                                                    $schedule->StartTime
+                                                )->format('H:i');
+
+                                                $endTime = \Carbon\Carbon::parse(
+                                                    $schedule->EndTime
+                                                )->format('H:i');
+
+                                                if ($status === 'Off') {
+
+                                                    $displayStatus = 'Off';
+                                                    $statusColor = '#64748b';
+                                                    $backgroundColor = '#f8fafc';
+                                                    $borderColor = '#cbd5e1';
+
+                                                } elseif ((int) $schedule->IsBooked === 1) {
+
+                                                    $displayStatus = 'Booked';
+                                                    $statusColor = '#dc2626';
+                                                    $backgroundColor = '#fef2f2';
+                                                    $borderColor = '#fecaca';
+
+                                                } else {
+
+                                                    $displayStatus = 'Available';
+                                                    $statusColor = '#16a34a';
+                                                    $backgroundColor = '#f0fdf4';
+                                                    $borderColor = '#bbf7d0';
+
+                                                }
+                                            @endphp
+
+
+                                            {{-- EACH MORNING SLOT --}}
+                                            <div
+                                                class="schedule-slot"
+                                                style="
+                                                    margin-bottom: 8px;
+                                                    padding: 8px;
+                                                    border: 1px solid {{ $borderColor }};
+                                                    border-radius: 6px;
+                                                    background-color: {{ $backgroundColor }};
+                                                "
+                                            >
+
+                                                <div
+                                                    style="
+                                                        font-size: 10px;
+                                                        color: #475569;
+                                                        white-space: nowrap;
+                                                    "
+                                                >
+                                                    <i
+                                                        class="icofont-circle"
+                                                        style="
+                                                            font-size: 7px;
+                                                            color: #0088cc;
+                                                        "
+                                                    ></i>
+
+                                                    {{ $startTime }}
+                                                    -
+                                                    {{ $endTime }}
+                                                </div>
+
+                                                <div
+                                                    class="mt-1 font-weight-bold"
+                                                    style="
+                                                        font-size: 10px;
+                                                        color: {{ $statusColor }};
+                                                    "
+                                                >
+                                                    {{ $displayStatus }}
+                                                </div>
+
+                                            </div>
+
+                                        @empty
+
+                                            <div
+                                                class="text-muted"
+                                                style="font-size: 10px;"
+                                            >
+                                                No schedule
+                                            </div>
+
+                                        @endforelse
+
                                     </div>
 
-                                    <!-- CA CHIỀU (AFTERNOON) -->
-                                    <div class="card-shift p-2 rounded bg-white border shadow-sm" style="border-color: #bae6fd !important;">
-                                        <div class="d-flex align-items-center justify-content-center mb-1">
-                                            <i class="icofont-cloud-sun text-info mr-1" style="font-size: 14px;"></i>
-                                            <span class="font-weight-bold text-dark" style="font-size: 12px;">Afternoon</span>
-                                        </div>
-                                        <div class="text-muted mb-2" style="font-size: 10px; line-height: 1.2;">13:00 - 17:00</div>
 
-                                        @if($afternoon && !$afternoon->IsOff && !$afternoon->IsDayOff)
-                                        <span class="badge badge-light-success text-success font-weight-bold px-1 py-1.5 rounded d-block text-truncate" style="background-color: #dcfce7; font-size: 11px;">
-                                            Available
-                                        </span>
-                                        @else
-                                        <div class="text-secondary font-weight-bold mb-1" style="font-size: 11px;">Off</div>
-                                        <div class="reason-box p-1 rounded text-muted text-truncate" style="background-color: #f8fafc; border: 1px solid #e2e8f0; font-size: 10px; min-height: 28px;" title="{{ $afternoon->Reason ?? $afternoon->DayOffReason ?? 'Day off' }}">
-                                            {{ $afternoon->Reason ?? $afternoon->DayOffReason ?? 'Off' }}
+                                    {{-- AFTERNOON --}}
+                                    <div
+                                        class="p-2 rounded bg-white border shadow-sm"
+                                        style="
+                                            border-color: #bae6fd !important;
+                                        "
+                                    >
+
+                                        <div
+                                            class="d-flex align-items-center mb-2"
+                                        >
+
+                                            <i
+                                                class="icofont-cloud-sun text-info mr-1"
+                                                style="font-size: 13px;"
+                                            ></i>
+
+                                            <span
+                                                class="font-weight-bold text-dark"
+                                                style="font-size: 12px;"
+                                            >
+                                                Afternoon
+                                            </span>
+
                                         </div>
-                                        @endif
+
+
+                                        @forelse($afternoonSchedules as $schedule)
+
+                                            @php
+                                                $status = $schedule->Status;
+
+                                                $startTime = \Carbon\Carbon::parse(
+                                                    $schedule->StartTime
+                                                )->format('H:i');
+
+                                                $endTime = \Carbon\Carbon::parse(
+                                                    $schedule->EndTime
+                                                )->format('H:i');
+
+                                                if ($status === 'Off') {
+
+                                                    $displayStatus = 'Off';
+                                                    $statusColor = '#64748b';
+                                                    $backgroundColor = '#f8fafc';
+                                                    $borderColor = '#cbd5e1';
+
+                                                } elseif ((int) $schedule->IsBooked === 1) {
+
+                                                    $displayStatus = 'Booked';
+                                                    $statusColor = '#dc2626';
+                                                    $backgroundColor = '#fef2f2';
+                                                    $borderColor = '#fecaca';
+
+                                                } else {
+
+                                                    $displayStatus = 'Available';
+                                                    $statusColor = '#16a34a';
+                                                    $backgroundColor = '#f0fdf4';
+                                                    $borderColor = '#bbf7d0';
+
+                                                }
+                                            @endphp
+
+
+                                            {{-- EACH AFTERNOON SLOT --}}
+                                            <div
+                                                class="schedule-slot"
+                                                style="
+                                                    margin-bottom: 8px;
+                                                    padding: 8px;
+                                                    border: 1px solid {{ $borderColor }};
+                                                    border-radius: 6px;
+                                                    background-color: {{ $backgroundColor }};
+                                                "
+                                            >
+
+                                                <div
+                                                    style="
+                                                        font-size: 10px;
+                                                        color: #475569;
+                                                        white-space: nowrap;
+                                                    "
+                                                >
+                                                    <i
+                                                        class="icofont-circle"
+                                                        style="
+                                                            font-size: 7px;
+                                                            color: #0088cc;
+                                                        "
+                                                    ></i>
+
+                                                    {{ $startTime }}
+                                                    -
+                                                    {{ $endTime }}
+                                                </div>
+
+                                                <div
+                                                    class="mt-1 font-weight-bold"
+                                                    style="
+                                                        font-size: 10px;
+                                                        color: {{ $statusColor }};
+                                                    "
+                                                >
+                                                    {{ $displayStatus }}
+                                                </div>
+
+                                            </div>
+
+                                        @empty
+
+                                            <div
+                                                class="text-muted"
+                                                style="font-size: 10px;"
+                                            >
+                                                No schedule
+                                            </div>
+
+                                        @endforelse
+
                                     </div>
+
                                 </div>
-                                @endforeach
+
+                            @endfor
+
                         </div>
+
+
+                        {{-- Legend --}}
+                        <div
+                            class="mt-3 pt-3"
+                            style="
+                                border-top: 1px solid #cce3fd;
+                            "
+                        >
+
+                            <div
+                                class="d-flex flex-wrap align-items-center"
+                                style="gap: 15px;"
+                            >
+
+                                <div
+                                    class="d-flex align-items-center"
+                                    style="font-size: 11px;"
+                                >
+                                    <span
+                                        style="
+                                            width: 10px;
+                                            height: 10px;
+                                            border-radius: 3px;
+                                            background: #f0fdf4;
+                                            border: 1px solid #bbf7d0;
+                                            margin-right: 5px;
+                                        "
+                                    ></span>
+
+                                    Available
+                                </div>
+
+
+                                <div
+                                    class="d-flex align-items-center"
+                                    style="font-size: 11px;"
+                                >
+                                    <span
+                                        style="
+                                            width: 10px;
+                                            height: 10px;
+                                            border-radius: 3px;
+                                            background: #fef2f2;
+                                            border: 1px solid #fecaca;
+                                            margin-right: 5px;
+                                        "
+                                    ></span>
+
+                                    Booked
+                                </div>
+
+
+                                <div
+                                    class="d-flex align-items-center"
+                                    style="font-size: 11px;"
+                                >
+                                    <span
+                                        style="
+                                            width: 10px;
+                                            height: 10px;
+                                            border-radius: 3px;
+                                            background: #f8fafc;
+                                            border: 1px solid #cbd5e1;
+                                            margin-right: 5px;
+                                        "
+                                    ></span>
+
+                                    Off
+                                </div>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
-                    <!-- Make Appointment -->
+
+                    {{-- Appointment --}}
                     <div class="d-flex justify-content-end">
-                        <a href="{{ url('/appoinment?doctor_id=' . ($doctor->DoctorId ?? $doctor->id)) }}" class="btn btn-main-2 btn-round-full mt-4 ">
-                            Make an Appoinment<i class="icofont-simple-right ml-2"></i>
+
+                        <a
+                            href="{{ route('patient.appointments.book', ['doctor_id' => $doctor->DoctorId]) }}"
+                            class="btn btn-main-2 btn-round-full mt-4"
+                        >
+                            Make an Appointment
+                            <i class="icofont-simple-right ml-2"></i>
                         </a>
+
                     </div>
 
                 </div>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- Bằng cấp & Trình độ học vấn -->
-<section class="section doctor-qualification gray-bg">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="section-title">
-                    <h3>Educational Qualifications & Degree</h3>
-                    <div class="divider my-4"></div>
-                </div>
             </div>
+
         </div>
 
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="edu-block p-4 bg-white rounded shadow-sm border-left border-primary" style="border-left-width: 5px !important;">
-                    <span class="h6 text-muted"><i class="icofont-graduation-cap mr-1 text-primary"></i> Qualification</span>
-                    <h4 class="mb-2 mt-1 title-color">{{ $doctor->Degree ?? 'Medical Doctor (M.D.)' }}</h4>
-                    <p class="mb-0">
-                        {{ $doctor->Qualifications ?? $doctor->Education ?? 'Graduated from prestigious medical institutions with specialized training certificates and years of clinical practice in diagnosis and treatment.' }}
-                    </p>
-                </div>
-            </div>
-        </div>
     </div>
+
 </section>
 
 @endsection
