@@ -1,4 +1,4 @@
-@extends('components.layouts.partials.frontend')
+@extends('components.layouts.patient.dashboard')
 @section('title', 'My Appointments - MediConnect')
 
 @section('content')
@@ -50,7 +50,7 @@
                     @if(!$isReadOnly)
                     <div class="d-inline-flex gap-1 align-items-center">
                         <!-- Reschedule -->
-                        <a href="{{ route('patient.appointments.book', ['doctor_id' => $app->DoctorId]) }}"
+                        <a href="{{ route('patient.appointments.reschedule', $app->AppointmentId) }}"
                             class="btn btn-xs btn-outline-primary px-2 py-1"
                             style="font-size: 11px; font-weight: 600;">
                             <i class="icofont-ui-edit mr-1"></i>Reschedule
@@ -59,7 +59,7 @@
                         <!-- Cancel -->
                         <form action="{{ route('patient.appointments.cancel', $app->AppointmentId) }}"
                             method="POST" class="d-inline"
-                            onsubmit="return confirm('Bạn có chắc chắn muốn hủy cuộc hẹn này?');">
+                            onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
                             @csrf
                             <button type="submit"
                                 class="btn btn-xs btn-outline-danger px-2 py-1"

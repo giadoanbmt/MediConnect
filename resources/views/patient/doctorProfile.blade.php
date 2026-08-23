@@ -571,29 +571,17 @@
 
                         </div>
 
-
                         {{-- Appointment --}}
                         <div class="d-flex justify-content-end">
-                            <<<<<<< Updated upstream
-
-                                <a
-                                href="{{ route('patient.appointments.book', ['doctor_id' => $doctor->DoctorId]) }}"
-                                class="btn btn-main-2 btn-round-full mt-4">
-                                Make an Appointment
-                                <i class="icofont-simple-right ml-2"></i>
-                                </a>
-
-                                =======
-                                @auth
-                                <a href="{{ route('patient.appointments.book', ['doctor_id' => $doctor->DoctorId ?? $doctor->id]) }}" class="btn btn-main-2 btn-round-full mt-4 ">
-                                    Make an Appoinment<i class="icofont-simple-right ml-2"></i>
-                                </a>
-                                @else
-                                <a href="{{ url('/login') }}" class="btn btn-main-2 btn-icon btn-round-full">
-                                    Make an appointment<i class="icofont-simple-right ml-2"></i>
-                                </a>
-                                @endauth
-                                >>>>>>> Stashed changes
+                            @auth
+                            <a href="{{ route('patient.appointments.book', ['doctor_id' => $doctor->DoctorId ?? $doctor->id]) }}" class="btn btn-main-2 btn-round-full mt-4 ">
+                                Make an Appoinment<i class="icofont-simple-right ml-2"></i>
+                            </a>
+                            @else
+                            <a href="{{ url('/login') }}" class="btn btn-main-2 btn-icon btn-round-full">
+                                Make an appointment<i class="icofont-simple-right ml-2"></i>
+                            </a>
+                            @endauth
                         </div>
 
                     </div>

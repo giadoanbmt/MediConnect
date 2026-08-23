@@ -98,9 +98,12 @@ Route::middleware(['role:patient'])->prefix('patient')->name('patient.')->group(
     Route::get('/appointments/get-doctors', [AppointmentController::class, 'getDoctorsBySpecialization'])->name('appointments.get-doctors');
     Route::get('/appointments/get-slots', [AppointmentController::class, 'getSlots'])->name('appointments.get-slots');
 
-    // Đổi lịch & Hủy lịch
-    Route::put('/appointments/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
-    Route::delete('/appointments/{id}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+    // Hủy lịch
+    Route::post('/appointments/{id}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+
+    // Đổi lịch (Reschedule)
+    Route::get('/appointments/{id}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
+    Route::post('/appointments/{id}/reschedule', [AppointmentController::class, 'updateReschedule'])->name('appointments.updateReschedule');
 });
 
 /*
