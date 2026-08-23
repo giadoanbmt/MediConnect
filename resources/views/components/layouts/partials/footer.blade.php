@@ -11,13 +11,13 @@
 
 					<ul class="list-inline footer-socials mt-4">
 						<li class="list-inline-item">
-							<a href="https://www.facebook.com/themefisher"><i class="icofont-facebook"></i></a>
+							<a href="#!"><i class="icofont-facebook"></i></a>
 						</li>
 						<li class="list-inline-item">
-							<a href="https://twitter.com/themefisher"><i class="icofont-twitter"></i></a>
+							<a href="#!"><i class="icofont-twitter"></i></a>
 						</li>
 						<li class="list-inline-item">
-							<a href="https://www.pinterest.com/themefisher/"><i class="icofont-linkedin"></i></a>
+							<a href="#!"><i class="icofont-linkedin"></i></a>
 						</li>
 					</ul>
 				</div>
@@ -65,17 +65,6 @@
 		</div>
 
 		<div class="footer-btm py-4 mt-5">
-			<!-- <div class="row align-items-center justify-content-between">
-				<div class="col-lg-6">
-					<div class="subscribe-form text-lg-right mt-5 mt-lg-0">
-						<form action="#" class="subscribe">
-							<input type="text" class="form-control" placeholder="Your Email address" required>
-							<button type="submit" class="btn btn-main-2 btn-round-full">Subscribe</button>
-						</form>
-					</div>
-				</div>
-			</div> -->
-
 			<div class="row">
 				<div class="col-lg-4">
 					<a class="backtop scroll-top-to" href="#top">
