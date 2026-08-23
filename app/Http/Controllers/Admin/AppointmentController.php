@@ -31,10 +31,10 @@ class AppointmentController extends Controller
 
         // Lọc theo trạng thái
         if ($status !== 'All') {
-            if ($status === 'Approved') {
-                $query->whereIn('Appointment.Status', ['Approved', 'Accept', 'Accepted']);
-            } elseif ($status === 'Rejected' || $status === 'Cancelled') {
-                $query->whereIn('Appointment.Status', ['Cancelled', 'cancelled', 'Rejected', 'Reject']);
+            if ($status === 'Confirmed') {
+                $query->whereIn('Appointment.Status', ['Approved', 'Accept', 'Accepted', 'Confirmed']);
+            } elseif ($status === 'Cancelled') {
+                $query->whereIn('Appointment.Status', ['Cancelled', 'cancelled']);
             } else {
                 $query->where('Appointment.Status', $status);
             }
@@ -76,8 +76,8 @@ class AppointmentController extends Controller
         $counts = [
             'All'       => (clone $baseCount)->count(),
             'Pending'   => (clone $baseCount)->where('Appointment.Status', 'Pending')->count(),
-            'Approved'  => (clone $baseCount)->whereIn('Appointment.Status', ['Approved', 'Accept', 'Accepted'])->count(),
-            'Rejected'  => (clone $baseCount)->whereIn('Appointment.Status', ['Cancelled', 'cancelled', 'Rejected', 'Reject'])->count(),
+            'Confirmed' => (clone $baseCount)->whereIn('Appointment.Status', ['Approved', 'Accept', 'Accepted', 'Confirmed'])->count(),
+            'Cancelled'  => (clone $baseCount)->whereIn('Appointment.Status', ['Cancelled', 'cancelled'])->count(),
             'Completed' => (clone $baseCount)->where('Appointment.Status', 'Completed')->count(),
         ];
 

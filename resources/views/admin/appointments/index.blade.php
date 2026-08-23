@@ -48,16 +48,16 @@
             <span class="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-800 font-bold">{{ $counts['Pending'] }}</span>
         </a>
 
-        <a href="{{ route('admin.appointments.index', array_filter(['status' => 'Approved', 'keyword' => $keyword])) }}"
-            class="px-4 py-2.5 text-sm font-medium border-b-2 transition flex items-center space-x-2 whitespace-nowrap {{ $status === 'Approved' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-800' }}">
-            <span>Approved</span>
-            <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-100 text-emerald-800 font-bold">{{ $counts['Approved'] }}</span>
+        <a href="{{ route('admin.appointments.index', array_filter(['status' => 'Confirmed', 'keyword' => $keyword])) }}"
+            class="px-4 py-2.5 text-sm font-medium border-b-2 transition flex items-center space-x-2 whitespace-nowrap {{ $status === 'Confirmed' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-800' }}">
+            <span>Confirmed</span>
+            <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-100 text-emerald-800 font-bold">{{ $counts['Confirmed'] }}</span>
         </a>
 
-        <a href="{{ route('admin.appointments.index', array_filter(['status' => 'Rejected', 'keyword' => $keyword])) }}"
-            class="px-4 py-2.5 text-sm font-medium border-b-2 transition flex items-center space-x-2 whitespace-nowrap {{ in_array($status, ['Rejected', 'Cancelled']) ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-800' }}">
-            <span>Cancelled / Rejected</span>
-            <span class="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-800 font-bold">{{ $counts['Rejected'] }}</span>
+        <a href="{{ route('admin.appointments.index', array_filter(['status' => 'Cancelled', 'keyword' => $keyword])) }}"
+            class="px-4 py-2.5 text-sm font-medium border-b-2 transition flex items-center space-x-2 whitespace-nowrap {{ $status ==='Cancelled' ? 'border-blue-600 text-blue-600 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-800' }}">
+            <span>Cancelled</span>
+            <span class="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-800 font-bold">{{ $counts['Cancelled'] }}</span>
         </a>
 
         <a href="{{ route('admin.appointments.index', array_filter(['status' => 'Completed', 'keyword' => $keyword])) }}"
@@ -111,8 +111,8 @@
                         <td class="py-4 px-4">
                             @if($item->Status === 'Pending')
                             <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 inline-block">Pending</span>
-                            @elseif(in_array($item->Status, ['Approved', 'Accept', 'Accepted']))
-                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 inline-block">Approved</span>
+                            @elseif(in_array($item->Status, ['Approved', 'Accept', 'Accepted', 'Confirmed']))
+                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 inline-block">Confirmed</span>
                             @elseif(in_array(strtolower($item->Status), ['cancelled', 'rejected', 'reject']))
                             <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200 inline-block">Cancelled</span>
                             @if(!empty($item->CancellationReason))

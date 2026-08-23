@@ -26,12 +26,16 @@ use App\Http\Controllers\Patient\ContactController;
 
 use Illuminate\Support\Facades\Route;
 
+// Tự động chuyển về trang chủ nếu người dùng truy cập GET /logout
+Route::get('/logout', function () {
+    return redirect()->route('public.home');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
 */
-
 Route::controller(PatientController::class)->group(function () {
     Route::get('/', 'index')->name('public.home');
     Route::get('/about', 'about')->name('public.about');
@@ -71,7 +75,6 @@ Route::post('/logout', [AuthController::class, 'logout'])
 | Patient Routes (Role = 2)
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(['role:patient'])->prefix('patient')->name('patient.')->group(function () {
 
     Route::controller(PatientController::class)->group(function () {

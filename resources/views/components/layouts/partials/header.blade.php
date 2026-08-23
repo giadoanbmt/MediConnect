@@ -46,21 +46,24 @@
                                 <a class="dropdown-item py-2" href="{{ route('patient.profile') }}">
                                     <i class="icofont-ui-user mr-2 text-primary"></i>Edit profile
                                 </a>
-                                <a class="dropdown-item py-2" href="#">
-                                    <i class="icofont-calendar mr-2 text-info"></i>My appointments <small class="text-muted">(coming soon)</small>
+                                <a class="dropdown-item py-2" href="{{ route('patient.appointments.index') }}">
+                                    <i class="icofont-calendar mr-2 text-info"></i>My appointments
                                 </a>
 
                                 <div class="dropdown-divider my-1"></div>
 
-                                {{-- Nút Log out dạng link, gọi JavaScript để submit Form bên dưới --}}
-                                <a class="dropdown-item text-danger py-2" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="icofont-logout mr-2"></i>Log out
-                                </a>
+                                {{-- logout --}}
+                                <form action="{{ route('logout') }}" method="POST" class="m-0 p-0">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger py-2 w-100 text-left border-0 bg-transparent flex items-center">
+                                        <i class="icofont-logout mr-2"></i>Log out
+                                    </button>
+                                </form>
                             </div>
 
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            <!-- <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                 @csrf
-                            </form>
+                            </form> -->
                         </div>
                         @endguest
 
