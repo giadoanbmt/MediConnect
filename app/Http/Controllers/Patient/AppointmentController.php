@@ -184,52 +184,151 @@ class AppointmentController extends Controller
         return redirect()->back()->with('success', 'Appointment booked successfully! We will contact you soon.');
     }
 
-
-
-    // Dời lịch hẹn sang khung giờ trống khác
+    // Hiển thị trang dời lịch
     public function reschedule(Request $request, $id)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in!');
+        }
+
+        // Lấy thông tin lịch hẹn hiện tại của bệnh nhân
+        $appointment = DB::table('Appointment')
+            ->join('Doctor', 'Appointment.DoctorId', '=', 'Doctor.DoctorId')
+            ->leftJoin('Specialization', 'Doctor.SpecializationId', '=', 'Specialization.SpecializationId')
+            ->where('Appointment.AppointmentId', $id)
+            ->where('Appointment.UserId', Auth::id())
+            ->select(
+                'Appointment.*',
+                'Doctor.FullName as DoctorName',
+                'Specialization.SpecializationName'
+            )
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->back()->with('error', 'Appointment not found!');
+        }
+
+        // Kiểm tra không cho dời lịch đã bị hủy
+        if ($appointment->Status === 'Cancelled') {
+            return redirect()->back()->with('error', 'Cannot reschedule a past or canceled appointment!');
+        }
+
+        return view('patient.appointments.reschedule', compact('appointment'));
+    }
+
+    /**
+     * 2. Xử lý Cập nhật Dời lịch (Giữ nguyên AppointmentId, đổi khung giờ & ngày)
+     */
+    public function updateReschedule(Request $request, $id)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in');
+        }
+
         $request->validate([
-            'new_appointment_id' => 'required|exists:Appointments,AppointmentId',
+            'AppointmentDate' => 'required|date|after_or_equal:today',
+            'ScheduleId'      => 'required', // ID khung giờ mới được chọn từ DoctorSchedule
+        ], [
+            'AppointmentDate.required'       => 'Please select a new appointment date.',
+            'AppointmentDate.after_or_equal' => 'The new appointment date cannot be in the past.',
+            'ScheduleId.required'            => 'Please select new appointment time slot.',
         ]);
 
-        // Hủy lịch cũ
-        $oldAppointment = Appointment::where('AppointmentId', $id)
-            ->where('PatientId', Auth::id())
-            ->firstOrFail();
+        $userId = Auth::id();
+        $newScheduleId = $request->input('ScheduleId');
 
-        $oldAppointment->update([
-            'PatientId' => null,
-            'Status'    => 'Available'
-        ]);
+        // Kiểm tra cuộc hẹn cũ
+        $appointment = DB::table('Appointment')
+            ->where('AppointmentId', $id)
+            ->where('UserId', $userId)
+            ->first();
 
+        if (!$appointment) {
+            return redirect()->back()->with('error', 'The appointment does not exist!');
+        }
 
-
-        // Đặt lịch mới
-        $newAppointment = Appointment::where('AppointmentId', $request->new_appointment_id)
+        // Kiểm tra khung giờ mới trong DoctorSchedule
+        $newSchedule = DB::table('DoctorSchedule')
+            ->where('ScheduleId', $newScheduleId)
             ->where('Status', 'Available')
-            ->firstOrFail();
+            ->where('IsBooked', '0')
+            ->first();
 
-        $newAppointment->update([
-            'PatientId' => Auth::id(),
-            'Status'    => 'Booked'
-        ]);
 
-        return response()->json(['message' => 'Dời lịch hẹn thành công!']);
+        DB::transaction(function () use ($appointment, $newSchedule, $request, $id) {
+            // A. Giải phóng khung giờ CŨ trong DoctorSchedule (chuyển IsBooked về '0')
+            DB::table('DoctorSchedule')
+                ->where('DoctorId', $appointment->DoctorId)
+                ->whereDate('WorkDate', $appointment->AppointmentDate)
+                ->where('StartTime', $appointment->StartTime)
+                ->where('EndTime', $appointment->EndTime)
+                ->update(['IsBooked' => '0']);
+
+            // B. Đánh dấu khung giờ MỚI trong DoctorSchedule (chuyển IsBooked thành '1')
+            DB::table('DoctorSchedule')
+                ->where('ScheduleId', $newSchedule->ScheduleId)
+                ->update(['IsBooked' => '1']);
+
+            // C. Cập nhật trực tiếp bản ghi Appointment CŨ (Giữ nguyên AppointmentId)
+            DB::table('Appointment')
+                ->where('AppointmentId', $id)
+                ->update([
+                    'AppointmentDate' => $request->input('AppointmentDate'),
+                    'StartTime'       => $newSchedule->StartTime,
+                    'EndTime'         => $newSchedule->EndTime,
+                    'Reason'          => $request->input('Reason', $appointment->Reason),
+                    'Status'          => 'Pending', // Đưa về trạng thái chờ duyệt
+                    'UpdatedAt'       => now(),
+                ]);
+        });
+
+        return redirect()->route('patient.appointments.index')
+            ->with('success', 'Appointment rescheduled successfully! Your appointment is now pending confirmation.');
     }
 
     // Hủy lịch hẹn
     public function cancel($id)
     {
-        $appointment = Appointment::where('AppointmentId', $id)
-            ->where('PatientId', Auth::id())
-            ->firstOrFail();
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in to cancel appointments!');
+        }
 
-        $appointment->update([
-            'PatientId' => null,
-            'Status'    => 'Available',
-        ]);
+        $userId = Auth::id();
 
-        return response()->json(['message' => 'Đã hủy lịch hẹn thành công!']);
+        // 1. Lấy thông tin cuộc hẹn
+        $appointment = DB::table('Appointment')
+            ->where('AppointmentId', $id)
+            ->where('UserId', $userId)
+            ->first();
+
+        if (!$appointment) {
+            return redirect()->back()->with('error', 'Appointment not found!');
+        }
+
+        // 2. Chỉ cho phép hủy nếu trạng thái đang là Pending hoặc Confirmed
+        if (!in_array($appointment->Status, ['Pending', 'Confirmed'])) {
+            return redirect()->back()->with('error', 'This appointment cannot be cancelled!');
+        }
+
+        // 3. Cập nhật trạng thái cuộc hẹn & Nhả khung giờ trống trong DoctorSchedule
+        DB::transaction(function () use ($appointment, $id) {
+            // Cập nhật trạng thái lịch hẹn thành Cancelled
+            DB::table('Appointment')
+                ->where('AppointmentId', $id)
+                ->update([
+                    'Status'    => 'Cancelled',
+                    'UpdatedAt' => now(),
+                ]);
+
+            // Trả lại khung giờ trống cho Bác sĩ (chuyển IsBooked = '0')
+            DB::table('DoctorSchedule')
+                ->where('DoctorId', $appointment->DoctorId)
+                ->whereDate('WorkDate', $appointment->AppointmentDate)
+                ->where('StartTime', $appointment->StartTime)
+                ->where('EndTime', $appointment->EndTime)
+                ->update(['IsBooked' => '0']);
+        });
+
+        return redirect()->back()->with('success', 'Appointment cancelled successfully!');
     }
 }

@@ -1,4 +1,4 @@
-@extends('components.layouts.partials.frontend')
+@extends('components.layouts.patient.dashboard')
 @section('title', 'My Profile - MediConnect')
 
 @section('content')

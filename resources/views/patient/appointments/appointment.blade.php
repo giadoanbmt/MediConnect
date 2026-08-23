@@ -55,7 +55,6 @@
                     <form id="appointmentForm" class="appoinment-form" method="POST" action="{{ route('patient.appointments.store') }}"> @csrf
                         <div class="row">
                             <!-- 1. Chuyên khoa (Specialization) -->
-                            <!-- 1. Chuyên khoa (Specialization) -->
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <select class="form-control" name="specialization_id" id="specializationSelect">
@@ -70,7 +69,6 @@
                                 </div>
                             </div>
 
-                            <!-- 2. Bác sĩ (Tự động lọc theo Specialization) -->
                             <!-- 2. Bác sĩ -->
                             <div class="col-lg-6">
                                 <div class="form-group">
