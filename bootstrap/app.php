@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => EnsureRoleAccess::class,
             'no_admin' => EnsureNoAdminExists::class,
+        ])->validateCsrfTokens(except: [
+            'logout',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

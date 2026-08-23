@@ -26,10 +26,8 @@ use App\Http\Controllers\Patient\ContactController;
 
 use Illuminate\Support\Facades\Route;
 
-// Tự động chuyển về trang chủ nếu người dùng truy cập GET /logout
-Route::get('/logout', function () {
-    return redirect()->route('public.home');
-});
+
+Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
