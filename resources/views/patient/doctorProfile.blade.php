@@ -187,6 +187,13 @@
                         "
                     >
 
+<<<<<<< Updated upstream
+=======
+                    <!-- BẢNG LỊCH LÀM VIỆC (DOCTOR SCHEDULE) -->
+                    <div class="schedule-light-container p-3 p-md-4 rounded-lg my-4" style="background-color: #f0f7ff; border: 1px solid #cce3fd; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.06);">
+
+                        <!-- Tiêu đề -->
+>>>>>>> Stashed changes
                         <div class="d-flex align-items-center mb-3">
 
                             <i
@@ -603,6 +610,7 @@
 
                     {{-- Appointment --}}
                     <div class="d-flex justify-content-end">
+<<<<<<< Updated upstream
 
                         <a
                             href="{{ route('patient.appointments.book', ['doctor_id' => $doctor->DoctorId]) }}"
@@ -612,6 +620,17 @@
                             <i class="icofont-simple-right ml-2"></i>
                         </a>
 
+=======
+                        @auth
+                        <a href="{{ route('patient.appointments.book', ['doctor_id' => $doctor->DoctorId ?? $doctor->id]) }}" class="btn btn-main-2 btn-round-full mt-4 ">
+                            Make an Appoinment<i class="icofont-simple-right ml-2"></i>
+                        </a>
+                        @else
+                        <a href="{{ url('/login') }}" class="btn btn-main-2 btn-icon btn-round-full">
+                            Make an appointment<i class="icofont-simple-right ml-2"></i>
+                        </a>
+                        @endauth
+>>>>>>> Stashed changes
                     </div>
 
                 </div>

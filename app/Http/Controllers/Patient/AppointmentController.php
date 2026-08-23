@@ -30,20 +30,33 @@ class AppointmentController extends Controller
     // Hiển thị trang đặt lịch hẹn
     public function create(Request $request)
     {
-        // 1. Lấy danh sách Chuyên khoa
-        try {
-            $specializations = class_exists(Specialization::class)
-                ? Specialization::all()
-                : DB::table('specializations')->get();
-        } catch (\Exception $e) {
-            $specializations = DB::table('Specialization')->get();
+        $specializations = DB::table('Specialization')->get();
+
+        // Lấy doctor_id truyền từ URL (?doctor_id=X)
+        $selectedDoctorId = $request->query('doctor_id');
+        $selectedSpecializationId = null;
+
+        if ($selectedDoctorId) {
+            // Tìm bác sĩ theo ID để lấy SpecializationId tương ứng
+            $selectedDoctor = DB::table('Doctor')->where('DoctorId', $selectedDoctorId)->first();
+
+            if ($selectedDoctor) {
+                $selectedSpecializationId = $selectedDoctor->SpecializationId;
+                // Chỉ lấy các bác sĩ thuộc cùng Chuyên khoa này
+                $doctors = DB::table('Doctor')->where('SpecializationId', $selectedSpecializationId)->get();
+            } else {
+                $doctors = DB::table('Doctor')->get();
+            }
+        } else {
+            $doctors = DB::table('Doctor')->get();
         }
 
-        // 2. Lấy trực tiếp danh sách Bác sĩ từ bảng Doctor (không dùng relationship user)
-        $doctors = Doctor::all();
-        $selectedDoctorId = $request->query('doctorId');
-
-        return view('patient.appointment', compact('specializations', 'doctors', 'selectedDoctorId'));
+        return view('patient.appointments.appointment', compact(
+            'specializations',
+            'doctors',
+            'selectedDoctorId',
+            'selectedSpecializationId'
+        ));
     }
 
     /**
