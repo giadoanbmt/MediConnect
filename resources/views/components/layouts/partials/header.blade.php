@@ -52,13 +52,15 @@
 
                                 <div class="dropdown-divider my-1"></div>
 
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button class="dropdown-item text-danger py-2" type="submit" style="cursor: pointer; background: transparent; border: none; width: 100%; text-align: left;">
-                                        <i class="icofont-logout mr-2"></i>Log out
-                                    </button>
-                                </form>
+                                {{-- Nút Log out dạng link, gọi JavaScript để submit Form bên dưới --}}
+                                <a class="dropdown-item text-danger py-2" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="icofont-logout mr-2"></i>Log out
+                                </a>
                             </div>
+
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
                         </div>
                         @endguest
 

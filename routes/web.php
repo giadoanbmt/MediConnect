@@ -89,7 +89,7 @@ Route::middleware(['role:patient'])->prefix('patient')->name('patient.')->group(
     Route::get('/doctors/{id}', [DoctorController::class, 'show'])->name('doctors.show');
 
     // Quản lý Đặt lịch khám
-    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::get('/my-appointments', [AppointmentController::class, 'index'])->name('appointments.index');
     Route::get('/appointment/book', [AppointmentController::class, 'create'])->name('appointments.book');
     Route::post('/appointment/book', [AppointmentController::class, 'store'])->name('appointments.store');
 

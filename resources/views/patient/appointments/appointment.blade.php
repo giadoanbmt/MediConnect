@@ -55,12 +55,14 @@
                     <form id="appointmentForm" class="appoinment-form" method="POST" action="{{ route('patient.appointments.store') }}"> @csrf
                         <div class="row">
                             <!-- 1. Chuyên khoa (Specialization) -->
+                            <!-- 1. Chuyên khoa (Specialization) -->
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <select class="form-control" name="specialization_id" id="specializationSelect">
                                         <option value="">Choose Specialization</option>
                                         @foreach($specializations ?? [] as $spec)
-                                        <option value="{{ $spec->SpecializationId ?? $spec->id }}">
+                                        <option value="{{ $spec->SpecializationId ?? $spec->id }}"
+                                            {{ (isset($selectedSpecializationId) && $selectedSpecializationId == ($spec->SpecializationId ?? $spec->id)) ? 'selected' : '' }}>
                                             {{ $spec->SpecializationName ?? $spec->name ?? $spec->specialization_name }}
                                         </option>
                                         @endforeach
@@ -69,13 +71,14 @@
                             </div>
 
                             <!-- 2. Bác sĩ (Tự động lọc theo Specialization) -->
+                            <!-- 2. Bác sĩ -->
                             <div class="col-lg-6">
                                 <div class="form-group">
                                     <select class="form-control" name="DoctorId" id="doctorSelect" required>
                                         <option value="">Select Doctors</option>
                                         @foreach($doctors ?? [] as $doc)
                                         <option value="{{ $doc->DoctorId ?? $doc->id }}"
-                                            {{ (request('doctorId') == ($doc->DoctorId ?? $doc->id) || (isset($selectedDoctorId) && $selectedDoctorId == ($doc->DoctorId ?? $doc->id))) ? 'selected' : '' }}>
+                                            {{ (request('doctor_id') == ($doc->DoctorId ?? $doc->id) || (isset($selectedDoctorId) && $selectedDoctorId == ($doc->DoctorId ?? $doc->id))) ? 'selected' : '' }}>
                                             {{ $doc->FullName ?? $doc->DoctorName ?? $doc->Name ?? ('Dr. ' . ($doc->DoctorId ?? $doc->id)) }}
                                         </option>
                                         @endforeach
