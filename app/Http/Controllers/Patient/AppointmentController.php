@@ -19,12 +19,23 @@ class AppointmentController extends Controller
     // Xem danh sách lịch hẹn cá nhân
     public function index()
     {
-        $appointments = Appointment::with('doctor.user')
-            ->where('PatientId', Auth::id())
+        $userId = Auth::id() ?? session('UserId');
+
+        $appointments = DB::table('Appointment')
+            ->join('Doctor', 'Appointment.DoctorId', '=', 'Doctor.DoctorId')
+            ->leftJoin('Specialization', 'Doctor.SpecializationId', '=', 'Specialization.SpecializationId')
+            ->where('Appointment.UserId', $userId)
+            ->select(
+                'Appointment.*',
+                'Doctor.FullName as DoctorName',
+                'Doctor.RoomId',
+                'Specialization.SpecializationName'
+            )
             ->orderBy('AppointmentDate', 'desc')
+            ->orderBy('StartTime', 'desc')
             ->get();
 
-        return response()->json($appointments);
+        return view('patient.appointments.index', compact('appointments'));
     }
 
     // Hiển thị trang đặt lịch hẹn
@@ -191,6 +202,8 @@ class AppointmentController extends Controller
             'PatientId' => null,
             'Status'    => 'Available'
         ]);
+
+
 
         // Đặt lịch mới
         $newAppointment = Appointment::where('AppointmentId', $request->new_appointment_id)
