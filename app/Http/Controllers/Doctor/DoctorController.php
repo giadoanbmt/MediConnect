@@ -280,9 +280,10 @@ class DoctorController extends Controller
         }
 
         // Lấy danh sách News
-        $news = $query
-            ->orderBy('CreatedAt', 'desc')
-            ->paginate(7);
+$news = $query
+    ->whereNull('DeletedAt')
+    ->orderBy('CreatedAt', 'desc')
+    ->paginate(7);
 
         // Chuyển dữ liệu về object giống logic cũ
         $news->getCollection()->transform(function ($n) {
@@ -495,19 +496,21 @@ class DoctorController extends Controller
             );
     }
 
-    public function deleteNews($id)
-    {
-        $news = News::where('NewsId', $id)
-            ->where('DoctorId', session('doctor_id'))
-            ->where('AuthorType', 'Doctor')
-            ->firstOrFail();
+   public function deleteNews($id)
+{
+    $news = News::where('NewsId', $id)
+        ->where('DoctorId', session('doctor_id'))
+        ->where('AuthorType', 'Doctor')
+        ->whereNull('DeletedAt')
+        ->firstOrFail();
 
-        $news->forceDelete();
+    $news->DeletedAt = now();
+    $news->save();
 
-        return redirect()
-            ->route('doctor.news.index')
-            ->with('success', 'News deleted successfully!');
-    }
+    return redirect()
+        ->route('doctor.news.index')
+        ->with('success', 'News deleted successfully!');
+}
 
     /// Availability
     public function availability(Request $request)
@@ -871,13 +874,11 @@ class DoctorController extends Controller
             );
         }
 
-        // Lấy danh sách lịch hẹn theo thứ tự mới nhất
+        // Lấy danh sách lịch hẹn và sắp xếp theo ngày, giờ
         $appointments = $appointmentsQuery
             ->orderBy('AppointmentId', 'desc')
             ->get();
-
         // Tạo query riêng để đếm số lượng theo trạng thái
-        // Không áp dụng status filter hiện tại
         $statusCountsQuery = clone $baseQuery;
 
         // Chỉ lấy Status để tính số lượng
