@@ -4,13 +4,13 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <ul class="top-bar-info list-inline-item pl-0 mb-0">
-                        <li class="list-inline-item"><a href="mailto:support@gmail.com"><i class="icofont-support-faq mr-2"></i>support@novena.com</a></li>
-                        <li class="list-inline-item"><i class="icofont-location-pin mr-2"></i>Address Ta-134/A, New York, USA</li>
+                        <li class="list-inline-item"><a href="mailto:support@gmail.com"><i class="icofont-support-faq mr-2"></i>support@gmail.com</a></li>
+                        <li class="list-inline-item"><i class="icofont-location-pin mr-2"></i>35/6 D5 Street, Thanh My Tay Ward, Ho Chi Minh City</li>
                     </ul>
                 </div>
                 <div class="col-lg-6">
                     <div class="top-right-bar mt-2 mt-lg-0 d-flex justify-content-lg-end align-items-center">
-                        <a href="tel:+23-345-67890" class="top-hotline mr-3"><span>Call Now: </span><span class="h4">823-4565-13456</span></a>
+                        <a href="tel:+84-123-456-789" class="top-hotline mr-3"><span>Call Now: </span><span class="h4">+84 123 456 789</span></a>
 
                         @guest
                         <a class="top-login-link login-btn" href="{{ route('login') }}">

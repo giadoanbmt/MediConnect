@@ -24,21 +24,21 @@
         <div class="contact-block mb-4 mb-lg-0">
           <i class="icofont-live-support"></i>
           <h5>Call Us</h5>
-          +823-4565-13456
+          +84 123 456 789
         </div>
       </div>
       <div class="col-lg-4 col-md-6">
         <div class="contact-block mb-4 mb-lg-0">
           <i class="icofont-support-faq"></i>
           <h5>Email Us</h5>
-          contact@mail.com
+          support@mail.com
         </div>
       </div>
       <div class="col-lg-4 col-md-12">
         <div class="contact-block mb-4 mb-lg-0">
           <i class="icofont-location-pin"></i>
           <h5>Location</h5>
-          North Main Street,Brooklyn Australia
+          Ho Chi Minh City
         </div>
       </div>
     </div>
@@ -58,7 +58,7 @@
     </div>
     <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12">
-        <form id="contact-form" class="contact__form" method="POST" action="{{ route('contact.store') }}">
+        <form id="contact-form" class="contact_form" method="POST" action="{{ route('patient.contact.store') }}">
           @csrf
 
           <!-- Flash Message thành công -->

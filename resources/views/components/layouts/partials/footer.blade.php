@@ -50,15 +50,15 @@
 							<i class="icofont-email mr-3"></i>
 							<span class="h6 mb-0">Support Available for 24/7</span>
 						</div>
-						<h4 class="mt-2"><a href="mailto:support@email.com">Support@email.com</a></h4>
+						<h4 class="mt-2"><a href="mailto:support@gmail.com">Support@gmail.com</a></h4>
 					</div>
 
 					<div class="footer-contact-block">
 						<div class="icon d-flex align-items-center">
 							<i class="icofont-support mr-3"></i>
-							<span class="h6 mb-0">Mon to Fri : 08:30 - 18:00</span>
+							<span class="h6 mb-0">Mon to Fri : 08:00 - 17:00</span>
 						</div>
-						<h4 class="mt-2"><a href="tel:+23-345-67890">+23-456-6588</a></h4>
+						<h4 class="mt-2"><a href="tel:+84-123-456-789">+84 123 456 789</a></h4>
 					</div>
 				</div>
 			</div>
