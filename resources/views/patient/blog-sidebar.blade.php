@@ -53,7 +53,7 @@
                             @endif
                             <div class="post-content overflow-hidden">
                                 <span class="text-sm text-muted d-block mb-1">{{ \Carbon\Carbon::parse($pop->PublishedAt ?? $pop->created_at)->format('d M, Y') }}</span>
-                                <h6 class="mb-0 text-truncate"><a href="{{ url('/blog/' . $pop->NewsId) }}">{{ $pop->Title }}</a></h6>
+                                <h6 class="mb-0 text-truncate"><a href="{{ url('/blog-single/' . $pop->NewsId) }}">{{ $pop->Title }}</a></h6>
                             </div>
                         </div>
                         @endforeach
