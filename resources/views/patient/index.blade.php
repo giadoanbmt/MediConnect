@@ -26,6 +26,7 @@
 
                     @auth
                     <a href="{{ route('patient.appointments.book') }}"
+                        data-no-spa
                         class="btn btn-main-2 btn-icon btn-round-full">
                         Book an Appointment
                         <i class="icofont-simple-right ml-2"></i>

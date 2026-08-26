@@ -53,7 +53,7 @@
                             @endif
                             <div class="post-content overflow-hidden">
                                 <span class="text-sm text-muted d-block mb-1">{{ \Carbon\Carbon::parse($pop->PublishedAt ?? $pop->created_at)->format('d M, Y') }}</span>
-                                <h6 class="mb-0 text-truncate"><a href="{{ url('/blog/' . $pop->NewsId) }}">{{ $pop->Title }}</a></h6>
+                                <h6 class="mb-0 text-truncate"><a href="{{ url('/blog-single/' . $pop->NewsId) }}">{{ $pop->Title }}</a></h6>
                             </div>
                         </div>
                         @endforeach
@@ -61,13 +61,12 @@
                     </div>
 
                     <!-- Categories -->
-                    <!-- Categories -->
                     <div class="sidebar-widget category mb-4">
                         <h5 class="mb-4">Categories</h5>
                         <ul class="list-unstyled mb-0">
                             @forelse($categories as $cat)
                             <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                                <!-- Thêm class="category-link" và dùng route() chuẩn -->
+
                                 <a href="{{ route('public.blog-sidebar', ['category' => $cat->Category]) }}" class="category-link">
                                     {{ $cat->Category }}
                                 </a>
