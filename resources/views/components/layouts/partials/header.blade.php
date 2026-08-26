@@ -61,9 +61,6 @@
                                 </form>
                             </div>
 
-                            <!-- <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form> -->
                         </div>
                         @endguest
 
@@ -110,7 +107,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ auth()->check() ? route('patient.contact') : route('login') }}">Contact</a></li>
                 </ul>
             </div>
-            <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3">
+            <!-- <form action="{{ url('/search') }}" method="GET" class="form-inline my-2 my-lg-0 ml-lg-3">
                 <div class="input-group input-group-sm" style="max-width: 230px;">
                     <input type="text" name="keyword" class="form-control" placeholder="Search doctor, blog..." required style="border-radius: 20px 0 0 20px; border-right: none;">
                     <div class="input-group-append">
@@ -119,7 +116,7 @@
                         </button>
                     </div>
                 </div>
-            </form>
+            </form> -->
         </div>
     </nav>
 </header>

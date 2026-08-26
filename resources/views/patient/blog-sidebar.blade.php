@@ -61,13 +61,12 @@
                     </div>
 
                     <!-- Categories -->
-                    <!-- Categories -->
                     <div class="sidebar-widget category mb-4">
                         <h5 class="mb-4">Categories</h5>
                         <ul class="list-unstyled mb-0">
                             @forelse($categories as $cat)
                             <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                                <!-- Thêm class="category-link" và dùng route() chuẩn -->
+
                                 <a href="{{ route('public.blog-sidebar', ['category' => $cat->Category]) }}" class="category-link">
                                     {{ $cat->Category }}
                                 </a>

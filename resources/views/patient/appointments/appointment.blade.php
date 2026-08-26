@@ -134,61 +134,38 @@
     </div>
 </section>
 
-<!-- Script AJAX lọc 3 cấp: Specialization -> Doctor -> TimeSlots -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@push('scripts')
 <script>
-    $(document).ready(function() {
-        // Cập nhật UI NiceSelect sau khi render option từ AJAX
-        function refreshNiceSelect() {
-            if ($.fn.niceSelect) {
-                $('select').niceSelect('update');
-            }
-        }
-
-        // KHI CHỌN CHUYÊN KHOA -> TẢI DANH SÁCH BÁC SĨ THUỘC KHOA
-        $('#specializationSelect').on('change', function() {
-            var specId = $(this).val();
+    (function() {
+        function initAppointmentForm() {
+            var $specSelect = $('#specializationSelect');
             var $docSelect = $('#doctorSelect');
             var $timeSelect = $('#timeSlotSelect');
+            var $dateInput = $('#date');
 
-            $docSelect.html('<option value="">Loading doctors...</option>');
-            $timeSelect.html('<option value="">Select Available Time</option>');
-            refreshNiceSelect();
+            if (!$specSelect.length) return; // Nếu không ở trang booking thì bỏ qua
 
-            $.ajax({
-                url: "{{ route('patient.appointments.get-doctors') }}",
-                type: "GET",
-                data: {
-                    specialization_id: specId
-                },
-                success: function(response) {
-                    $docSelect.empty().append('<option value="">Select Doctors</option>');
-                    if (response && response.length > 0) {
-                        $.each(response, function(index, doc) {
-                            $docSelect.append('<option value="' + doc.DoctorId + '">' + doc.FullName + '</option>');
-                        });
-                    } else {
-                        $docSelect.append('<option value="">No doctors available</option>');
-                    }
-                    refreshNiceSelect();
-                },
-                error: function() {
-                    $docSelect.html('<option value="">Error loading doctors</option>');
-                    refreshNiceSelect();
+            // Hàm đồng bộ UI NiceSelect (nếu template có sử dụng)
+            function updateNiceSelect() {
+                if ($.fn.niceSelect) {
+                    $('select').niceSelect('update');
                 }
-            });
-        });
+            }
 
-        // B. KHI CHỌN BÁC SĨ HOẶC NGÀY -> TẢI DANH SÁCH KHUNG GIỜ TRỐNG
-        function loadAvailableSlots() {
-            var doctorId = $('#doctorSelect').val();
-            var date = $('#date').val();
-            var $timeSelect = $('#timeSlotSelect');
+            // Hàm load khung giờ trống
+            function loadAvailableSlots() {
+                var doctorId = $docSelect.val();
+                var date = $dateInput.val();
 
-            $timeSelect.html('<option value="">Loading time slots...</option>');
-            refreshNiceSelect();
+                if (!doctorId || !date) {
+                    $timeSelect.html('<option value="">Select Available Time</option>');
+                    updateNiceSelect();
+                    return;
+                }
 
-            if (doctorId && date) {
+                $timeSelect.html('<option value="">Loading time slots...</option>');
+                updateNiceSelect();
+
                 $.ajax({
                     url: "{{ route('patient.appointments.get-slots') }}",
                     type: "GET",
@@ -206,27 +183,67 @@
                         } else {
                             $timeSelect.append('<option value="">No available slots on this date</option>');
                         }
-                        refreshNiceSelect();
+                        updateNiceSelect();
                     },
                     error: function() {
                         $timeSelect.html('<option value="">Error loading slots</option>');
-                        refreshNiceSelect();
+                        updateNiceSelect();
                     }
                 });
-            } else {
+            }
+
+            // Lắng nghe sự kiện chọn Chuyên khoa
+            $(document).off('change', '#specializationSelect').on('change', '#specializationSelect', function() {
+                var specId = $(this).val();
+
+                $docSelect.html('<option value="">Loading doctors...</option>');
                 $timeSelect.html('<option value="">Select Available Time</option>');
-                refreshNiceSelect();
+                updateNiceSelect();
+
+                if (!specId) {
+                    $docSelect.html('<option value="">Select Doctors</option>');
+                    updateNiceSelect();
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ route('patient.appointments.get-doctors') }}",
+                    type: "GET",
+                    data: {
+                        specialization_id: specId
+                    },
+                    success: function(response) {
+                        $docSelect.empty().append('<option value="">Select Doctors</option>');
+                        if (response && response.length > 0) {
+                            $.each(response, function(index, doc) {
+                                $docSelect.append('<option value="' + doc.DoctorId + '">' + doc.FullName + '</option>');
+                            });
+                        } else {
+                            $docSelect.append('<option value="">No doctors available</option>');
+                        }
+                        updateNiceSelect();
+                    },
+                    error: function() {
+                        $docSelect.html('<option value="">Error loading doctors</option>');
+                        updateNiceSelect();
+                    }
+                });
+            });
+
+            // Lắng nghe sự kiện chọn Bác sĩ / Ngày
+            $(document).off('change', '#doctorSelect, #date').on('change', '#doctorSelect, #date', loadAvailableSlots);
+
+            // Tự động kích hoạt nếu đã có Bác sĩ được chọn từ URL
+            if ($docSelect.val()) {
+                loadAvailableSlots();
             }
         }
 
-        // Bắt sự kiện thay đổi Bác sĩ hoặc Ngày
-        $('#doctorSelect, #date').on('change', loadAvailableSlots);
-
-        // Tự động tải khung giờ nếu Bác sĩ đã được chọn từ trước (qua URL profile)
-        if ($('#doctorSelect').val()) {
-            loadAvailableSlots();
-        }
-    });
+        // Chạy khi nạp trang lần đầu hoặc khi SPA Navigation hoàn tất chuyển trang
+        $(document).ready(initAppointmentForm);
+        $(document).on('pjax:end page:loaded turbolinks:load content:loaded', initAppointmentForm);
+    })();
 </script>
+@endpush
 
 @endsection

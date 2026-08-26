@@ -34,7 +34,7 @@
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="Specialization-block border rounded shadow-sm overflow-hidden h-100 d-flex flex-column justify-content-between">
                     <div>
-                        <!-- 1. HÌNH ẢNH CÓ LINK & CỐ ĐỊNH KÍCH THƯỚC -->
+                        <!-- THUMPNAIL -->
                         <a href="{{ url('/specialization/' . ($item->SpecializationId ?? $item->id)) }}">
                             <img src="{{ !empty($item->ImageUrl) && file_exists(public_path($item->ImageUrl)) ? asset($item->ImageUrl) : asset('images/default-specialization.jpg') }}"
                                 alt="{{ $item->SpecializationName ?? $item->name }}"
@@ -43,21 +43,21 @@
                         </a>
 
                         <div class="content p-4">
-                            <!-- 2. TIÊU ĐỀ CÓ LINK -->
+                            <!-- TIÊU ĐỀ  -->
                             <h4 class="mt-2 mb-2 title-color">
                                 <a href="{{ url('/specialization-single/' . ($item->SpecializationId ?? $item->id)) }}" class="text-dark">
                                     {{ $item->SpecializationName ?? $item->name }}
                                 </a>
                             </h4>
 
-                            <!-- 3. MÔ TẢ TÓM TẮT -->
+                            <!--  MÔ TẢ TÓM TẮT -->
                             <p class="mb-4 text-muted">
                                 {{ Str::limit(strip_tags($item->Content), 110) }}
                             </p>
                         </div>
                     </div>
 
-                    <!-- 4. NÚT LEARN MORE CÓ LINK -->
+                    <!-- Learn more btn -->
                     <div class="px-4 pb-4">
                         <a href="{{ url('/specialization-single/' . ($item->SpecializationId ?? $item->id)) }}" class="read-more">
                             Learn More <i class="icofont-simple-right ml-2"></i>

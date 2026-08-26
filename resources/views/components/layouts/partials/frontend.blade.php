@@ -45,6 +45,8 @@
     {{-- Scripts & SPA Navigation --}}
     @include('components.layouts.partials.scripts')
 
+    @stack('scripts')
+
 </body>
 
 </html>

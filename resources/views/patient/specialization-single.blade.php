@@ -58,7 +58,7 @@
                         @if(isset($otherSpecializations) && count($otherSpecializations) > 0)
                         @foreach($otherSpecializations as $other)
                         <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                            <a href="{{ url('/specialization/' . ($other->SpecializationId ?? $other->id)) }}" class="text-secondary font-weight-medium">
+                            <a href="{{ url('specialization-single/' . ($other->SpecializationId ?? $other->id)) }}" class="text-secondary font-weight-medium">
                                 {{ $other->SpecializationName ?? $other->name }}
                             </a>
                             <i class="icofont-simple-right text-primary"></i>
